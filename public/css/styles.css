@@ -1185,3 +1185,103 @@ body {
         display: none;
     }
 }
+
+/* ===================================
+   Signature Modal - Tabs & Upload
+=================================== */
+.signature-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+
+.signature-tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.signature-tab:hover {
+    color: var(--text-primary);
+}
+
+.signature-tab.active {
+    color: var(--primary);
+}
+
+.signature-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+}
+
+.signature-tab-content {
+    display: block;
+}
+
+.signature-tab-content.hidden {
+    display: none;
+}
+
+.signature-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    color: var(--text-secondary);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.signature-upload-zone:hover,
+.signature-upload-zone.dragover {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--text-primary);
+}
+
+.signature-upload-zone svg {
+    color: var(--text-muted);
+}
+
+.signature-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+}
+
+.signature-preview img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 8px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.8125rem;
+}

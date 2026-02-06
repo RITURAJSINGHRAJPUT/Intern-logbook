@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Rahul",
+        "employee_id": "EMP001",
+        "date": "2026-02-01",
+        "department": "HR"
+    },
+    {
+        "name": "Anita",
+        "employee_id": "EMP002",
+        "date": "2026-02-01",
+        "department": "Finance"
+    },
+    {
+        "name": "Vikram",
+        "employee_id": "EMP003",
+        "date": "2026-02-02",
+        "department": "Engineering"
+    }
+]

@@ -196,11 +196,39 @@
             <div class="modal-overlay"></div>
             <div class="modal-content signature-modal">
                 <div class="modal-header">
-                    <h3>Draw Your Signature</h3>
+                    <h3>Add Signature</h3>
                     <button class="modal-close" id="closeSignature">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <canvas id="signatureCanvas" width="400" height="200"></canvas>
+                    <!-- Tabs -->
+                    <div class="signature-tabs">
+                        <button class="signature-tab active" data-tab="draw">Draw</button>
+                        <button class="signature-tab" data-tab="upload">Upload Image</button>
+                    </div>
+
+                    <!-- Draw Tab -->
+                    <div class="signature-tab-content active" id="drawTab">
+                        <canvas id="signatureCanvas" width="400" height="200"></canvas>
+                    </div>
+
+                    <!-- Upload Tab -->
+                    <div class="signature-tab-content hidden" id="uploadTab">
+                        <div class="signature-upload-zone" id="signatureUploadZone">
+                            <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p>Drop PNG/JPG image here</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">or click to browse</p>
+                            <input type="file" id="signatureFileInput"
+                                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" hidden>
+                        </div>
+                        <div class="signature-preview hidden" id="signaturePreview">
+                            <img id="signaturePreviewImg" alt="Signature preview">
+                            <button class="btn btn-secondary btn-small" id="removeSignatureImage">Remove</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" id="clearSignature">Clear</button>

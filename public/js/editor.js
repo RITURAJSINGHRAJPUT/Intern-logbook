@@ -212,22 +212,145 @@ function setupSignatureModal() {
     const saveBtn = document.getElementById('saveSignature');
     const overlay = modal?.querySelector('.modal-overlay');
 
+    // Tab elements
+    const tabs = document.querySelectorAll('.signature-tab');
+    const drawTab = document.getElementById('drawTab');
+    const uploadTab = document.getElementById('uploadTab');
+
+    // Upload elements
+    const uploadZone = document.getElementById('signatureUploadZone');
+    const fileInput = document.getElementById('signatureFileInput');
+    const previewContainer = document.getElementById('signaturePreview');
+    const previewImg = document.getElementById('signaturePreviewImg');
+    const removeBtn = document.getElementById('removeSignatureImage');
+
+    // Track current mode and uploaded image
+    let currentMode = 'draw';
+    let uploadedImageDataUrl = null;
+
+    // Tab switching
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const mode = tab.dataset.tab;
+            currentMode = mode;
+
+            // Update tab active state
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Show/hide content
+            if (mode === 'draw') {
+                drawTab.classList.remove('hidden');
+                drawTab.classList.add('active');
+                uploadTab.classList.remove('active');
+                uploadTab.classList.add('hidden');
+            } else {
+                uploadTab.classList.remove('hidden');
+                uploadTab.classList.add('active');
+                drawTab.classList.remove('active');
+                drawTab.classList.add('hidden');
+            }
+        });
+    });
+
+    // Upload zone click
+    uploadZone?.addEventListener('click', () => fileInput?.click());
+
+    // File input change
+    fileInput?.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleSignatureFile(e.target.files[0]);
+        }
+    });
+
+    // Drag and drop
+    uploadZone?.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+
+    uploadZone?.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            handleSignatureFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    // Handle file
+    function handleSignatureFile(file) {
+        if (!file.type.startsWith('image/')) {
+            showToast('Please upload an image file (PNG, JPG, etc.)', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            uploadedImageDataUrl = e.target.result;
+            previewImg.src = uploadedImageDataUrl;
+            uploadZone.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            showToast('Image loaded! Click Save to apply.', 'success');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Remove uploaded image
+    removeBtn?.addEventListener('click', () => {
+        uploadedImageDataUrl = null;
+        previewImg.src = '';
+        previewContainer.classList.add('hidden');
+        uploadZone.classList.remove('hidden');
+        fileInput.value = '';
+    });
+
     closeBtn?.addEventListener('click', () => hideModal('signatureModal'));
     overlay?.addEventListener('click', () => hideModal('signatureModal'));
 
     clearBtn?.addEventListener('click', () => {
-        window.signaturePad?.clear();
+        if (currentMode === 'draw') {
+            window.signaturePad?.clear();
+        } else {
+            // Clear uploaded image
+            uploadedImageDataUrl = null;
+            previewImg.src = '';
+            previewContainer.classList.add('hidden');
+            uploadZone.classList.remove('hidden');
+            fileInput.value = '';
+        }
     });
 
     saveBtn?.addEventListener('click', () => {
-        const dataUrl = window.signaturePad?.toDataURL();
-        if (dataUrl) {
-            window.fieldManager?.saveSignature(dataUrl);
-            hideModal('signatureModal');
-            showToast('Signature saved!', 'success');
+        let dataUrl = null;
+
+        if (currentMode === 'draw') {
+            dataUrl = window.signaturePad?.toDataURL();
+            if (!dataUrl) {
+                showToast('Please draw your signature first', 'error');
+                return;
+            }
         } else {
-            showToast('Please draw your signature first', 'error');
+            dataUrl = uploadedImageDataUrl;
+            if (!dataUrl) {
+                showToast('Please upload an image first', 'error');
+                return;
+            }
         }
+
+        window.fieldManager?.saveSignature(dataUrl);
+        hideModal('signatureModal');
+        showToast('Signature saved!', 'success');
+
+        // Reset for next time
+        uploadedImageDataUrl = null;
+        previewImg.src = '';
+        previewContainer?.classList.add('hidden');
+        uploadZone?.classList.remove('hidden');
+        if (fileInput) fileInput.value = '';
     });
 }
 

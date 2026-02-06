@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Fill PDFs | PDF Form Filler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Bulk Fill Page Specific Styles */
+        .bulk-main {
+            padding: 40px 0;
+            min-height: calc(100vh - var(--header-height) - 100px);
+        }
+
+        .bulk-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Steps Container */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .step-content {
+            padding-left: 52px;
+        }
+
+        /* Template Selector */
+        .template-select {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .template-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .template-info {
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Data Upload */
+        .data-upload-zone {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .data-upload-zone:hover,
+        .data-upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .data-upload-zone.has-file {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .upload-icon-small {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .upload-icon-small svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .file-preview {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .file-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        .row-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Mapping Grid */
+        .mapping-container {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .mapping-header {
+            display: grid;
+            grid-template-columns: 1fr 50px 1fr;
+            padding: 12px 16px;
+            background: var(--bg-dark);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .mapping-header span:last-child {
+            text-align: right;
+        }
+
+        .mapping-row {
+            display: grid;
+            grid-template-columns: 1fr 50px 1fr;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .mapping-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-key {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: var(--bg-dark);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .mapping-arrow {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .mapping-select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .mapping-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .mapping-select.mapped {
+            border-color: var(--accent);
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-frame {
+            background: white;
+            border-radius: var(--radius-sm);
+            width: 100%;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-placeholder {
+            color: var(--bg-dark);
+            font-size: 0.875rem;
+        }
+
+        /* Progress Container */
+        .progress-container {
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .progress-bar-wrapper {
+            background: var(--bg-dark);
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .progress-status {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+        }
+
+        .btn-large {
+            padding: 14px 32px;
+            font-size: 1rem;
+        }
+
+        .btn-accent {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Disabled States */
+        .step-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Data Preview Table */
+        .data-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+            margin-top: 12px;
+        }
+
+        .data-preview-table th,
+        .data-preview-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-preview-table th {
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .data-preview-table td {
+            color: var(--text-secondary);
+        }
+
+        .data-preview-scroll {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .toast.success {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+
+            .mapping-header,
+            .mapping-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .mapping-arrow {
+                display: none;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .btn-large {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="app">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                PDF Form Filler
+            </a>
+            <nav class="nav">
+                <a href="/app.html" class="nav-link">← Back to App</a>
+                <span class="nav-badge accent">Bulk Fill</span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="bulk-main">
+        <div class="bulk-container">
+            <h1 class="page-title">
+                <span class="gradient-text">Bulk Fill PDFs</span>
+            </h1>
+            <p class="page-subtitle">Auto-fill multiple PDFs from CSV or JSON data in seconds</p>
+
+            <div class="steps-container">
+                <!-- Step 1: Select Template -->
+                <div class="step-card" id="step1">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3>Select Template</h3>
+                    </div>
+                    <div class="step-content">
+                        <select class="template-select" id="templateSelect">
+                            <option value="">-- Select a template --</option>
+                        </select>
+                        <p class="template-info" id="templateInfo">Choose a template with saved field definitions</p>
+                    </div>
+                </div>
+
+                <!-- Step 2: Upload Data -->
+                <div class="step-card disabled" id="step2">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3>Upload Data (CSV or JSON)</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="data-upload-zone" id="dataUploadZone">
+                            <div class="upload-icon-small">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                            </div>
+                            <p><strong>Drop CSV or JSON file here</strong></p>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">or click to browse</p>
+                            <input type="file" id="dataFileInput" accept=".csv,.json" hidden>
+                        </div>
+                        <div class="file-preview hidden" id="filePreview">
+                            <div class="file-preview-header">
+                                <span class="file-name" id="fileName"></span>
+                                <span class="row-count" id="rowCount"></span>
+                            </div>
+                            <div class="data-preview-scroll">
+                                <table class="data-preview-table" id="dataPreviewTable">
+                                    <thead></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Map Fields -->
+                <div class="step-card disabled" id="step3">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3>Map Fields</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="mapping-container" id="mappingContainer">
+                            <div class="mapping-header">
+                                <span>Data Column</span>
+                                <span></span>
+                                <span>PDF Field</span>
+                            </div>
+                            <div id="mappingRows"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Preview -->
+                <div class="step-card disabled" id="step4">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <h3>Preview First Record</h3>
+                    </div>
+                    <div class="step-content">
+                        <button class="btn btn-secondary" id="previewBtn">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Generate Preview
+                        </button>
+                        <div class="preview-panel hidden" id="previewPanel" style="margin-top: 16px;">
+                            <iframe class="preview-frame" id="previewFrame"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Generate -->
+                <div class="step-card disabled" id="step5">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <h3>Generate & Download</h3>
+                    </div>
+                    <div class="step-content">
+                        <div class="progress-container hidden" id="progressContainer">
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+                            </div>
+                            <p class="progress-status" id="progressStatus">Preparing...</p>
+                        </div>
+                        <div class="action-bar" id="actionBar">
+                            <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                                <input type="checkbox" id="mergeCheckbox" style="accent-color: var(--primary);">
+                                Merge into single PDF
+                            </label>
+                            <button class="btn btn-primary btn-large" id="generateBtn">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Generate All PDFs
+                            </button>
+                            <button class="btn btn-accent btn-large hidden" id="downloadBtn">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download
+                            </button>
+                            <button class="btn btn-secondary btn-large hidden" id="printBtn">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                                Print All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>PDF Form Filler — 100% Free, No Login Required</p>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/bulk-fill.js"></script>
+</body>
+
+</html>
