@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit PDF Form - PDF Form Filler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+
+<body class="editor-page">
+    <div class="app">
+        <!-- Editor Header -->
+        <header class="header editor-header">
+            <div class="container">
+                <a href="/app.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                    </div>
+                    <span>PDF Form Filler</span>
+                </a>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" id="zoomOut" title="Zoom Out">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                <line x1="8" y1="11" x2="14" y2="11" />
+                            </svg>
+                        </button>
+                        <span class="zoom-level" id="zoomLevel">100%</span>
+                        <button class="toolbar-btn" id="zoomIn" title="Zoom In">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                <line x1="11" y1="8" x2="11" y2="14" />
+                                <line x1="8" y1="11" x2="14" y2="11" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <div class="toolbar-group page-nav">
+                        <button class="toolbar-btn" id="prevPage" title="Previous Page">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                        </button>
+                        <span class="page-info">
+                            <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                        </span>
+                        <button class="toolbar-btn" id="nextPage" title="Next Page">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="header-actions">
+                    <label class="flatten-toggle">
+                        <input type="checkbox" id="flattenCheckbox">
+                        <span>Flatten PDF</span>
+                    </label>
+                    <button class="btn btn-secondary" id="saveTemplateBtn"
+                        title="Save field positions for this template">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Save Template</span>
+                    </button>
+                    <button class="btn btn-primary" id="downloadBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>Download PDF</span>
+                    </button>
+                    <a href="#" id="loginBtn" class="btn btn-secondary">Loading...</a>
+                </div>
+            </div>
+        </header>
+
+        <script type="module">
+            import { checkAuth } from './js/auth.js';
+            checkAuth(true); // Redirect to login if not authenticated
+        </script>
+
+        <!-- Main Editor Area -->
+        <main class="editor-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Add Field</h3>
+                    <div class="field-buttons">
+                        <button class="field-btn" data-type="text" title="Text Field">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 7 4 4 20 4 20 7" />
+                                <line x1="9" y1="20" x2="15" y2="20" />
+                                <line x1="12" y1="4" x2="12" y2="20" />
+                            </svg>
+                            <span>Text</span>
+                        </button>
+                        <button class="field-btn" data-type="day" title="Day of Week">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            <span>Day</span>
+                        </button>
+                        <button class="field-btn" data-type="date" title="Date Field">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                            <span>Date</span>
+                        </button>
+                        <button class="field-btn" data-type="time" title="Time (12-hour)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span>Time</span>
+                        </button>
+                        <button class="field-btn" data-type="checkbox" title="Checkbox">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 11 12 14 22 4" />
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                            </svg>
+                            <span>Checkbox</span>
+                        </button>
+                        <button class="field-btn" data-type="textarea" title="Multi-line Text">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <line x1="7" y1="8" x2="17" y2="8" />
+                                <line x1="7" y1="12" x2="17" y2="12" />
+                                <line x1="7" y1="16" x2="13" y2="16" />
+                            </svg>
+                            <span>Notes</span>
+                        </button>
+                        <button class="field-btn" data-type="signature" title="Signature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                                <path d="M2 2l7.586 7.586" />
+                            </svg>
+                            <span>Signature</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Detected Fields</h3>
+                    <div class="fields-list" id="fieldsList">
+                        <!-- Fields will be populated here -->
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Selected Field</h3>
+                    <div class="field-properties" id="fieldProperties">
+                        <p class="no-selection">Click a field to edit its properties</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PDF Viewer -->
+            <div class="pdf-container" id="pdfContainer">
+                <div class="pdf-viewer" id="pdfViewer">
+                    <canvas id="pdfCanvas"></canvas>
+                    <div class="fields-overlay" id="fieldsOverlay">
+                        <!-- Field overlays will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Signature Modal -->
+        <div class="modal hidden" id="signatureModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content signature-modal">
+                <div class="modal-header">
+                    <h3>Draw Your Signature</h3>
+                    <button class="modal-close" id="closeSignature">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="signatureCanvas" width="400" height="200"></canvas>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="clearSignature">Clear</button>
+                    <button class="btn btn-primary" id="saveSignature">Save Signature</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">Loading PDF...</p>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="js/pdfViewer.js"></script>
+    <script src="js/fieldManager.js"></script>
+    <script src="js/signature.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/editor.js"></script>
+</body>
+
+</html>

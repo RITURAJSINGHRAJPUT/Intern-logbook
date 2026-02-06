@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Form Filler - Privacy First & Free</title>
+    <meta name="description"
+        content="The secure, free online PDF form filler. No signup needed to start. Privacy focused.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Landing specific overrides */
+        .hero {
+            padding: 100px 0;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-cta {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-cta {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary-cta {
+            background: white;
+            color: var(--bg-dark);
+            border: 1px solid white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                    </div>
+                    <span>PDF Form Filler</span>
+                </a>
+                <nav class="nav">
+                    <div class="nav-links">
+                        <a href="login.html" class="nav-link">Log In</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <script type="module">
+            // Auto-redirect if already logged in
+            import { checkAuth } from './js/auth.js';
+            // checkAuth(requireAuth, redirectIfAuth)
+            checkAuth(false, true); // If auth, go to /app.html is handled in auth.js logic update next
+        </script>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        The Simplest Way to <br>
+                        <span class="gradient-text">Fill PDF Forms</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Secure, fast, and 100% free. Upload your PDF, fill it out in your browser, and download. No
+                        watermarks.
+                    </p>
+
+                    <div class="cta-group">
+                        <a href="login.html" class="btn-cta btn-primary-cta">Get Started Free</a>
+                        <a href="#features" class="btn-cta btn-secondary-cta">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>🔒 Privacy First</h3>
+                        <p>We process files securely. Your documents are automatically deleted after use.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📝 Rich Editor</h3>
+                        <p>Add text, dates, signatures, and formatted notes with our easy-to-use editor.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ Fast & Free</h3>
+                        <p>No hidden fees. No watermarks. Instant download. Just simple PDF filling.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2026 PDF Form Filler</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
