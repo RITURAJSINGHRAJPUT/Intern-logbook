@@ -108,7 +108,7 @@ router.put('/fields/:sessionId', express.json(), (req, res) => {
  */
 router.post('/generate/:sessionId', express.json(), async (req, res) => {
     const { sessionId } = req.params;
-    const { fields, flatten = false } = req.body;
+    const { fields, instances, flatten = false } = req.body;
     const session = sessions.get(sessionId);
 
     if (!session) {
@@ -116,8 +116,28 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
     }
 
     try {
-        const fieldsToUse = fields || session.fields;
-        const pdfBuffer = await generateFilledPDF(session.pdfPath, fieldsToUse, flatten);
+        let pdfBuffer;
+
+        // Check if we have multiple instances
+        if (instances && instances.length > 1) {
+            // Generate a PDF for each instance and merge them
+            const { PDFDocument } = require('pdf-lib');
+            const mergedPdf = await PDFDocument.create();
+
+            for (const instance of instances) {
+                const instanceBuffer = await generateFilledPDF(session.pdfPath, instance.fields, flatten);
+                const instancePdf = await PDFDocument.load(instanceBuffer);
+                const pages = await mergedPdf.copyPages(instancePdf, instancePdf.getPageIndices());
+                pages.forEach(page => mergedPdf.addPage(page));
+            }
+
+            pdfBuffer = Buffer.from(await mergedPdf.save());
+        } else {
+            // Single instance - use fields directly
+            const fieldsToUse = fields || (instances && instances[0]?.fields) || session.fields;
+            pdfBuffer = await generateFilledPDF(session.pdfPath, fieldsToUse, flatten);
+        }
+
         const filledPath = await saveGeneratedPDF(sessionId, pdfBuffer);
 
         session.filledPath = filledPath;

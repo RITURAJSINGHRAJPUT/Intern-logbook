@@ -5,6 +5,11 @@
 // Store template filename for saving
 let currentTemplateFilename = null;
 
+// Page instance tracking - stores field values for each copy
+let pageInstances = [];
+let currentInstanceIndex = 0;
+let templateFields = []; // Store the template field definitions
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Get session ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,9 +54,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (templateFieldsRes.ok) {
                     const templateData = await templateFieldsRes.json();
                     if (templateData.saved && templateData.fields.length > 0) {
+                        // Store template field definitions
+                        templateFields = JSON.parse(JSON.stringify(templateData.fields));
                         window.fieldManager.setFields(templateData.fields);
                         fieldsLoaded = true;
                         showToast('Loaded saved template fields!', 'success');
+
+                        // Initialize first page instance
+                        pageInstances = [{ fields: JSON.parse(JSON.stringify(templateData.fields)) }];
+                        currentInstanceIndex = 0;
                     }
                 }
             } catch (e) {
@@ -65,6 +76,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (fieldsRes.ok) {
                 const data = await fieldsRes.json();
                 window.fieldManager.setFields(data.fields || []);
+                templateFields = JSON.parse(JSON.stringify(data.fields || []));
+                pageInstances = [{ fields: JSON.parse(JSON.stringify(data.fields || [])) }];
             }
         }
 
@@ -80,6 +93,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         window.fieldManager.onFieldUpdate = (fields) => {
             updateFieldsList(fields, window.pdfViewer.currentPage);
+            // Update the current instance with new field data
+            if (pageInstances[currentInstanceIndex]) {
+                pageInstances[currentInstanceIndex].fields = JSON.parse(JSON.stringify(fields));
+            }
         };
 
         // Initialize Signature Pad
@@ -89,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updatePageInfo();
         updateZoomLevel();
         updateFieldsList(window.fieldManager.fields, 1);
+        updateInstanceIndicator();
 
         hideLoading();
         if (!fieldsLoaded) {
@@ -109,12 +127,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                if (window.pdfViewer.currentPage < window.pdfViewer.totalPages) {
-                    document.getElementById('nextPage').click();
+                if (currentInstanceIndex < pageInstances.length - 1) {
+                    goToInstance(currentInstanceIndex + 1);
                 }
             } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                if (window.pdfViewer.currentPage > 1) {
-                    document.getElementById('prevPage').click();
+                if (currentInstanceIndex > 0) {
+                    goToInstance(currentInstanceIndex - 1);
                 }
             }
         });
@@ -144,7 +162,91 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Set up save template button
     setupSaveTemplateButton();
+
+    // Set up add page button
+    setupAddPageButton();
 });
+
+/**
+ * Add a new page instance (copy of the template)
+ */
+function addPageInstance() {
+    // Save current instance fields
+    if (window.fieldManager && pageInstances[currentInstanceIndex]) {
+        pageInstances[currentInstanceIndex].fields = JSON.parse(JSON.stringify(window.fieldManager.getFields()));
+    }
+
+    // Create new instance with fresh template fields (no values)
+    const newFields = templateFields.map(field => ({
+        ...JSON.parse(JSON.stringify(field)),
+        value: field.type === 'checkbox' ? false : ''
+    }));
+
+    pageInstances.push({ fields: newFields });
+
+    // Navigate to new instance
+    goToInstance(pageInstances.length - 1);
+
+    showToast(`Added page copy ${pageInstances.length}. Fill in the fields!`, 'success');
+}
+
+/**
+ * Navigate to a specific page instance
+ */
+function goToInstance(index) {
+    if (index < 0 || index >= pageInstances.length) return;
+
+    // Save current instance fields
+    if (window.fieldManager && pageInstances[currentInstanceIndex]) {
+        pageInstances[currentInstanceIndex].fields = JSON.parse(JSON.stringify(window.fieldManager.getFields()));
+    }
+
+    // Switch to new instance
+    currentInstanceIndex = index;
+
+    // Load instance fields
+    if (pageInstances[currentInstanceIndex]) {
+        window.fieldManager.setFields(pageInstances[currentInstanceIndex].fields);
+        window.fieldManager.renderFields();
+    }
+
+    updateInstanceIndicator();
+    updateFieldsList(window.fieldManager?.fields || [], window.pdfViewer?.currentPage || 1);
+}
+
+/**
+ * Update the instance indicator in the toolbar
+ */
+function updateInstanceIndicator() {
+    document.getElementById('currentPage').textContent = currentInstanceIndex + 1;
+    document.getElementById('totalPages').textContent = pageInstances.length;
+}
+
+/**
+ * Get all fields from all instances for download
+ */
+function getAllInstanceFields() {
+    // Save current instance first
+    if (window.fieldManager && pageInstances[currentInstanceIndex]) {
+        pageInstances[currentInstanceIndex].fields = JSON.parse(JSON.stringify(window.fieldManager.getFields()));
+    }
+
+    return pageInstances.map((instance, index) => ({
+        instanceIndex: index,
+        fields: instance.fields
+    }));
+}
+
+/**
+ * Set up Add Page button
+ */
+function setupAddPageButton() {
+    const addPageBtn = document.getElementById('addPageBtn');
+
+    addPageBtn?.addEventListener('click', () => {
+        addPageInstance();
+    });
+}
 
 /**
  * Set up toolbar controls
@@ -161,17 +263,17 @@ function setupToolbarControls() {
         updateZoomLevel();
     });
 
-    // Page navigation
-    document.getElementById('prevPage')?.addEventListener('click', async () => {
-        await window.pdfViewer.prevPage();
-        updatePageInfo();
-        updateFieldsList(window.fieldManager?.fields || [], window.pdfViewer.currentPage);
+    // Page navigation (for instances)
+    document.getElementById('prevPage')?.addEventListener('click', () => {
+        if (currentInstanceIndex > 0) {
+            goToInstance(currentInstanceIndex - 1);
+        }
     });
 
-    document.getElementById('nextPage')?.addEventListener('click', async () => {
-        await window.pdfViewer.nextPage();
-        updatePageInfo();
-        updateFieldsList(window.fieldManager?.fields || [], window.pdfViewer.currentPage);
+    document.getElementById('nextPage')?.addEventListener('click', () => {
+        if (currentInstanceIndex < pageInstances.length - 1) {
+            goToInstance(currentInstanceIndex + 1);
+        }
     });
 }
 
@@ -365,9 +467,12 @@ function setupDownloadButton(sessionId) {
         showLoading('Generating PDF...');
 
         try {
-            // Get all filled fields
-            const fields = window.fieldManager?.getFields() || [];
+            // Get all page instances with their fields
+            const allInstances = getAllInstanceFields();
             const flatten = flattenCheckbox?.checked || false;
+
+            // Determine if single or multiple instances
+            const isSingleInstance = allInstances.length === 1;
 
             // Generate PDF
             const generateRes = await fetch(`/api/generate/${sessionId}`, {
@@ -375,7 +480,11 @@ function setupDownloadButton(sessionId) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ fields, flatten })
+                body: JSON.stringify({
+                    fields: isSingleInstance ? allInstances[0].fields : null,
+                    instances: isSingleInstance ? null : allInstances,
+                    flatten
+                })
             });
 
             if (!generateRes.ok) {
@@ -386,7 +495,8 @@ function setupDownloadButton(sessionId) {
             window.location.href = `/api/download/${sessionId}`;
 
             hideLoading();
-            showToast('PDF downloaded! Starting new session...', 'success');
+            const pageWord = allInstances.length > 1 ? `${allInstances.length} pages` : 'PDF';
+            showToast(`${pageWord} downloaded! Starting new session...`, 'success');
 
             // Redirect to home after a delay
             setTimeout(() => {

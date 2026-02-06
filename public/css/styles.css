@@ -1285,3 +1285,34 @@ body {
     padding: 6px 12px;
     font-size: 0.8125rem;
 }
+
+/* ===================================
+   Add Page Button
+=================================== */
+.add-page-btn {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-sm);
+    margin-left: 8px;
+}
+
+.add-page-btn:hover {
+    transform: scale(1.05);
+}
+
+.add-page-btn svg {
+    color: white;
+}
+
+/* Page instance indicator */
+.page-instance-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 8px;
+}
