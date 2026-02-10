@@ -207,9 +207,20 @@ function applyDataToFields(templateFields, dataRow, fieldMapping) {
         if (dataKey && dataRow[dataKey] !== undefined) {
             let value = dataRow[dataKey];
 
+            // Skip empty values - keep template default (important for signature)
+            if (value === '' || value === null) continue;
+
             // Handle checkbox fields
             if (field.type === 'checkbox') {
                 value = normalizeCheckboxValue(value);
+            }
+
+            // Handle textarea fields - convert separators to newlines
+            if (field.type === 'textarea' && typeof value === 'string') {
+                // Support || as paragraph separator
+                value = value.replace(/\|\|/g, '\n');
+                // Support literal \n as newline
+                value = value.replace(/\\n/g, '\n');
             }
 
             field.value = value;

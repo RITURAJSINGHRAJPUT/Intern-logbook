@@ -14,6 +14,7 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
     const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
 
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const pages = pdfDoc.getPages();
 
     for (const field of fields) {
@@ -21,7 +22,12 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
 
         // Debug logging
         if (field.type === 'textarea') {
-            console.log('Processing textarea field:', JSON.stringify(field, null, 2));
+            console.log('=== TEXTAREA DEBUG ===');
+            console.log('Field name:', field.name);
+            console.log('Value length:', String(field.value || '').length);
+            console.log('Value:', JSON.stringify(String(field.value || '').substring(0, 200)));
+            console.log('Field dimensions:', field.width, 'x', field.height, 'at', field.x, ',', field.y);
+            console.log('=== END TEXTAREA DEBUG ===');
         }
 
         const pageIndex = (field.page || 1) - 1;
@@ -49,7 +55,7 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
                 break;
 
             case 'textarea':
-                drawMultilineText(page, field, x, y, helveticaFont);
+                drawMultilineText(page, field, x, y, helveticaFont, helveticaBold);
                 break;
 
             case 'checkbox':
@@ -126,22 +132,160 @@ function htmlToText(html) {
 }
 
 /**
- * Draw multiline text for textarea
+ * Wrap text into lines that fit within maxWidth
  */
-function drawMultilineText(page, field, x, y, font) {
-    const fontSize = 10;
-    const lineHeight = 14;
-    const text = htmlToText(String(field.value || ''));
+function wrapText(text, font, fontSize, maxWidth) {
+    const lines = [];
+    const words = text.split(/\s+/);
+    let currentLine = '';
 
-    page.drawText(text, {
-        x: x + 2,
-        y: y + field.height - fontSize - 2, // Top-aligned
-        size: fontSize,
-        font: font,
-        color: rgb(0, 0, 0),
-        maxWidth: field.width - 4,
-        lineHeight: lineHeight
-    });
+    for (const word of words) {
+        if (!word) continue;
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+        if (testWidth > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    }
+
+    if (currentLine) {
+        lines.push(currentLine);
+    }
+
+    return lines;
+}
+
+/**
+ * Parse textarea value into structured segments:
+ * - Bold headings: *Heading Text*
+ * - Bullet points: - Text or • Text
+ * - Regular text: everything else
+ * Segments are separated by newlines (which come from || in CSV)
+ */
+function parseTextareaContent(text) {
+    const segments = [];
+    const lines = text.split('\n');
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            segments.push({ type: 'blank' });
+        } else if (/^\*(.+)\*$/.test(trimmed)) {
+            // Bold heading: *Heading Text*
+            segments.push({ type: 'heading', text: trimmed.slice(1, -1) });
+        } else if (/^[-•]\s+/.test(trimmed)) {
+            // Bullet point: - Text or • Text
+            segments.push({ type: 'bullet', text: trimmed.replace(/^[-•]\s+/, '') });
+        } else {
+            segments.push({ type: 'text', text: trimmed });
+        }
+    }
+
+    return segments;
+}
+
+/**
+ * Draw multiline text for textarea with rich formatting
+ * Supports bold headings (*text*), bullet points (- text), and paragraphs
+ */
+function drawMultilineText(page, field, x, y, font, boldFont) {
+    const fontSize = 7;
+    const headingFontSize = 8;
+    const lineHeight = fontSize * 1.4;
+    const headingLineHeight = headingFontSize * 1.6;
+    const rawValue = String(field.value || '');
+    // Convert || separators and literal \n to actual newlines
+    let processed = rawValue.replace(/\|\|/g, '\n');
+    processed = processed.replace(/\\n/g, '\n');
+    const text = htmlToText(processed);
+    const padding = 4;
+    const bulletIndent = 12;
+    const maxWidth = field.width - (padding * 2);
+
+    // Parse into structured segments
+    const segments = parseTextareaContent(text);
+
+    // Draw segments from top of field
+    let currentY = y + field.height - padding - headingFontSize;
+    const bottomY = y + padding;
+
+    for (const segment of segments) {
+        if (currentY < bottomY) break; // Stop if we've run out of space
+
+        switch (segment.type) {
+            case 'blank':
+                currentY -= lineHeight * 0.5;
+                break;
+
+            case 'heading': {
+                // Add small gap before heading (unless it's the first item)
+                if (currentY < y + field.height - padding - headingFontSize - 1) {
+                    currentY -= lineHeight * 0.3;
+                }
+                // Bold underlined heading
+                const headingFont = boldFont || font;
+                const headingLines = wrapText(segment.text, headingFont, headingFontSize, maxWidth);
+                for (const hLine of headingLines) {
+                    if (currentY < bottomY) break;
+                    page.drawText(hLine, {
+                        x: x + padding,
+                        y: currentY,
+                        size: headingFontSize,
+                        font: headingFont,
+                        color: rgb(0, 0, 0)
+                    });
+                    currentY -= headingLineHeight;
+                }
+                break;
+            }
+
+            case 'bullet': {
+                const bulletLines = wrapText(segment.text, font, fontSize, maxWidth - bulletIndent - 8);
+                for (let j = 0; j < bulletLines.length; j++) {
+                    if (currentY < bottomY) break;
+                    if (j === 0) {
+                        // Draw bullet character on first line
+                        page.drawText('\u2022', {
+                            x: x + padding + 4,
+                            y: currentY,
+                            size: fontSize,
+                            font: font,
+                            color: rgb(0, 0, 0)
+                        });
+                    }
+                    page.drawText(bulletLines[j], {
+                        x: x + padding + bulletIndent + 4,
+                        y: currentY,
+                        size: fontSize,
+                        font: font,
+                        color: rgb(0, 0, 0)
+                    });
+                    currentY -= lineHeight;
+                }
+                break;
+            }
+
+            case 'text': {
+                const textLines = wrapText(segment.text, font, fontSize, maxWidth);
+                for (const tLine of textLines) {
+                    if (currentY < bottomY) break;
+                    page.drawText(tLine, {
+                        x: x + padding,
+                        y: currentY,
+                        size: fontSize,
+                        font: font,
+                        color: rgb(0, 0, 0)
+                    });
+                    currentY -= lineHeight;
+                }
+                break;
+            }
+        }
+    }
 }
 
 /**
