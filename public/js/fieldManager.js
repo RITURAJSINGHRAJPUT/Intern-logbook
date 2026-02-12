@@ -252,6 +252,11 @@ class FieldManager {
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle se';
         resizeHandle.addEventListener('mousedown', (e) => this.startResize(e, field));
+        resizeHandle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            this.startResize({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {}, stopPropagation: () => {} }, field, true);
+        }, { passive: false });
         wrapper.appendChild(resizeHandle);
 
         // Add delete button
@@ -264,7 +269,7 @@ class FieldManager {
         });
         wrapper.appendChild(deleteBtn);
 
-        // Make draggable
+        // Make draggable (mouse)
         wrapper.addEventListener('mousedown', (e) => {
             if (e.target === wrapper || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
                 if (e.target === wrapper) {
@@ -273,6 +278,17 @@ class FieldManager {
                 this.selectField(field.id);
             }
         });
+
+        // Make draggable (touch)
+        wrapper.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (target === wrapper || target === wrapper.querySelector('.field-overlay')) {
+                e.preventDefault();
+                this.startDrag({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} }, field, true);
+                this.selectField(field.id);
+            }
+        }, { passive: false });
 
         this.overlay.appendChild(wrapper);
     }
@@ -411,9 +427,9 @@ class FieldManager {
     }
 
     /**
-     * Start dragging a field
+     * Start dragging a field (supports both mouse and touch)
      */
-    startDrag(e, field) {
+    startDrag(e, field, isTouch = false) {
         e.preventDefault();
 
         const element = document.getElementById(`overlay_${field.id}`);
@@ -422,17 +438,27 @@ class FieldManager {
         const startLeft = element.offsetLeft;
         const startTop = element.offsetTop;
 
-        const onMouseMove = (e) => {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+        const onMove = (ev) => {
+            let clientX, clientY;
+            if (ev.touches) {
+                clientX = ev.touches[0].clientX;
+                clientY = ev.touches[0].clientY;
+            } else {
+                clientX = ev.clientX;
+                clientY = ev.clientY;
+            }
+            const dx = clientX - startX;
+            const dy = clientY - startY;
 
             element.style.left = `${startLeft + dx}px`;
             element.style.top = `${startTop + dy}px`;
         };
 
-        const onMouseUp = () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+        const onEnd = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
 
             // Update field position in PDF coords
             const pageInfo = this.pdfViewer.getCurrentPageInfo();
@@ -446,14 +472,19 @@ class FieldManager {
             }
         };
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        if (isTouch) {
+            document.addEventListener('touchmove', onMove, { passive: false });
+            document.addEventListener('touchend', onEnd);
+        } else {
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+        }
     }
 
     /**
-     * Start resizing a field
+     * Start resizing a field (supports both mouse and touch)
      */
-    startResize(e, field) {
+    startResize(e, field, isTouch = false) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -463,17 +494,28 @@ class FieldManager {
         const startWidth = element.offsetWidth;
         const startHeight = element.offsetHeight;
 
-        const onMouseMove = (e) => {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+        const onMove = (ev) => {
+            let clientX, clientY;
+            if (ev.touches) {
+                ev.preventDefault();
+                clientX = ev.touches[0].clientX;
+                clientY = ev.touches[0].clientY;
+            } else {
+                clientX = ev.clientX;
+                clientY = ev.clientY;
+            }
+            const dx = clientX - startX;
+            const dy = clientY - startY;
 
             element.style.width = `${Math.max(50, startWidth + dx)}px`;
             element.style.height = `${Math.max(20, startHeight + dy)}px`;
         };
 
-        const onMouseUp = () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+        const onEnd = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
 
             // Update field dimensions in PDF coords
             const pageInfo = this.pdfViewer.getCurrentPageInfo();
@@ -481,7 +523,7 @@ class FieldManager {
             field.width = element.offsetWidth / pageInfo.scale;
             field.height = element.offsetHeight / pageInfo.scale;
 
-            // Recalculate Y because height changed (PDF Y is bottom-left, visual Top is constant)
+            // Recalculate Y because height changed
             const pageData = this.pdfViewer.pageInfo[pageInfo.currentPage - 1];
             field.y = pageData.height - (element.offsetTop / pageInfo.scale) - field.height;
 
@@ -490,8 +532,13 @@ class FieldManager {
             }
         };
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        if (isTouch) {
+            document.addEventListener('touchmove', onMove, { passive: false });
+            document.addEventListener('touchend', onEnd);
+        } else {
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+        }
     }
 
     /**

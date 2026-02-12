@@ -3,7 +3,7 @@
  * Caches app shell for offline support and fast loading
  */
 
-const CACHE_NAME = 'pdf-filler-v1';
+const CACHE_NAME = 'pdf-filler-v2';
 const OFFLINE_URL = '/offline.html';
 
 // App shell files to pre-cache
@@ -25,8 +25,8 @@ const APP_SHELL = [
     '/js/signature.js',
     '/js/Firebase-config.js',
     '/manifest.json',
-    '/icons/icon-192.svg',
-    '/icons/icon-512.svg'
+    '/icons/icon-192.png',
+    '/icons/icon-512.png'
 ];
 
 // Install — pre-cache app shell
