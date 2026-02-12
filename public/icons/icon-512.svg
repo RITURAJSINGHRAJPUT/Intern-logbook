@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="102" fill="url(#bg)"/>
+  <!-- Document icon -->
+  <path d="M320 80H180c-11.046 0-20 8.954-20 20v312c0 11.046 8.954 20 20 20h200c11.046 0 20-8.954 20-20V160L320 80z" fill="rgba(255,255,255,0.95)" stroke="none"/>
+  <path d="M320 80v80h80" fill="rgba(255,255,255,0.6)" stroke="none"/>
+  <path d="M320 80L400 160" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none"/>
+  <!-- Form lines -->
+  <rect x="204" y="200" width="160" height="10" rx="5" fill="#6366f1" opacity="0.5"/>
+  <rect x="204" y="232" width="140" height="10" rx="5" fill="#6366f1" opacity="0.4"/>
+  <rect x="204" y="264" width="150" height="10" rx="5" fill="#6366f1" opacity="0.3"/>
+  <rect x="204" y="296" width="120" height="10" rx="5" fill="#6366f1" opacity="0.25"/>
+  <rect x="204" y="328" width="130" height="10" rx="5" fill="#6366f1" opacity="0.2"/>
+  <!-- Pencil icon -->
+  <g transform="translate(88, 290) rotate(-45, 50, 50)">
+    <rect x="36" y="10" width="28" height="90" rx="4" fill="#f8fafc"/>
+    <path d="M36 10L50 -10L64 10Z" fill="#f8fafc"/>
+    <rect x="36" y="92" width="28" height="10" rx="2" fill="#f59e0b"/>
+  </g>
+</svg>

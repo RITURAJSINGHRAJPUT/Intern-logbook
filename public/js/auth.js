@@ -94,3 +94,16 @@ function updateAuthUI(user) {
         };
     }
 }
+
+/**
+ * Get current user ID (Promise)
+ * exposed globally for non-module scripts
+ */
+window.getCurrentUserId = () => {
+    return new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            unsubscribe();
+            resolve(user ? user.uid : null);
+        });
+    });
+};

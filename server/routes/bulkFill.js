@@ -22,6 +22,7 @@ const { generateFilledPDF } = require('../services/pdfGenerator');
 
 const TEMPLATES_DIR = path.join(__dirname, '../../pdf-format');
 const TEMP_DIR = path.join(__dirname, '../../temp');
+const USERS_DIR = path.join(__dirname, '../../data/users');
 
 // File upload configuration
 const storage = multer.memoryStorage();
@@ -50,25 +51,56 @@ const upload = multer({
  * GET /api/bulk/templates
  * List templates that have saved fields
  */
+// Helper to get user directory (copied from templates.js or similar)
+function getUserDir(userId) {
+    return path.join(USERS_DIR, userId);
+}
+
+/**
+ * GET /api/bulk/templates
+ * List templates that have saved fields (user-specific or global)
+ */
 router.get('/templates', (req, res) => {
     try {
         if (!fs.existsSync(TEMPLATES_DIR)) {
             return res.json({ templates: [] });
         }
 
+        const userId = req.headers['x-user-id'];
+        console.log(`[Bulk] Listing templates for UserID: ${userId || 'Global'}`);
+
         const files = fs.readdirSync(TEMPLATES_DIR)
             .filter(file => file.toLowerCase().endsWith('.pdf'))
-            .filter(file => {
-                const fieldsFile = file.replace('.pdf', '.fields.json');
-                return fs.existsSync(path.join(TEMPLATES_DIR, fieldsFile));
-            })
             .map(file => {
-                const fieldsPath = path.join(TEMPLATES_DIR, file.replace('.pdf', '.fields.json'));
                 let fieldCount = 0;
-                try {
-                    const data = JSON.parse(fs.readFileSync(fieldsPath, 'utf8'));
-                    fieldCount = data.fields ? data.fields.length : 0;
-                } catch (e) { }
+                let hasFields = false;
+
+                // 1. Check user-specific fields
+                if (userId) {
+                    const userDir = getUserDir(userId);
+                    const userFieldsPath = path.join(userDir, file.replace('.pdf', '.fields.json'));
+                    if (fs.existsSync(userFieldsPath)) {
+                        try {
+                            const data = JSON.parse(fs.readFileSync(userFieldsPath, 'utf8'));
+                            fieldCount = data.fields ? data.fields.length : 0;
+                            hasFields = true;
+                        } catch (e) { }
+                    }
+                }
+
+                // 2. Fallback to global fields if not found for user
+                if (!hasFields) {
+                    const fieldsPath = path.join(TEMPLATES_DIR, file.replace('.pdf', '.fields.json'));
+                    if (fs.existsSync(fieldsPath)) {
+                        try {
+                            const data = JSON.parse(fs.readFileSync(fieldsPath, 'utf8'));
+                            fieldCount = data.fields ? data.fields.length : 0;
+                            hasFields = true;
+                        } catch (e) { }
+                    }
+                }
+
+                if (!hasFields) return null;
 
                 return {
                     name: file.replace('.pdf', ''),
@@ -76,7 +108,8 @@ router.get('/templates', (req, res) => {
                     url: `/templates/${encodeURIComponent(file)}`,
                     fieldCount
                 };
-            });
+            })
+            .filter(t => t !== null); // Remove templates without fields
 
         res.json({ templates: files });
     } catch (error) {
@@ -92,7 +125,8 @@ router.get('/templates', (req, res) => {
 router.get('/template/:filename/fields', async (req, res) => {
     try {
         const { filename } = req.params;
-        const fields = await getTemplateFields(filename);
+        const userId = req.headers['x-user-id'];
+        const fields = await getTemplateFields(filename, userId);
 
         if (!fields) {
             return res.status(404).json({ error: 'Template fields not found' });
@@ -109,6 +143,38 @@ router.get('/template/:filename/fields', async (req, res) => {
     } catch (error) {
         console.error('Error getting template fields:', error);
         res.status(500).json({ error: 'Failed to get template fields' });
+    }
+});
+
+/**
+ * GET /api/bulk/template-csv/:filename
+ * Download a CSV template for bulk fill
+ */
+router.get('/template-csv/:filename', async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const userId = req.headers['x-user-id'];
+
+        const fields = await getTemplateFields(filename, userId);
+
+        if (!fields || fields.length === 0) {
+            return res.status(404).json({ error: 'No fields found for this template. Please save fields first.' });
+        }
+
+        // Extract unique field names for headers
+        const headers = [...new Set(fields.map(f => f.name).filter(n => n))];
+
+        // Create CSV content (headers only)
+        // Add a BOM for Excel compatibility with UTF-8
+        const csvContent = '\uFEFF' + headers.join(',') + '\n';
+
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename.replace('.pdf', '')}_bulk_template.csv"`);
+        res.send(csvContent);
+
+    } catch (error) {
+        console.error('Error generating CSV template:', error);
+        res.status(500).json({ error: 'Failed to generate CSV template' });
     }
 });
 
@@ -143,6 +209,7 @@ router.post('/upload-data', upload.single('dataFile'), (req, res) => {
             success: true,
             rowCount: data.length,
             headers,
+            data: data, // Full parsed data for generation
             preview: data.slice(0, 5) // First 5 rows for preview
         });
     } catch (error) {
@@ -158,12 +225,13 @@ router.post('/upload-data', upload.single('dataFile'), (req, res) => {
 router.post('/auto-map', express.json(), async (req, res) => {
     try {
         const { templateFilename, dataHeaders } = req.body;
+        const userId = req.headers['x-user-id'];
 
         if (!templateFilename || !dataHeaders) {
             return res.status(400).json({ error: 'Missing required parameters' });
         }
 
-        const fields = await getTemplateFields(templateFilename);
+        const fields = await getTemplateFields(templateFilename, userId);
         if (!fields) {
             return res.status(404).json({ error: 'Template fields not found' });
         }
@@ -185,6 +253,7 @@ router.post('/preview/:filename', express.json(), async (req, res) => {
     try {
         const { filename } = req.params;
         const { dataRow, fieldMapping } = req.body;
+        const userId = req.headers['x-user-id'];
 
         if (!dataRow || !fieldMapping) {
             return res.status(400).json({ error: 'Missing data row or field mapping' });
@@ -195,7 +264,7 @@ router.post('/preview/:filename', express.json(), async (req, res) => {
             return res.status(404).json({ error: 'Template not found' });
         }
 
-        const fields = await getTemplateFields(filename);
+        const fields = await getTemplateFields(filename, userId);
         if (!fields) {
             return res.status(404).json({ error: 'Template fields not found' });
         }
@@ -244,6 +313,7 @@ router.post('/generate/:filename', express.json(), async (req, res) => {
     try {
         const { filename } = req.params;
         const { data, fieldMapping, options = {} } = req.body;
+        const userId = req.headers['x-user-id'];
 
         if (!data || !Array.isArray(data)) {
             return res.status(400).json({ error: 'Invalid data array' });
@@ -261,8 +331,11 @@ router.post('/generate/:filename', express.json(), async (req, res) => {
         // Start async job
         const jobId = uuidv4();
 
+        // Pass userId to options for generateBulkPDFs
+        const jobOptions = { ...options, userId };
+
         // Launch generation in background
-        generateBulkPDFs(jobId, filename, data, fieldMapping, options)
+        generateBulkPDFs(jobId, filename, data, fieldMapping, jobOptions)
             .catch(err => console.error('Bulk generation error:', err));
 
         res.json({

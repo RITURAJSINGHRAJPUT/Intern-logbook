@@ -3,6 +3,8 @@
  * Handles CSV/JSON upload, field mapping, and bulk PDF generation
  */
 
+import { checkAuth } from './auth.js';
+
 // State
 let selectedTemplate = null;
 let templateFields = [];
@@ -10,6 +12,7 @@ let uploadedData = [];
 let dataHeaders = [];
 let fieldMapping = {};
 let currentJobId = null;
+let currentUser = null;
 
 // DOM Elements
 const templateSelect = document.getElementById('templateSelect');
@@ -35,6 +38,20 @@ const toast = document.getElementById('toast');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Check auth first
+    checkAuth(true);
+
+    // Wait for auth to initialize before loading templates
+    // checkAuth executes asynchronously, so we can use window.getCurrentUserId which wraps the promise
+    try {
+        if (window.getCurrentUserId) {
+            currentUser = await window.getCurrentUserId();
+            console.log('Bulk Fill - User ID:', currentUser);
+        }
+    } catch (e) {
+        console.error('Error getting user ID:', e);
+    }
+
     await loadTemplates();
     setupEventListeners();
 });
@@ -44,7 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 async function loadTemplates() {
     try {
-        const res = await fetch('/api/bulk/templates');
+        const userId = currentUser;
+        const res = await fetch('/api/bulk/templates', {
+            headers: { 'x-user-id': userId || '' }
+        });
         const data = await res.json();
 
         templateSelect.innerHTML = '<option value="">-- Select a template --</option>';
@@ -124,7 +144,10 @@ async function handleTemplateSelect() {
     }
 
     try {
-        const res = await fetch(`/api/bulk/template/${encodeURIComponent(filename)}/fields`);
+        const userId = currentUser;
+        const res = await fetch(`/api/bulk/template/${encodeURIComponent(filename)}/fields`, {
+            headers: { 'x-user-id': userId || '' }
+        });
         const data = await res.json();
 
         if (!res.ok) {
@@ -185,9 +208,10 @@ async function handleFile(file) {
             throw new Error(data.error || 'Failed to parse file');
         }
 
-        // Store data
-        uploadedData = data.preview; // We'll fetch full data during generation
-        dataHeaders = data.headers;
+        // Store full server-parsed data directly (ensures consistent header keys with fieldMapping)
+        uploadedData = data.data || data.preview || [];
+        dataHeaders = data.headers || [];
+        console.log('Using server-parsed data. Headers:', dataHeaders, 'Rows:', uploadedData.length);
 
         // Update UI
         dataUploadZone.classList.add('has-file');
@@ -197,28 +221,6 @@ async function handleFile(file) {
         // Show preview table
         displayDataPreview(data.headers, data.preview);
         filePreview.classList.remove('hidden');
-
-        // Store full data in memory by reading file
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target.result;
-            if (file.name.endsWith('.json')) {
-                uploadedData = JSON.parse(content);
-            } else {
-                // Use simple CSV parse for full data
-                const lines = content.split('\n').filter(l => l.trim());
-                const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-                uploadedData = lines.slice(1).map(line => {
-                    const values = parseCSVLine(line);
-                    const obj = {};
-                    headers.forEach((h, i) => {
-                        obj[h] = values[i] || '';
-                    });
-                    return obj;
-                });
-            }
-        };
-        reader.readAsText(file);
 
         // Auto-map fields
         await autoMapAndDisplay();
@@ -280,9 +282,13 @@ async function autoMapAndDisplay() {
     if (!selectedTemplate || dataHeaders.length === 0) return;
 
     try {
+        const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch('/api/bulk/auto-map', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-id': userId || ''
+            },
             body: JSON.stringify({
                 templateFilename: selectedTemplate,
                 dataHeaders: dataHeaders
@@ -367,9 +373,13 @@ async function generatePreview() {
     previewBtn.textContent = 'Generating...';
 
     try {
+        const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch(`/api/bulk/preview/${encodeURIComponent(selectedTemplate)}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-id': userId || ''
+            },
             body: JSON.stringify({
                 dataRow: uploadedData[0],
                 fieldMapping: fieldMapping
@@ -424,9 +434,13 @@ async function startGeneration() {
     progressStatus.textContent = 'Starting generation...';
 
     try {
+        const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch(`/api/bulk/generate/${encodeURIComponent(selectedTemplate)}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-id': userId || ''
+            },
             body: JSON.stringify({
                 data: uploadedData,
                 fieldMapping: fieldMapping,

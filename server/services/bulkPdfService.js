@@ -155,12 +155,29 @@ function autoMapFields(dataHeaders, templateFields) {
     return mapping;
 }
 
+const USERS_DIR = path.join(__dirname, '../../data/users');
+
 /**
  * Get template fields from saved JSON
  * @param {string} templateFilename - Template PDF filename
+ * @param {string} [userId] - Optional user ID to fetch user-specific fields
  * @returns {Array|null} - Field definitions or null
  */
-async function getTemplateFields(templateFilename) {
+async function getTemplateFields(templateFilename, userId = null) {
+    // 1. Try user-specific path if userId is provided
+    if (userId) {
+        const userDir = path.join(USERS_DIR, userId);
+        const userFieldsPath = path.join(userDir, templateFilename.replace('.pdf', '.fields.json'));
+        try {
+            const content = await fs.readFile(userFieldsPath, 'utf-8');
+            const data = JSON.parse(content);
+            return data.fields || [];
+        } catch (e) {
+            // User file not found, fall through to global
+        }
+    }
+
+    // 2. Fallback to global path
     const fieldsFile = templateFilename.replace('.pdf', '.fields.json');
     const fieldsPath = path.join(TEMPLATES_DIR, fieldsFile);
 
@@ -192,6 +209,11 @@ function normalizeCheckboxValue(value) {
  * @returns {Array} - Fields with values filled
  */
 function applyDataToFields(templateFields, dataRow, fieldMapping) {
+    // Debug logging
+    console.log('--- applyDataToFields ---');
+    console.log('Mapping (Header -> Field):', JSON.stringify(fieldMapping));
+    console.log('Data row keys:', JSON.stringify(Object.keys(dataRow)));
+
     // Create deep copy of fields
     const filledFields = JSON.parse(JSON.stringify(templateFields));
 
@@ -200,32 +222,49 @@ function applyDataToFields(templateFields, dataRow, fieldMapping) {
     for (const [dataKey, fieldName] of Object.entries(fieldMapping)) {
         reverseMapping[fieldName] = dataKey;
     }
+    console.log('Reverse Mapping (Field -> Header):', JSON.stringify(reverseMapping));
 
+    let matchedCount = 0;
     for (const field of filledFields) {
         const dataKey = reverseMapping[field.name];
 
-        if (dataKey && dataRow[dataKey] !== undefined) {
-            let value = dataRow[dataKey];
+        if (dataKey) {
+            const val = dataRow[dataKey];
+            console.log(`Field "${field.name}" maps to header "${dataKey}". Value in row: "${String(val).substring(0, 80)}"`);
 
-            // Skip empty values - keep template default (important for signature)
-            if (value === '' || value === null) continue;
+            if (dataRow[dataKey] !== undefined) {
+                let value = dataRow[dataKey];
 
-            // Handle checkbox fields
-            if (field.type === 'checkbox') {
-                value = normalizeCheckboxValue(value);
+                // Skip empty values - keep template default (important for signature)
+                if (value === '' || value === null) {
+                    console.log(`  Skipping empty value for ${field.name}`);
+                    continue;
+                }
+
+                // Handle checkbox fields
+                if (field.type === 'checkbox') {
+                    value = normalizeCheckboxValue(value);
+                }
+
+                // Handle textarea fields - convert separators to newlines
+                if (field.type === 'textarea' && typeof value === 'string') {
+                    // Support || as paragraph separator
+                    value = value.replace(/\|\|/g, '\n');
+                    // Support literal \n as newline
+                    value = value.replace(/\\n/g, '\n');
+                }
+
+                field.value = value;
+                matchedCount++;
+            } else {
+                console.log(`  Data row missing key "${dataKey}"`);
             }
-
-            // Handle textarea fields - convert separators to newlines
-            if (field.type === 'textarea' && typeof value === 'string') {
-                // Support || as paragraph separator
-                value = value.replace(/\|\|/g, '\n');
-                // Support literal \n as newline
-                value = value.replace(/\\n/g, '\n');
-            }
-
-            field.value = value;
+        } else {
+            console.log(`  No mapping found for field "${field.name}"`);
         }
     }
+    console.log(`Applied data to ${matchedCount} fields`);
+    console.log('-------------------------');
 
     return filledFields;
 }
@@ -247,7 +286,7 @@ async function generateSinglePDF(templatePath, fields, dataRow, fieldMapping) {
  * @param {Object} options - Generation options
  */
 async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping, options = {}) {
-    const { merge = false, filenameField = null } = options;
+    const { merge = false, filenameField = null, userId = null } = options;
 
     const job = {
         id: jobId,
@@ -260,7 +299,7 @@ async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping,
     jobs.set(jobId, job);
 
     const templatePath = path.join(TEMPLATES_DIR, templateFilename);
-    const templateFields = await getTemplateFields(templateFilename);
+    const templateFields = await getTemplateFields(templateFilename, userId);
 
     if (!templateFields) {
         job.status = 'error';

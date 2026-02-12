@@ -50,7 +50,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         let fieldsLoaded = false;
         if (currentTemplateFilename) {
             try {
-                const templateFieldsRes = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`);
+                const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+                const templateFieldsRes = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
+                    headers: { 'x-user-id': userId || '' }
+                });
                 if (templateFieldsRes.ok) {
                     const templateData = await templateFieldsRes.json();
                     if (templateData.saved && templateData.fields.length > 0) {
@@ -106,7 +109,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         updatePageInfo();
         updateZoomLevel();
         updateFieldsList(window.fieldManager.fields, 1);
-        updateInstanceIndicator();
+
+        // Initial status update
+        setTimeout(updateStatusDisplay, 100);
 
         hideLoading();
         if (!fieldsLoaded) {
@@ -127,13 +132,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                if (currentInstanceIndex < pageInstances.length - 1) {
-                    goToInstance(currentInstanceIndex + 1);
-                }
+                document.getElementById('nextPage')?.click();
             } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                if (currentInstanceIndex > 0) {
-                    goToInstance(currentInstanceIndex - 1);
-                }
+                document.getElementById('prevPage')?.click();
             }
         });
 
@@ -165,6 +166,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Set up add page button
     setupAddPageButton();
+
+    // Set up download CSV button
+    setupDownloadCsvButton();
 });
 
 /**
@@ -186,6 +190,9 @@ function addPageInstance() {
 
     // Navigate to new instance
     goToInstance(pageInstances.length - 1);
+
+    // Go to first page
+    window.pdfViewer.goToPage(1);
 
     showToast(`Added page copy ${pageInstances.length}. Fill in the fields!`, 'success');
 }
@@ -212,6 +219,12 @@ function goToInstance(index) {
 
     updateInstanceIndicator();
     updateFieldsList(window.fieldManager?.fields || [], window.pdfViewer?.currentPage || 1);
+
+    // Reset to first page when switching instances (unless we handled it in navigation)
+    // Actually, let's not force it here to allow flexibility, but navigation handlers should handle it.
+    // However, if called from "Add Page", we definitely want to see Page 1.
+    // Let's rely on the caller to set the page if needed, or updateStatusDisplay to show correct info.
+    updateStatusDisplay();
 }
 
 /**
@@ -263,18 +276,79 @@ function setupToolbarControls() {
         updateZoomLevel();
     });
 
-    // Page navigation (for instances)
+    // Page navigation (combined PDF pages and instances)
     document.getElementById('prevPage')?.addEventListener('click', () => {
+        const pageInfo = window.pdfViewer.getCurrentPageInfo();
+
+        // 1. Try to go to previous PDF page
+        if (pageInfo.currentPage > 1) {
+            window.pdfViewer.prevPage();
+            updateStatusDisplay();
+            return;
+        }
+
+        // 2. If at first page, try to go to previous instance
         if (currentInstanceIndex > 0) {
             goToInstance(currentInstanceIndex - 1);
+            // Go to last page of previous instance
+            const newInfo = window.pdfViewer.getCurrentPageInfo();
+            window.pdfViewer.goToPage(newInfo.totalPages);
+            updateStatusDisplay();
         }
     });
 
     document.getElementById('nextPage')?.addEventListener('click', () => {
+        const pageInfo = window.pdfViewer.getCurrentPageInfo();
+
+        // 1. Try to go to next PDF page
+        if (pageInfo.currentPage < pageInfo.totalPages) {
+            window.pdfViewer.nextPage();
+            updateStatusDisplay();
+            return;
+        }
+
+        // 2. If at last page, try to go to next instance
         if (currentInstanceIndex < pageInstances.length - 1) {
             goToInstance(currentInstanceIndex + 1);
+            // Go to first page of next instance
+            window.pdfViewer.goToPage(1);
+            updateStatusDisplay();
         }
     });
+}
+
+/**
+ * Update the status display (Page X/Y or Form A - Page X/Y)
+ */
+function updateStatusDisplay() {
+    const pageInfo = window.pdfViewer?.getCurrentPageInfo();
+    const currentPageSpan = document.getElementById('currentPage');
+    const totalPagesSpan = document.getElementById('totalPages');
+
+    if (!pageInfo || !currentPageSpan || !totalPagesSpan) return;
+
+    if (pageInstances.length > 1) {
+        // Show "Form X/N - Page Y/M"
+        currentPageSpan.textContent = `${currentInstanceIndex + 1} (Pg ${pageInfo.currentPage}`;
+        totalPagesSpan.textContent = `${pageInstances.length} / ${pageInfo.totalPages})`;
+
+        // Hacky way to fit longer text, or we update the DOM structure
+        // Let's just update the text content directly if possible
+        const container = document.querySelector('.page-info');
+        if (container) {
+            container.textContent = `Form ${currentInstanceIndex + 1}/${pageInstances.length} • Page ${pageInfo.currentPage}/${pageInfo.totalPages}`;
+        }
+    } else {
+        // Show standard "Page Y / M"
+        // Reset container content if we messed with it
+        const container = document.querySelector('.page-info');
+        if (container && !container.querySelector('#currentPage')) {
+            container.innerHTML = '<span id="currentPage">1</span> / <span id="totalPages">1</span>';
+        }
+
+        document.getElementById('currentPage').textContent = pageInfo.currentPage;
+        document.getElementById('totalPages').textContent = pageInfo.totalPages;
+    }
 }
 
 /**
@@ -557,10 +631,13 @@ function setupSaveTemplateButton() {
 
             showLoading('Saving template...');
 
+            const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+
             const response = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId || ''
                 },
                 body: JSON.stringify({ fields })
             });
@@ -576,6 +653,79 @@ function setupSaveTemplateButton() {
             console.error('Save template error:', error);
             hideLoading();
             showToast('Failed to save template. Please try again.', 'error');
+        }
+    });
+}
+
+/**
+ * Set up download CSV button
+ */
+function setupDownloadCsvButton() {
+    const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+
+    if (!downloadCsvBtn) return;
+
+    // Show/hide button based on whether this is a template
+    if (currentTemplateFilename) {
+        // Only show if it matches the template filename pattern (not a session ID)
+        downloadCsvBtn.style.display = 'flex';
+    } else {
+        downloadCsvBtn.style.display = 'none';
+        return;
+    }
+
+    downloadCsvBtn.addEventListener('click', async () => {
+        try {
+            showLoading('Generating CSV...');
+
+            const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+
+            const response = await fetch(`/api/bulk/template-csv/${encodeURIComponent(currentTemplateFilename)}`, {
+                headers: {
+                    'x-user-id': userId || ''
+                }
+            });
+
+            if (!response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to generate CSV');
+                } else {
+                    const text = await response.text();
+                    console.error('Non-JSON error response:', text);
+                    throw new Error(`Server error (${response.status}): ${response.statusText}`);
+                }
+            }
+
+            // Trigger download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // Get filename from header or default
+            const disposition = response.headers.get('Content-Disposition');
+            let filename = 'template.csv';
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            hideLoading();
+            showToast('CSV template downloaded!', 'success');
+
+        } catch (error) {
+            console.error('Download CSV error:', error);
+            hideLoading();
+            showToast(error.message || 'Failed to download CSV', 'error');
         }
     });
 }
