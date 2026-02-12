@@ -409,8 +409,36 @@
             }
         }
 
-        /* Responsive */
+        /* Responsive — Tablet */
         @media (max-width: 768px) {
+            .bulk-main {
+                padding: 24px 0;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.875rem;
+                margin-bottom: 24px;
+            }
+
+            .step-card {
+                padding: 20px;
+            }
+
+            .step-content {
+                padding-left: 0;
+            }
+
+            .template-select {
+                max-width: 100%;
+            }
+
+            .data-upload-zone {
+                padding: 24px 16px;
+            }
 
             .mapping-header,
             .mapping-row {
@@ -422,12 +450,84 @@
                 display: none;
             }
 
+            .mapping-header span:last-child {
+                text-align: left;
+            }
+
+            .preview-frame {
+                height: 280px;
+            }
+
             .action-bar {
                 flex-direction: column;
             }
 
             .btn-large {
                 width: 100%;
+            }
+
+            .data-preview-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+        }
+
+        /* Responsive — Mobile */
+        @media (max-width: 480px) {
+            .bulk-container {
+                padding: 0 12px;
+            }
+
+            .page-title {
+                font-size: 1.25rem;
+            }
+
+            .step-card {
+                padding: 16px;
+            }
+
+            .step-header {
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8125rem;
+            }
+
+            .step-header h3 {
+                font-size: 1rem;
+            }
+
+            .data-upload-zone {
+                padding: 20px 12px;
+            }
+
+            .upload-icon-small {
+                width: 40px;
+                height: 40px;
+            }
+
+            .data-key {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+
+            .preview-frame {
+                height: 220px;
+            }
+
+            .progress-container {
+                padding: 16px;
             }
         }
     </style>
@@ -446,6 +546,12 @@
                 </div>
                 PDF Form Filler
             </a>
+            <button class="mobile-menu-btn" onclick="document.querySelector('.nav').classList.toggle('open')"
+                aria-label="Menu">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
             <nav class="nav">
                 <a href="/app.html" class="nav-link">← Back to App</a>
                 <span class="nav-badge accent">Bulk Fill</span>
