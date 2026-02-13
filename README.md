@@ -60,3 +60,7 @@ A 100% free, secure, and privacy-focused online PDF form filler. No login requir
 ## 📄 License
 
 MIT
+
+## 📂 Local Data Storage
+
+This project is configured to ignore the `My InternShip Data/` directory to facilitate local storage of sensitive or large files during development.

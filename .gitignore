@@ -50,3 +50,6 @@ lpt1
 # Node
 node_modules/
 temp/
+
+# User Data
+My InternShip Data/
