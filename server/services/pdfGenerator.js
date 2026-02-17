@@ -90,7 +90,7 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
  * Draw text field value
  */
 function drawTextField(page, field, x, y, font) {
-    const fontSize = Math.min(field.height * 0.7, 12);
+    const fontSize = field.fontSize || Math.min(field.height * 0.7, 14);
     const text = String(field.value || '');
 
     page.drawText(text, {
@@ -193,8 +193,8 @@ function parseTextareaContent(text) {
  * Supports bold headings (*text*), bullet points (- text), and paragraphs
  */
 function drawMultilineText(page, field, x, y, font, boldFont) {
-    const fontSize = 7;
-    const headingFontSize = 8;
+    const fontSize = field.fontSize || 14;
+    const headingFontSize = Math.round(fontSize * 1.14); // Scale heading relative to base size
     const lineHeight = fontSize * 1.4;
     const headingLineHeight = headingFontSize * 1.6;
     const rawValue = String(field.value || '');

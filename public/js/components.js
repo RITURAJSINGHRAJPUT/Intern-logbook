@@ -128,6 +128,10 @@ function updateFieldProperties(field) {
             <label>Required</label>
             <input type="checkbox" id="propRequired" ${field.required ? 'checked' : ''}>
         </div>
+        <div class="property-row">
+            <label>Font Size</label>
+            <input type="number" id="propFontSize" value="${field.fontSize || ''}" placeholder="14" min="6" max="72">
+        </div>
     `;
 
     // Add change listeners
@@ -143,6 +147,15 @@ function updateFieldProperties(field) {
     typeSelect?.addEventListener('change', () => {
         field.type = typeSelect.value;
         window.fieldManager?.renderFields();
+    });
+
+    const fontSizeInput = document.getElementById('propFontSize');
+    fontSizeInput?.addEventListener('change', () => {
+        const size = parseInt(fontSizeInput.value, 10);
+        if (size && size > 4) {
+            field.fontSize = size;
+            window.fieldManager?.renderFields();
+        }
     });
 
     requiredCheck?.addEventListener('change', () => {

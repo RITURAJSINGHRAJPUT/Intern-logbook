@@ -1,6 +1,7 @@
 {
   "templateName": "Internship Form 1 (Daily).pdf",
-  "savedAt": "2026-02-10T05:17:45.865Z",
+  "userId": "eT7fphhz9kNRRjTVJLMzVdrl4fN2",
+  "savedAt": "2026-02-17T07:37:48.060Z",
   "fields": [
     {
       "id": "suggested_0",
@@ -154,7 +155,8 @@
       "width": 448,
       "height": 316,
       "value": "<p>Enter notes...</p><p>jmh</p><p>m</p>",
-      "required": true
+      "required": true,
+      "fontSize": 12
     }
   ]
 }

@@ -113,7 +113,12 @@ class FieldManager {
         wrapper.style.left = `${screenX}px`;
         wrapper.style.top = `${screenY}px`;
         wrapper.style.width = `${screenWidth}px`;
+        wrapper.style.width = `${screenWidth}px`;
         wrapper.style.height = `${screenHeight}px`;
+
+        if (field.fontSize) {
+            wrapper.style.fontSize = `${field.fontSize}px`;
+        }
 
         // Create input element based on type
         let input;
@@ -175,6 +180,9 @@ class FieldManager {
                 const editor = document.createElement('div');
                 editor.className = 'rich-editor-content';
                 editor.contentEditable = 'true';
+                if (field.fontSize) {
+                    editor.style.fontSize = `${field.fontSize}px`;
+                }
                 editor.innerHTML = field.value || '<p>Enter notes...</p>';
 
                 // Toolbar button handlers
@@ -243,6 +251,9 @@ class FieldManager {
         }
 
         if (input) {
+            if (field.fontSize) {
+                input.style.fontSize = `${field.fontSize}px`;
+            }
             input.addEventListener('focus', () => this.selectField(field.id));
             input.addEventListener('change', () => this.updateFieldValue(field.id, input));
             wrapper.appendChild(input);
@@ -255,7 +266,7 @@ class FieldManager {
         resizeHandle.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
-            this.startResize({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {}, stopPropagation: () => {} }, field, true);
+            this.startResize({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { }, stopPropagation: () => { } }, field, true);
         }, { passive: false });
         wrapper.appendChild(resizeHandle);
 
@@ -285,7 +296,7 @@ class FieldManager {
             const target = document.elementFromPoint(touch.clientX, touch.clientY);
             if (target === wrapper || target === wrapper.querySelector('.field-overlay')) {
                 e.preventDefault();
-                this.startDrag({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} }, field, true);
+                this.startDrag({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { } }, field, true);
                 this.selectField(field.id);
             }
         }, { passive: false });
@@ -384,6 +395,7 @@ class FieldManager {
             width: width,
             height: height,
             value: '',
+            fontSize: 14,
             required: false
         };
 
