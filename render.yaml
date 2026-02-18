@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: pdf-form-filler
+    env: node
+    plan: free # Optional: defaults to starter/individual, strict 'free' might not be available on all account types as code, but 'starter' is common. Removing specific plan to let user choose or default.
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        sync: false

@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Uploaded PDFs (sensitive user data)
+uploads/
+*.pdf
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Windows reserved device files
+nul
+con
+prn
+aux
+com1
+lpt1
+
+# Node
+node_modules/
+temp/
+
+# User Data
+My InternShip Data/
+pdf-format/
+data/
