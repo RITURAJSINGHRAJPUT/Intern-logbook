@@ -95,7 +95,14 @@
                     <div class="templates-section" id="templatesSection">
                         <h3 class="templates-title">Or choose a template</h3>
                         <div class="templates-grid" id="templatesGrid">
-                            <!-- Templates will be loaded dynamically -->
+                            <!-- Show loading state until Firebase Auth resolves -->
+                            <div
+                                style="grid-column: 1 / -1; display:flex; padding: 2rem; justify-content:center; color: var(--text-secondary); align-items: center; gap: 10px;">
+                                <div class="spinner"
+                                    style="width:20px; height:20px; border-width:2px; border-bottom-color:transparent;">
+                                </div>
+                                <span>Loading your secure templates...</span>
+                            </div>
                         </div>
                         <div id="bulkFillContainer"
                             style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: none;">

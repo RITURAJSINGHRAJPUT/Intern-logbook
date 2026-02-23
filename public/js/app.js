@@ -10,16 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const templatesGrid = document.getElementById('templatesGrid');
 
     // Listen for auth to map token properly
-    window.addEventListener('auth-ready', () => {
+    if (window.isAuthReady) {
         loadTemplates();
-    });
-
-    // Fallback if auth is very slow or fails
-    setTimeout(() => {
-        if (templatesGrid.children.length === 0) {
+    } else {
+        window.addEventListener('auth-ready', () => {
             loadTemplates();
-        }
-    }, 2500);
+        });
+    }
 
     // Click to upload
     uploadZone.addEventListener('click', () => {
@@ -79,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.templates && data.templates.length > 0) {
+                // Ensure the section is visible
+                document.getElementById('templatesSection').classList.remove('hidden');
+
                 templatesGrid.innerHTML = data.templates.map(template => {
                     const isLocked = template.allowed === false;
                     return `

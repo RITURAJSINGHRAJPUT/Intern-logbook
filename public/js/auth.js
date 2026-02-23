@@ -95,6 +95,8 @@ export function checkAuth(requireAuth = false, redirectIfAuth = false) {
         }
 
         // Dispatch event that auth is ready
+        window.isAuthReady = true;
+        window.authUser = user;
         window.dispatchEvent(new CustomEvent('auth-ready', { detail: { user } }));
     });
 }

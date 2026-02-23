@@ -58,3 +58,4 @@ data/
 
 # Firebase
 serviceAccountKey.json
+serviceAccountKeyB64.txt
