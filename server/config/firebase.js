@@ -3,10 +3,26 @@ const path = require('path');
 
 let serviceAccount;
 
-// Try env var first (for production/Render), then local file (for dev)
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+// Try base64 env var first (most robust for Render), then literal JSON env var, then local file
+if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
     try {
-        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8');
+        serviceAccount = JSON.parse(decoded);
+    } catch (e) {
+        console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64 env var:', e.message);
+        process.exit(1);
+    }
+} else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+        // Render often strips or mangles literal '\n' within environment variable strings.
+        // We attempt to re-escape them so that the private key maintains its formatting.
+        let jsonString = process.env.FIREBASE_SERVICE_ACCOUNT;
+        serviceAccount = JSON.parse(jsonString);
+
+        // Ensure private key has proper newlines for Firebase SDK
+        if (serviceAccount.private_key) {
+            serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+        }
     } catch (e) {
         console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT env var:', e.message);
         process.exit(1);
