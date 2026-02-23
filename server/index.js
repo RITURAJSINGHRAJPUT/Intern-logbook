@@ -4,7 +4,13 @@ const path = require('path');
 const pdfRoutes = require('./routes/pdf');
 const templateRoutes = require('./routes/templates');
 const bulkFillRoutes = require('./routes/bulkFill');
+const { adminRouter, setupRouter } = require('./routes/admin');
+const { verifyToken } = require('./middleware/auth');
+const { verifyAdmin, verifyBulkAccess } = require('./middleware/adminAuth');
 const { startCleanupJob } = require('./utils/cleanup');
+
+// Initialize Firebase Admin SDK
+require('./config/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,10 +31,18 @@ app.use('/api', pdfRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/bulk', bulkFillRoutes);
 
+// Admin routes (setupRouter first — it only requires auth, not admin role)
+app.use('/api/admin', setupRouter);
+app.use('/api/admin', adminRouter);
 
 // Serve editor page for any session
 app.get('/editor', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/editor.html'));
+});
+
+// Serve admin panel
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
 // Start cleanup job

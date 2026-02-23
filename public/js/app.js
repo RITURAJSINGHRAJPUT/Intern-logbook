@@ -1,5 +1,6 @@
 /**
  * Main application logic for landing page
+ * Updated with template access control
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,8 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadLoading = document.getElementById('uploadLoading');
     const templatesGrid = document.getElementById('templatesGrid');
 
-    // Load available templates
-    loadTemplates();
+    // Listen for auth to map token properly
+    window.addEventListener('auth-ready', () => {
+        loadTemplates();
+    });
+
+    // Fallback if auth is very slow or fails
+    setTimeout(() => {
+        if (templatesGrid.children.length === 0) {
+            loadTemplates();
+        }
+    }, 2500);
 
     // Click to upload
     uploadZone.addEventListener('click', () => {
@@ -51,30 +61,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Load available PDF templates from server
+     * Now includes access control — marks templates as allowed/denied
      */
     async function loadTemplates() {
         try {
-            const response = await fetch('/api/templates');
+            // Get Firebase token for access control check
+            const token = window.getFirebaseToken ? await window.getFirebaseToken() : null;
+
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch('/api/templates', { headers });
             if (!response.ok) throw new Error('Failed to load templates');
 
             const data = await response.json();
 
             if (data.templates && data.templates.length > 0) {
-                templatesGrid.innerHTML = data.templates.map(template => `
-                    <div class="template-card" data-url="${template.url}">
+                templatesGrid.innerHTML = data.templates.map(template => {
+                    const isLocked = template.allowed === false;
+                    return `
+                    <div class="template-card ${isLocked ? 'template-locked' : ''}" 
+                         data-url="${template.url}" 
+                         data-filename="${template.filename}"
+                         data-allowed="${template.allowed !== false}">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            ${isLocked ? `
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            ` : `
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            `}
                         </svg>
                         <span>${template.name}</span>
+                        ${isLocked ? '<span class="lock-badge">🔒</span>' : ''}
                     </div>
-                `).join('');
+                `;
+                }).join('');
 
                 // Add click handlers for template cards
                 templatesGrid.querySelectorAll('.template-card').forEach(card => {
                     card.addEventListener('click', () => {
+                        const allowed = card.dataset.allowed === 'true';
+                        if (!allowed) {
+                            showError('Access Denied: You do not have permission to use this template. Contact your admin.');
+                            return;
+                        }
                         const url = card.dataset.url;
                         loadTemplateFromUrl(url);
                     });
@@ -203,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             box-shadow: 0 10px 15px rgba(0,0,0,0.3);
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            max-width: 400px;
         `;
 
         // Remove after 5 seconds
@@ -211,4 +248,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
 });
-

@@ -55,3 +55,6 @@ temp/
 My InternShip Data/
 pdf-format/
 data/
+
+# Firebase
+serviceAccountKey.json

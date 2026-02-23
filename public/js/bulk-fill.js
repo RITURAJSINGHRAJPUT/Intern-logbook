@@ -57,13 +57,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /**
+ * Helper to get authentication headers including JWT token
+ */
+async function getAuthHeaders(userId, additionalHeaders = {}) {
+    const headers = { ...additionalHeaders };
+    if (userId) {
+        headers['x-user-id'] = userId;
+    }
+    try {
+        if (window.getFirebaseToken) {
+            const token = await window.getFirebaseToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+        }
+    } catch (e) {
+        console.error('Error getting auth token:', e);
+    }
+    return headers;
+}
+
+/**
  * Load available templates
  */
 async function loadTemplates() {
     try {
         const userId = currentUser;
         const res = await fetch('/api/bulk/templates', {
-            headers: { 'x-user-id': userId || '' }
+            headers: await getAuthHeaders(userId)
         });
         const data = await res.json();
 
@@ -146,7 +167,7 @@ async function handleTemplateSelect() {
     try {
         const userId = currentUser;
         const res = await fetch(`/api/bulk/template/${encodeURIComponent(filename)}/fields`, {
-            headers: { 'x-user-id': userId || '' }
+            headers: await getAuthHeaders(userId)
         });
         const data = await res.json();
 
@@ -199,6 +220,7 @@ async function handleFile(file) {
     try {
         const res = await fetch('/api/bulk/upload-data', {
             method: 'POST',
+            headers: await getAuthHeaders(currentUser),
             body: formData
         });
 
@@ -285,10 +307,9 @@ async function autoMapAndDisplay() {
         const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch('/api/bulk/auto-map', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-user-id': userId || ''
-            },
+            headers: await getAuthHeaders(userId, {
+                'Content-Type': 'application/json'
+            }),
             body: JSON.stringify({
                 templateFilename: selectedTemplate,
                 dataHeaders: dataHeaders
@@ -376,10 +397,9 @@ async function generatePreview() {
         const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch(`/api/bulk/preview/${encodeURIComponent(selectedTemplate)}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-user-id': userId || ''
-            },
+            headers: await getAuthHeaders(userId, {
+                'Content-Type': 'application/json'
+            }),
             body: JSON.stringify({
                 dataRow: uploadedData[0],
                 fieldMapping: fieldMapping
@@ -437,10 +457,9 @@ async function startGeneration() {
         const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
         const res = await fetch(`/api/bulk/generate/${encodeURIComponent(selectedTemplate)}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-user-id': userId || ''
-            },
+            headers: await getAuthHeaders(userId, {
+                'Content-Type': 'application/json'
+            }),
             body: JSON.stringify({
                 data: uploadedData,
                 fieldMapping: fieldMapping,
@@ -472,7 +491,9 @@ async function startGeneration() {
  */
 async function pollJobStatus() {
     try {
-        const res = await fetch(`/api/bulk/status/${currentJobId}`);
+        const res = await fetch(`/api/bulk/status/${currentJobId}`, {
+            headers: await getAuthHeaders(currentUser)
+        });
         const job = await res.json();
 
         if (!res.ok) {

@@ -8,3 +8,5 @@ services:
     envVars:
       - key: PORT
         sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const { db, auth } = require('../config/firebase');
 
 const TEMPLATES_DIR = path.join(__dirname, '../../pdf-format');
 
@@ -17,29 +18,108 @@ function getUserDir(userId) {
 }
 
 // GET /api/templates - List all available PDF templates
-router.get('/', (req, res) => {
+// Optionally checks user's allowed templates when Bearer token is provided
+router.get('/', async (req, res) => {
     try {
         if (!fs.existsSync(TEMPLATES_DIR)) {
             return res.json({ templates: [] });
         }
 
-        const files = fs.readdirSync(TEMPLATES_DIR)
+        let files = fs.readdirSync(TEMPLATES_DIR)
             .filter(file => file.toLowerCase().endsWith('.pdf'))
-            .map(file => {
-                // We don't check for hasSavedFields here anymore as it's user specific
-                // and expensive to check for all users on list
-                return {
-                    name: file.replace('.pdf', ''),
-                    filename: file,
-                    url: `/templates/${encodeURIComponent(file)}`,
-                    hasSavedFields: true // Assume true or handled by client
-                };
-            });
+            .map(file => ({
+                name: file.replace('.pdf', ''),
+                filename: file,
+                url: `/templates/${encodeURIComponent(file)}`,
+                hasSavedFields: true,
+                allowed: true // default allowed, overridden below if user has restrictions
+            }));
+
+        // Check user's allowed templates if Bearer token present
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            try {
+                const token = authHeader.split('Bearer ')[1];
+                const decoded = await auth.verifyIdToken(token);
+                const userDoc = await db.collection('users').doc(decoded.uid).get();
+
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const allowedTemplates = userData.allowedTemplates || [];
+
+                    // Check if user is also an admin
+                    const adminDoc = await db.collection('admins').doc(decoded.uid).get();
+                    if (adminDoc.exists) {
+                        // Admin: allow all templates (leave as is)
+                    } else {
+                        // Regular user: Filter strictly based on allowedTemplates
+                        files.forEach(f => {
+                            f.allowed = allowedTemplates.includes(f.filename);
+                        });
+                        // Actually remove the templates they don't have access to
+                        files = files.filter(f => f.allowed);
+                    }
+                }
+            } catch (tokenErr) {
+                // Token invalid — restrict all templates
+                console.warn('Template access check: token invalid, returning no templates');
+                files = [];
+            }
+        } else {
+            // No token — restrict all templates
+            files = [];
+        }
 
         res.json({ templates: files });
     } catch (error) {
         console.error('Error listing templates:', error);
         res.status(500).json({ error: 'Failed to list templates' });
+    }
+});
+
+// GET /api/templates/check-access/:filename - Check if logged-in user can access a template
+router.get('/check-access/:filename', async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Auth token required' });
+        }
+
+        const token = authHeader.split('Bearer ')[1];
+        const decoded = await auth.verifyIdToken(token);
+        const userDoc = await db.collection('users').doc(decoded.uid).get();
+
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if user is an admin
+        const adminDoc = await db.collection('admins').doc(decoded.uid).get();
+        if (adminDoc.exists) {
+            return res.json({ allowed: true });
+        }
+
+        const userData = userDoc.data();
+
+        // Check if user is approved
+        if (!userData.approved) {
+            return res.json({ allowed: false, reason: 'Account not approved' });
+        }
+
+        const allowedTemplates = userData.allowedTemplates || [];
+
+        // If no templates are allowed, explicitly deny for non-admins
+        if (allowedTemplates.length === 0) {
+            return res.json({ allowed: false, reason: 'You have not been granted access to any templates.' });
+        }
+
+        const allowed = allowedTemplates.includes(filename);
+        res.json({ allowed, reason: allowed ? null : 'Template not in your allowed list' });
+    } catch (error) {
+        console.error('Error checking template access:', error);
+        res.status(500).json({ error: 'Failed to check access' });
     }
 });
 

@@ -1,0 +1,185 @@
+# Admin Portal & Role-Based Access Control System
+
+Add admin portal and RBAC to the existing PDF Form Filler / Internship Logbook SaaS. Firebase Auth is already used for login/registration. This adds Firestore for user management, admin approval workflow, and template access control.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Firebase Service Account Key**: You need to generate a Firebase Admin SDK service account key from the Firebase Console → Project Settings → Service Accounts → Generate New Private Key. This JSON file will be used by the backend to verify tokens and access Firestore. **Never commit this file to git.**
+
+> [!WARNING]
+> **Breaking Change — Approval Workflow**: After this change, newly registered users will see a "Waiting for Admin Approval" screen and cannot access the dashboard until an admin approves them. You must manually set the first admin user either via Firebase Console or a one-time setup script (provided).
+
+> [!IMPORTANT]
+> **Environment Variable Required**: Set `FIREBASE_SERVICE_ACCOUNT` as a stringified JSON env var on Render (paste the entire service account JSON content).
+
+---
+
+## Proposed Changes
+
+### Firebase Admin Backend Config
+
+#### [NEW] [firebase.js](file:///e:/project/Intern-logbook/server/config/firebase.js)
+- Initialize Firebase Admin SDK using `FIREBASE_SERVICE_ACCOUNT` env var (JSON string) or a local `serviceAccountKey.json` for development
+- Export `admin`, `db` (Firestore), and `auth` (Admin Auth) instances
+
+---
+
+### Auth Middleware
+
+#### [NEW] [auth.js](file:///e:/project/Intern-logbook/server/middleware/auth.js)
+- `verifyToken` middleware: Extracts Bearer token from `Authorization` header, verifies via Firebase Admin `auth.verifyIdToken()`, attaches decoded user to `req.user`
+- Returns 401 on invalid/missing token
+
+#### [NEW] [adminAuth.js](file:///e:/project/Intern-logbook/server/middleware/adminAuth.js)
+- `verifyAdmin` middleware (must run after `verifyToken`): Checks `admins/{uid}` collection in Firestore
+- Returns 403 if user is not in admins collection
+
+---
+
+### Admin API Routes
+
+#### [NEW] [admin.js](file:///e:/project/Intern-logbook/server/routes/admin.js)
+All routes protected by `verifyToken` + `verifyAdmin` middleware.
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/admin/users` | GET | List all users with pagination, search, and approved/pending filter |
+| `/api/admin/users/:uid/approve` | POST | Set `approved: true` on user doc |
+| `/api/admin/users/:uid/reject` | POST | Set `approved: false` on user doc |
+| `/api/admin/users/:uid/toggle-active` | POST | Toggle user active status |
+| `/api/admin/users/:uid/templates` | PUT | Update `allowedTemplates[]` array |
+| `/api/admin/stats` | GET | Return total users, approved, pending counts |
+| `/api/admin/setup-first-admin` | POST | One-time setup: creates admin doc for the authenticated user (only works if zero admins exist) |
+
+---
+
+### Template Access Control
+
+#### [MODIFY] [templates.js](file:///e:/project/Intern-logbook/server/routes/templates.js)
+- Add `verifyToken` middleware to the GET `/` route
+- When listing templates, also fetch user's `allowedTemplates` from Firestore
+- Add `allowed` boolean field to each template in response
+- Add a new route `GET /api/templates/check-access/:filename` that verifies the current user has access to a specific template
+
+---
+
+### Server Entry Point
+
+#### [MODIFY] [index.js](file:///e:/project/Intern-logbook/server/index.js)
+- Import and mount admin routes at `/api/admin`
+- Add admin page route: `app.get('/admin', ...)`
+
+---
+
+### Frontend — Auth Updates
+
+#### [MODIFY] [auth.js](file:///e:/project/Intern-logbook/public/js/auth.js)
+- Import Firestore SDK (`getFirestore`, `doc`, `getDoc`, `setDoc`)
+- In [register()](file:///e:/project/Intern-logbook/public/js/auth.js#51-70): After creating user, create `users/{uid}` Firestore doc with `{ email, role: "student", approved: false, allowedTemplates: [], createdAt }`
+- In [checkAuth()](file:///e:/project/Intern-logbook/public/js/auth.js#16-38): After confirming user is logged in, read `users/{uid}` doc. If `approved === false`, redirect to a "Waiting for Approval" screen instead of dashboard
+- Add `getIdToken()` helper to expose the Firebase JWT for API calls
+- Add `isAdmin()` check function (reads `admins/{uid}` doc)
+- Update [updateAuthUI()](file:///e:/project/Intern-logbook/public/js/auth.js#83-97) to show "Admin Panel" link if user is admin
+
+#### [MODIFY] [login.html](file:///e:/project/Intern-logbook/public/login.html)
+- Add "Waiting for Approval" UI (initially hidden, shown after registration or if user is unapproved)
+
+---
+
+### Frontend — Admin Panel
+
+#### [NEW] [admin.html](file:///e:/project/Intern-logbook/public/admin.html)
+- Same header structure as [app.html](file:///e:/project/Intern-logbook/public/app.html) (matching existing design)
+- Dashboard stats cards (Total Users, Approved, Pending)
+- Users table with columns: Email, Status, Templates, Actions
+- Search bar and filter dropdown (All / Approved / Pending)
+- Pagination controls
+- Template assignment modal with multi-select checkboxes
+
+#### [NEW] [admin.js](file:///e:/project/Intern-logbook/public/js/admin.js)
+- On load: verify user is admin, redirect to [/app.html](file:///e:/project/Intern-logbook/public/app.html) if not
+- Fetch and render user stats from `/api/admin/stats`
+- Fetch and render users table from `/api/admin/users`
+- Handle approve/reject button clicks
+- Handle template assignment modal
+- Search and filter functionality
+- Pagination logic
+
+#### [NEW] [admin.css](file:///e:/project/Intern-logbook/public/css/admin.css)
+- Styles for admin panel matching existing dark theme (uses same CSS variables from [styles.css](file:///e:/project/Intern-logbook/public/css/styles.css))
+- Stats cards, table, modal, pagination styles
+
+---
+
+### Frontend — Template Access Control
+
+#### [MODIFY] [app.js](file:///e:/project/Intern-logbook/public/js/app.js)
+- In [loadTemplates()](file:///e:/project/Intern-logbook/public/js/app.js#52-92): Use the template list response that now includes `allowed` field
+- Visually indicate locked/unlocked templates
+- When clicking a locked template, show "Access Denied" toast instead of loading
+- Include Firebase ID token in template-related API requests
+
+---
+
+### Firebase Security Rules
+
+#### [NEW] [firestore.rules](file:///e:/project/Intern-logbook/firestore.rules)
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (
+        request.auth.uid == userId && 
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['approved', 'allowedTemplates', 'role'])
+      ) || isAdmin();
+    }
+    // Admins collection  
+    match /admins/{adminId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+  }
+}
+```
+
+---
+
+### Configuration Updates
+
+#### [MODIFY] [.gitignore](file:///e:/project/Intern-logbook/.gitignore)
+- Add `serviceAccountKey.json`
+
+#### [MODIFY] [render.yaml](file:///e:/project/Intern-logbook/render.yaml)
+- Add `FIREBASE_SERVICE_ACCOUNT` env var entry
+
+---
+
+## Verification Plan
+
+### Automated Tests (Browser Tests)
+
+1. **Registration + Firestore doc creation**: Register a new user → Verify the user sees the "Waiting for Approval" screen → Verify user cannot access [/app.html](file:///e:/project/Intern-logbook/public/app.html)
+
+2. **Admin login + portal access**: Log in as admin → Navigate to `/admin` → Verify stats and user table render
+
+3. **Approve user flow**: Admin approves a user via admin panel → Log in as that user → Verify they can now access [/app.html](file:///e:/project/Intern-logbook/public/app.html)
+
+4. **Template access control**: Set `allowedTemplates` for a user to only 1 template → Log in as that user → Verify locked templates show lock icon → Verify clicking locked template shows "Access Denied"
+
+5. **Non-admin blocked**: Log in as regular user → Try to navigate to `/admin` → Verify redirect back to [/app.html](file:///e:/project/Intern-logbook/public/app.html)
+
+### Manual Verification
+1. Deploy to Render with `FIREBASE_SERVICE_ACCOUNT` env var set
+2. Register a new account and confirm the "Waiting for Approval" screen appears
+3. Use the `/api/admin/setup-first-admin` endpoint (with bearer token) to make yourself admin
+4. Visit `/admin` and approve the new user
+5. Log in as the new user and confirm template restrictions work

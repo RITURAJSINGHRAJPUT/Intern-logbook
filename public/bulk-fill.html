@@ -716,6 +716,20 @@
     <div class="toast" id="toast"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script type="module">
+        import { checkAuth, hasBulkFillAccess } from '/js/auth.js';
+
+        // Ensure user is authenticated
+        checkAuth(true);
+
+        // Ensure user is an admin or has bulk access before allowing interactions
+        hasBulkFillAccess().then(hasAccess => {
+            if (!hasAccess) {
+                alert('Access Denied: You do not have permission to use the Bulk Fill feature.');
+                window.location.replace('/app.html');
+            }
+        });
+    </script>
     <script type="module" src="/js/bulk-fill.js"></script>
     <script>
         if ('serviceWorker' in navigator) {

@@ -19,6 +19,18 @@ const {
     cleanupJob
 } = require('../services/bulkPdfService');
 const { generateFilledPDF } = require('../services/pdfGenerator');
+const { verifyBulkAccess } = require('../middleware/adminAuth');
+const { verifyToken } = require('../middleware/auth');
+
+// Apply auth conditionally (skip for generated file downloads accessed directly by browser)
+router.use((req, res, next) => {
+    if (req.path.startsWith('/preview-file/') || req.path.startsWith('/download/')) {
+        return next();
+    }
+    verifyToken(req, res, () => {
+        verifyBulkAccess(req, res, next);
+    });
+});
 
 const TEMPLATES_DIR = path.join(__dirname, '../../pdf-format');
 const TEMP_DIR = path.join(__dirname, '../../temp');

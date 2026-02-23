@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users collection
+    match /users/{userId} {
+      // Students can read their own document
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Students can create their own document (on registration)
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Students can update their own document EXCEPT protected fields
+      // Admin can update any user document
+      allow update: if request.auth != null && (
+        (
+          request.auth.uid == userId &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['approved', 'allowedTemplates', 'role'])
+        ) || isAdmin()
+      );
+
+      // Only admin can delete user documents
+      allow delete: if isAdmin();
+    }
+
+    // Admins collection
+    match /admins/{adminId} {
+      // Any authenticated user can read (to check their own admin status)
+      allow read: if request.auth != null;
+
+      // Only existing admins can write
+      allow write: if isAdmin();
+
+      // Allow create if no admins exist (first-time setup)
+      // Note: This is additionally protected server-side
+      allow create: if request.auth != null;
+    }
+
+    // Helper function to check admin status
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+  }
+}

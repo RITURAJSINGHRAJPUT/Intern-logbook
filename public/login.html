@@ -237,42 +237,72 @@
         <!-- Form Side -->
         <div class="form-side">
             <div class="form-container">
-                <div class="form-header">
-                    <h2 class="form-title">Welcome Back</h2>
-                    <p class="form-subtitle">Please enter your details to sign in.</p>
+                <!-- Waiting for Approval Screen (hidden by default) -->
+                <div id="waitingScreen" style="display:none;text-align:center;padding:2rem 0;">
+                    <div class="waiting-icon" style="margin-bottom:1.5rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width:64px;height:64px;color:var(--primary-light);animation:pulse 2s ease-in-out infinite">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                    </div>
+                    <h2 style="color:white;margin-bottom:0.5rem;font-size:1.5rem">Waiting for Admin Approval</h2>
+                    <p style="color:var(--text-secondary);margin-bottom:0.25rem">Your account</p>
+                    <p class="waiting-email"
+                        style="color:var(--primary-light);font-weight:600;margin-bottom:1.5rem;word-break:break-all">
+                    </p>
+                    <p style="color:var(--text-secondary);margin-bottom:2rem;font-size:0.9rem">
+                        is pending admin approval. You'll be able to access the dashboard once approved.
+                    </p>
+                    <button id="waitingLogoutBtn" class="btn-login"
+                        style="background:var(--bg-elevated);box-shadow:none">Sign Out</button>
                 </div>
 
-                <form id="loginForm">
-                    <div class="input-group" id="nameGroup" style="display: none;">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" placeholder="John Doe">
-                    </div>
-                    <div class="input-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="name@company.com" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="••••••••" required>
+                <div id="loginFormWrapper">
+                    <div class="form-header">
+                        <h2 class="form-title">Welcome Back</h2>
+                        <p class="form-subtitle">Please enter your details to sign in.</p>
                     </div>
 
-                    <button type="submit" class="btn-login" id="submitBtn">Sign In</button>
+                    <form id="loginForm">
+                        <div class="input-group" id="nameGroup" style="display: none;">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" placeholder="John Doe">
+                        </div>
+                        <div class="input-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="name@company.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
 
-                    <div id="errorMessage" class="error-message"></div>
+                        <button type="submit" class="btn-login" id="submitBtn">Sign In</button>
 
-                    <div class="toggle-auth">
-                        <a href="#" id="toggleAuth">Don't have an account? Sign Up</a>
-                    </div>
-                </form>
+                        <div id="errorMessage" class="error-message"></div>
+
+                        <div class="toggle-auth">
+                            <a href="#" id="toggleAuth">Don't have an account? Sign Up</a>
+                        </div>
+                    </form>
+                </div>
             </div>
+            <button data-logout id="hiddenLogout" style="display:none"></button>
         </div>
     </div>
 
     <script type="module">
-        import { login, register, checkAuth } from './js/auth.js';
+        import { login, register, checkAuth, logout } from './js/auth.js';
 
-        // Check if already logged in (redirect to app if yes)
+        // Check if already logged in (redirect to app if approved, show waiting if not)
         checkAuth(false, true);
+
+        // Check URL params for waiting state
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('waiting') === 'true') {
+            // Will be handled by checkAuth above
+        }
 
         const loginForm = document.getElementById('loginForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -282,8 +312,16 @@
         const formSubtitle = document.querySelector('.form-subtitle');
         const nameGroup = document.getElementById('nameGroup');
         const fullNameInput = document.getElementById('fullName');
+        const waitingLogoutBtn = document.getElementById('waitingLogoutBtn');
 
         let isLogin = true;
+
+        // Waiting screen logout
+        if (waitingLogoutBtn) {
+            waitingLogoutBtn.addEventListener('click', () => {
+                logout();
+            });
+        }
 
         toggleAuth.addEventListener('click', (e) => {
             e.preventDefault();
@@ -324,7 +362,15 @@
             }
 
             if (result.success) {
-                window.location.replace('/app.html');
+                // checkAuth will handle the redirect based on approval status
+                // For registration, it will show waiting screen
+                // For login, it will redirect to app if approved
+                if (result.needsApproval) {
+                    // Registration completed — checkAuth will show waiting screen
+                    // Just wait for onAuthStateChanged to trigger
+                    checkAuth(false, true);
+                }
+                // login success — onAuthStateChanged will handle redirect
             } else {
                 errorMessage.textContent = result.error || 'Authentication failed';
                 errorMessage.style.display = 'block';
@@ -333,6 +379,21 @@
             }
         });
     </script>
+    <style>
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+    </style>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
