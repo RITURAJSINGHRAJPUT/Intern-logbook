@@ -5,7 +5,8 @@ import {
     signOut,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
-    updateProfile
+    updateProfile,
+    sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
     getFirestore,
@@ -44,29 +45,30 @@ export function checkAuth(requireAuth = false, redirectIfAuth = false) {
                         lastLogin: serverTimestamp()
                     }).catch(err => console.warn('Failed to update lastLogin:', err));
 
-                    if (!userData.approved) {
-                        // User not approved — show waiting screen
+                    // Master Admin Bypass for testing
+                    const isMasterAdmin = user.email && user.email.toLowerCase() === 'admin@internbook.com';
+
+                    if (!user.emailVerified && !isMasterAdmin) {
                         if (redirectIfAuth) {
-                            // On login page, show waiting screen instead of redirecting
-                            showWaitingScreen(user.email);
+                            showWaitingScreen(user.email, true); // true for verification
                             return;
                         }
-                        // On protected pages, redirect to login with waiting state
                         if (requireAuth) {
-                            window.location.replace('/login.html?waiting=true');
-                            return;
-                        }
-                    } else {
-                        // User is approved
-                        if (redirectIfAuth) {
-                            window.location.replace('/app.html');
+                            window.location.replace('/login.html?verify=true');
                             return;
                         }
                     }
 
+                    // User is verified, meaning they're allowed into the basic app!
+                    if (redirectIfAuth) {
+                        window.location.replace('/app.html');
+                        return;
+                    }
+
                     // Check if admin and update UI
-                    const isAdminUser = await checkIsAdmin(user.uid);
-                    updateAuthUI(user, isAdminUser, userData.allowBulkFill || false);
+                    const isAdminUser = (await checkIsAdmin(user.uid)) || isMasterAdmin;
+                    // Pass userData.approved as the bulk access flag (as per new requirements)
+                    updateAuthUI(user, isAdminUser, userData.approved === true || userData.allowBulkFill || false, userData);
                 } else {
                     // No user doc — create one (edge case: registered before this system)
                     await createUserDoc(user);
@@ -163,8 +165,12 @@ export async function hasBulkFillAccess() {
 
                 try {
                     const userDoc = await getDoc(doc(firestore, 'users', user.uid));
-                    if (userDoc.exists() && userDoc.data().allowBulkFill) {
-                        return resolve(true);
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        // Bulk fill access requires explicit admin approval now
+                        if (data.approved || data.allowBulkFill) {
+                            return resolve(true);
+                        }
                     }
                 } catch (error) {
                     console.error('Error checking bulk access:', error);
@@ -215,7 +221,15 @@ export async function register(email, password, fullName) {
         // Create Firestore user document
         await createUserDoc(userCredential.user);
 
-        return { success: true, user: userCredential.user, needsApproval: true };
+        // Send email verification
+        try {
+            await sendEmailVerification(userCredential.user);
+            console.log('Verification email sent');
+        } catch (err) {
+            console.error('Error sending verification email:', err);
+        }
+
+        return { success: true, user: userCredential.user, needsApproval: true, emailSent: true };
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -234,33 +248,50 @@ export async function logout() {
 }
 
 /**
- * Show "Waiting for Admin Approval" screen
+ * Show "Waiting for Admin Approval" or "Verify Email" screen
  */
-function showWaitingScreen(email) {
+function showWaitingScreen(email, needsVerification = false) {
     const waitingEl = document.getElementById('waitingScreen');
     const loginForm = document.getElementById('loginForm');
+    const loginFormWrapper = document.getElementById('loginFormWrapper');
     const formContainer = document.querySelector('.form-container');
+
+    const title = needsVerification ? 'Verify Your Email' : 'Waiting for Admin Approval';
+    const subtext = needsVerification
+        ? `We've sent a verification link to <strong style="color:var(--primary-light)">${email}</strong>. Please check your inbox and click the link to continue.`
+        : `Your account <strong style="color:var(--primary-light)">${email}</strong> is pending admin approval. You'll be able to access the dashboard once approved.`;
+    const icon = needsVerification
+        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;color:var(--primary-light)">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>`
+        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;color:var(--primary-light)">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>`;
 
     if (waitingEl) {
         waitingEl.style.display = 'block';
-        if (loginForm) loginForm.style.display = 'none';
+        if (loginFormWrapper) loginFormWrapper.style.display = 'none';
+        else if (loginForm) loginForm.style.display = 'none';
 
-        const emailEl = waitingEl.querySelector('.waiting-email');
-        if (emailEl) emailEl.textContent = email;
+        const titleEl = waitingEl.querySelector('h2');
+        if (titleEl) titleEl.textContent = title;
+
+        const emailEl = waitingEl.querySelector('.waiting-email') || document.getElementById('waitingEmail');
+        if (emailEl) {
+            emailEl.innerHTML = subtext;
+        }
     } else if (formContainer) {
         // Inject waiting screen if element doesn't exist
         formContainer.innerHTML = `
             <div class="waiting-screen">
                 <div class="waiting-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;color:var(--primary-light)">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
-                    </svg>
+                    ${icon}
                 </div>
-                <h2 style="color:white;margin:1rem 0 0.5rem">Waiting for Admin Approval</h2>
+                <h2 style="color:white;margin:1rem 0 0.5rem">${title}</h2>
                 <p style="color:var(--text-secondary);margin-bottom:1.5rem">
-                    Your account <strong style="color:var(--primary-light)">${email}</strong> is pending admin approval.
-                    You'll be able to access the dashboard once approved.
+                    ${subtext}
                 </p>
                 <button onclick="document.querySelector('[data-logout]').click()" class="btn-login" style="background:var(--bg-elevated);box-shadow:none">
                     Sign Out
@@ -273,7 +304,7 @@ function showWaitingScreen(email) {
 /**
  * Update UI elements based on auth state
  */
-function updateAuthUI(user, isAdminUser = false, allowBulkFill = false) {
+function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData = null) {
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
         loginBtn.textContent = 'Logout';
@@ -284,20 +315,41 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false) {
         };
     }
 
+    // Update Profile button with User's Name
+    const profileBtn = document.getElementById('profileBtn');
+    if (profileBtn) {
+        const nameSpan = profileBtn.querySelector('span:not(.material-symbols-outlined)');
+        if (nameSpan) {
+            let displayName = 'Profile';
+            if (userData && userData.fullName) {
+                displayName = userData.fullName.split(' ')[0]; // Use first name
+            } else if (user && user.email) {
+                displayName = user.email.split('@')[0];
+            }
+            nameSpan.textContent = displayName;
+        }
+    }
+
     // Add Admin Panel link and show restricted features if user is admin
     if (isAdminUser) {
-        // Show admin link in navbar
-        const navLinks = document.querySelector('.nav-links');
-        if (navLinks && !document.getElementById('adminLink')) {
-            const adminLink = document.createElement('a');
-            adminLink.href = '/admin';
-            adminLink.className = 'nav-link';
-            adminLink.id = 'adminLink';
-            adminLink.textContent = '⚙️ Admin';
-            adminLink.style.marginRight = '8px';
-            adminLink.style.background = 'rgba(99, 102, 241, 0.2)';
-            adminLink.style.borderColor = 'var(--primary)';
-            navLinks.insertBefore(adminLink, navLinks.firstChild);
+        // Show admin link in navbar (new App.html structure)
+        const adminBtn = document.getElementById('adminBtn');
+        if (adminBtn) {
+            adminBtn.classList.remove('hidden');
+        } else {
+            // Fallback for older pages that haven't been migrated
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks && !document.getElementById('adminLink')) {
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin';
+                adminLink.className = 'nav-link';
+                adminLink.id = 'adminLink';
+                adminLink.textContent = '⚙️ Admin';
+                adminLink.style.marginRight = '8px';
+                adminLink.style.background = 'rgba(99, 102, 241, 0.2)';
+                adminLink.style.borderColor = 'var(--primary)';
+                navLinks.insertBefore(adminLink, navLinks.firstChild);
+            }
         }
     }
 
@@ -305,7 +357,7 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false) {
     if (isAdminUser || allowBulkFill) {
         const bulkFillContainer = document.getElementById('bulkFillContainer');
         if (bulkFillContainer) {
-            bulkFillContainer.style.display = 'block';
+            bulkFillContainer.classList.remove('hidden');
         }
     }
 }

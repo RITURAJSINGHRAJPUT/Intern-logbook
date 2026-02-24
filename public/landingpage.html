@@ -4,19 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PDF Form Filler - Privacy First & Free</title>
-    <meta name="description"
-        content="The secure, free online PDF form filler. No signup needed to start. Privacy focused.">
+    <title>PDF Pal - PDFs Made Fun &amp; Easy!</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&amp;display=swap"
         rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#00BCD4">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192.svg">
     <script>
         tailwind.config = {
             theme: {
@@ -41,131 +35,111 @@
             },
         };
     </script>
-    <style>
+    <style type="text/tailwindcss">
         body {
             background-color: #FFFDF5;
             color: #37474F;
             font-family: 'Quicksand', sans-serif;
         }
-
         .hero-gradient {
             background: radial-gradient(circle at center, #FFF9C4 0%, #FFFDF5 70%);
         }
-
         .organic-blob {
             border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
         }
-
         .hand-drawn-path {
             stroke-dasharray: 10;
             stroke-linecap: round;
         }
-
         .cartoon-character-hover:hover .character-head {
             transform: translateY(-10px) rotate(5deg);
         }
-
         .button-tactile {
-            box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 0 0 rgba(0,0,0,0.1);
             transition: all 0.15s ease-in-out;
         }
-
         .button-tactile:active {
             box-shadow: none;
             transform: translateY(4px);
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-            display: inline-block;
-            vertical-align: middle;
         }
     </style>
 </head>
 
 <body class="antialiased overflow-x-hidden">
-
-    <!-- Auth Check -->
-    <script type="module">
-        import { checkAuth } from './js/auth.js';
-        checkAuth(false, true); // Redirect to app is handled in auth logic
-    </script>
-
-    <nav class="py-6 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50">
-        <a href="/" class="flex items-center gap-2 group cursor-pointer">
+    <nav class="py-8 px-6 max-w-7xl mx-auto flex justify-between items-center relative z-50">
+        <div class="flex items-center gap-2 group cursor-pointer">
             <div
-                class="bg-vibrant-turquoise w-8 h-8 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform">
-                <span class="material-symbols-outlined text-white text-xl">face_6</span>
+                class="bg-vibrant-turquoise w-12 h-12 flex items-center justify-center rounded-[1.2rem] -rotate-6 shadow-lg group-hover:rotate-0 transition-transform">
+                <span class="material-symbols-outlined text-white text-3xl">face_6</span>
             </div>
-            <span class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
-        </a>
-        <div class="hidden md:flex items-center gap-6">
-            <a class="font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors"
-                href="/Pricing.html">Pricing</a>
-            <a class="bg-vibrant-coral text-white px-5 py-2 rounded-full font-extrabold text-sm button-tactile"
-                href="/login.html">
-                Get Started
-            </a>
+            <span class="font-bold text-3xl tracking-tight text-vibrant-turquoise">PDF Pal</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a class="font-bold text-friendly-navy hover:text-vibrant-coral transition-colors" href="#">Features</a>
+            <a class="font-bold text-friendly-navy hover:text-vibrant-coral transition-colors" href="#">Pricing</a>
+            <button class="bg-vibrant-coral text-white px-8 py-3 rounded-full font-extrabold text-lg button-tactile">
+                Join the Fun
+            </button>
         </div>
     </nav>
     <main>
-        <section class="hero-gradient pt-2 pb-32 px-6 relative">
+        <section class="hero-gradient pt-12 pb-32 px-6 relative">
             <div class="max-w-6xl mx-auto text-center relative">
                 <div
                     class="absolute -top-10 -left-10 w-24 h-24 bg-soft-turquoise organic-blob opacity-40 blur-xl animate-pulse">
                 </div>
                 <div class="absolute top-40 -right-20 w-40 h-40 bg-soft-coral organic-blob opacity-30 blur-2xl"></div>
-                <h1 class="text-5xl md:text-[4.25rem] font-extrabold text-friendly-navy mb-4 leading-[1.1]">
+                <h1 class="text-6xl md:text-8xl font-extrabold text-friendly-navy mb-8 leading-[1.1]">
                     PDFs Made <br />
                     <span class="text-vibrant-coral relative inline-block">
                         Fun &amp; Easy!
-                        <svg class="absolute -bottom-3 left-0 w-full" fill="none" height="12" viewBox="0 0 300 15"
+                        <svg class="absolute -bottom-4 left-0 w-full" fill="none" height="15" viewBox="0 0 300 15"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 10C50 2 250 2 295 10" stroke="#FF5722" stroke-linecap="round" stroke-width="8">
                             </path>
                         </svg>
                     </span>
                 </h1>
-                <p class="text-lg md:text-xl text-friendly-navy/80 mb-6 max-w-2xl mx-auto font-medium">
+                <p class="text-2xl md:text-3xl text-friendly-navy/80 mb-16 max-w-3xl mx-auto font-medium">
                     The friendliest way to fill, sign, and giggle your way through paperwork. ✨
                 </p>
-                <div class="relative max-w-xl mx-auto cartoon-character-hover mt-6">
-                    <a href="/login.html"
-                        class="block relative bg-white border-[6px] border-dashed border-soft-turquoise p-8 md:p-12 rounded-[3rem] shadow-xl hover:scale-[1.02] transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10 z-0">
-                        <div
-                            class="bg-sunny-yellow w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 border-[3px] border-white shadow-inner group-hover:rotate-12 transition-transform">
-                            <span class="material-symbols-outlined text-4xl text-warm-yellow">rocket_launch</span>
-                        </div>
-                        <h3 class="text-2xl font-extrabold text-friendly-navy mb-2">Drop your file here!</h3>
-                        <p class="text-base text-friendly-navy/60 font-bold">Or click to find it on your computer</p>
-                        <div class="mt-6 flex justify-center gap-3">
-                            <div
-                                class="flex items-center gap-1.5 bg-soft-turquoise/30 px-3 py-1.5 rounded-full border border-soft-turquoise">
-                                <span
-                                    class="material-symbols-outlined text-vibrant-turquoise text-xs">check_circle</span>
-                                <span class="text-xs font-bold text-vibrant-turquoise">Secure &amp; Fast</span>
-                            </div>
-                            <div
-                                class="flex items-center gap-1.5 bg-soft-coral/30 px-3 py-1.5 rounded-full border border-soft-coral">
-                                <span class="material-symbols-outlined text-vibrant-coral text-xs">star</span>
-                                <span class="text-xs font-bold text-vibrant-coral">Super Easy</span>
-                            </div>
-                        </div>
-                    </a>
+                <div class="relative max-w-2xl mx-auto cartoon-character-hover">
                     <div
-                        class="character-head absolute -top-8 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none z-50">
+                        class="character-head absolute -top-20 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none">
                         <div
-                            class="bg-bright-yellow w-16 h-16 rounded-full border-[3px] border-friendly-navy flex items-center justify-center shadow-lg">
+                            class="bg-bright-yellow w-24 h-24 rounded-full border-4 border-friendly-navy flex items-center justify-center shadow-xl">
                             <div class="flex flex-col items-center">
-                                <div class="flex gap-2 mb-1">
-                                    <div class="w-1.5 h-1.5 bg-friendly-navy rounded-full"></div>
-                                    <div class="w-1.5 h-1.5 bg-friendly-navy rounded-full"></div>
+                                <div class="flex gap-3 mb-1">
+                                    <div class="w-2 h-2 bg-friendly-navy rounded-full"></div>
+                                    <div class="w-2 h-2 bg-friendly-navy rounded-full"></div>
                                 </div>
-                                <div class="w-5 h-2 border-b-[3px] border-friendly-navy rounded-full"></div>
+                                <div class="w-8 h-3 border-b-4 border-friendly-navy rounded-full"></div>
                             </div>
                             <div
-                                class="absolute -right-8 top-1 bg-white px-2 py-1 rounded-xl border-2 border-friendly-navy font-bold text-xs -rotate-12">
+                                class="absolute -right-12 top-2 bg-white px-4 py-2 rounded-2xl border-2 border-friendly-navy font-bold text-sm -rotate-12">
                                 Hello! 👋
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="relative bg-white border-8 border-dashed border-soft-turquoise p-12 md:p-20 rounded-[4rem] shadow-2xl hover:scale-[1.02] transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10">
+                        <div
+                            class="bg-sunny-yellow w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-inner group-hover:rotate-12 transition-transform">
+                            <span class="material-symbols-outlined text-6xl text-warm-yellow">rocket_launch</span>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-friendly-navy mb-3">Drop your file here!</h3>
+                        <p class="text-xl text-friendly-navy/60 font-bold">Or click to find it on your computer</p>
+                        <div class="mt-8 flex justify-center gap-4">
+                            <div
+                                class="flex items-center gap-2 bg-soft-turquoise/30 px-4 py-2 rounded-full border border-soft-turquoise">
+                                <span
+                                    class="material-symbols-outlined text-vibrant-turquoise text-sm">check_circle</span>
+                                <span class="text-sm font-bold text-vibrant-turquoise">Secure &amp; Fast</span>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 bg-soft-coral/30 px-4 py-2 rounded-full border border-soft-coral">
+                                <span class="material-symbols-outlined text-vibrant-coral text-sm">star</span>
+                                <span class="text-sm font-bold text-vibrant-coral">Super Easy</span>
                             </div>
                         </div>
                     </div>
@@ -258,38 +232,38 @@
                 </div>
             </div>
         </section>
-        <section class="py-12 text-center">
+        <section class="py-32 text-center">
             <div
-                class="max-w-4xl mx-auto px-6 bg-warm-yellow/10 rounded-[4rem] py-16 border-4 border-dashed border-warm-yellow/30">
+                class="max-w-4xl mx-auto px-6 bg-warm-yellow/10 rounded-[5rem] py-20 border-4 border-dashed border-warm-yellow/30">
                 <h2 class="text-5xl font-extrabold mb-8">Ready to make PDFs happy?</h2>
-                <a href="/login.html"
-                    class="inline-block bg-vibrant-turquoise text-white px-12 py-6 rounded-super-rounded font-black text-2xl button-tactile hover:scale-105 transition-transform flex items-center gap-4 mx-auto w-max">
+                <button
+                    class="bg-vibrant-turquoise text-white px-12 py-6 rounded-super-rounded font-black text-2xl button-tactile hover:scale-105 transition-transform flex items-center gap-4 mx-auto">
                     <span class="material-symbols-outlined text-4xl">magic_button</span>
                     Start Your PDF Journey
-                </a>
+                </button>
                 <p class="mt-8 font-bold text-friendly-navy/50">No credit card. No boring stuff. Just fun.</p>
             </div>
         </section>
     </main>
-    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8">
+    <footer class="bg-friendly-navy text-white py-20 px-6 mt-20">
         <div class="max-w-7xl mx-auto">
             <div
-                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                class="flex flex-col md:flex-row justify-between items-center gap-12 border-b border-white/10 pb-12 mb-12">
                 <div class="flex items-center gap-3">
-                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
-                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                    <div class="bg-white w-10 h-10 flex items-center justify-center rounded-xl rotate-3">
+                        <span class="material-symbols-outlined text-friendly-navy">face_6</span>
                     </div>
-                    <span class="font-bold text-xl">PDF Form Filler</span>
+                    <span class="font-bold text-2xl">PDF Pal</span>
                 </div>
-                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                <div class="flex flex-wrap justify-center gap-10 font-bold">
                     <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
                     <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
                     <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
                     <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
-                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 text-white/50 font-bold">
+                <p>© 2024 PDF Pal - Made with 🎨 for busy humans.</p>
                 <div class="flex items-center gap-2">
                     <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
                     Server Status: Having a Great Day
@@ -298,11 +272,6 @@
         </div>
     </footer>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
-        }
-    </script>
 </body>
 
 </html>

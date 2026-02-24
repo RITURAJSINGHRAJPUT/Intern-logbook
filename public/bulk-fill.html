@@ -2,385 +2,125 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Bulk Fill PDFs | PDF Form Filler</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
+
+    <!-- External Scripts and Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Meta and Manifest -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#4DD0E1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#E0F7FA',
+                        'vibrant-turquoise': '#4DD0E1',
+                        'soft-coral': '#FFAB91',
+                        'vibrant-coral': '#FF7043',
+                        'sunny-yellow': '#FFF59D',
+                        'warm-yellow': '#FBC02D',
+                        'friendly-gray': '#546E7A',
+                        'friendly-navy': '#37474F',
+                        'pastel-yellow-bg': '#FFFDE7',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'super-rounded': '2.5rem',
+                        'glass': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+
     <style>
-        /* Bulk Fill Page Specific Styles */
-        .bulk-main {
-            padding: 40px 0;
-            min-height: calc(100vh - var(--header-height) - 100px);
+        body {
+            background-color: #FFFDE7;
+            color: #546E7A;
+            font-family: 'Quicksand', sans-serif;
         }
 
-        .bulk-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
         }
 
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-align: center;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
         }
 
-        .page-subtitle {
-            color: var(--text-secondary);
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        /* Steps Container */
-        .steps-container {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .step-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            border: 1px solid var(--border);
-        }
-
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .step-number {
-            width: 36px;
-            height: 36px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
+        .step-bubble {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
         }
 
-        .step-header h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .step-content {
-            padding-left: 52px;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        /* Template Selector */
-        .template-select {
-            width: 100%;
-            max-width: 400px;
-            padding: 12px 16px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 1rem;
-            cursor: pointer;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 9999px;
         }
 
-        .template-select:focus {
-            outline: none;
-            border-color: var(--primary);
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #cbd5e1;
         }
 
-        .template-info {
-            margin-top: 12px;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Data Upload */
-        .data-upload-zone {
-            background: rgba(30, 41, 59, 0.6);
-            border: 2px dashed var(--border);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-        }
-
-        .data-upload-zone:hover,
-        .data-upload-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .data-upload-zone.has-file {
-            border-color: var(--accent);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .upload-icon-small {
-            width: 48px;
-            height: 48px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-        }
-
-        .upload-icon-small svg {
-            width: 24px;
-            height: 24px;
-            color: white;
-        }
-
-        .file-preview {
-            background: var(--bg-elevated);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-top: 16px;
-        }
-
-        .file-preview-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .file-name {
-            font-weight: 500;
-            color: var(--accent);
-        }
-
-        .row-count {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Mapping Grid */
-        .mapping-container {
-            background: var(--bg-elevated);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
-
-        .mapping-header {
-            display: grid;
-            grid-template-columns: 1fr 50px 1fr;
-            padding: 12px 16px;
-            background: var(--bg-dark);
-            font-size: 0.8125rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-        }
-
-        .mapping-header span:last-child {
-            text-align: right;
-        }
-
-        .mapping-row {
-            display: grid;
-            grid-template-columns: 1fr 50px 1fr;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            align-items: center;
-        }
-
-        .mapping-row:last-child {
-            border-bottom: none;
-        }
-
-        .data-key {
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            background: var(--bg-dark);
-            padding: 6px 10px;
-            border-radius: var(--radius-sm);
-            display: inline-block;
-        }
-
-        .mapping-arrow {
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        .mapping-select {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-        }
-
-        .mapping-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .mapping-select.mapped {
-            border-color: var(--accent);
-        }
-
-        /* Preview Panel */
-        .preview-panel {
-            background: var(--bg-elevated);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            text-align: center;
-        }
-
-        .preview-frame {
-            background: white;
-            border-radius: var(--radius-sm);
-            width: 100%;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preview-placeholder {
-            color: var(--bg-dark);
-            font-size: 0.875rem;
-        }
-
-        /* Progress Container */
-        .progress-container {
-            background: var(--bg-elevated);
-            border-radius: var(--radius-md);
-            padding: 24px;
-        }
-
-        .progress-bar-wrapper {
-            background: var(--bg-dark);
-            border-radius: 20px;
-            height: 24px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 20px;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .progress-status {
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Action Bar */
-        .action-bar {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 24px;
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-        }
-
-        .btn-large {
-            padding: 14px 32px;
-            font-size: 1rem;
-        }
-
-        .btn-accent {
-            background: var(--gradient-accent);
-            color: white;
-        }
-
-        .btn-accent:hover {
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
-            transform: translateY(-1px);
-        }
-
-        /* Disabled States */
-        .step-card.disabled {
+        /* Functional States */
+        .disabled {
             opacity: 0.5;
             pointer-events: none;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Data Preview Table */
-        .data-preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8125rem;
-            margin-top: 12px;
-        }
-
-        .data-preview-table th,
-        .data-preview-table td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .data-preview-table th {
-            background: var(--bg-dark);
-            color: var(--text-muted);
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-
-        .data-preview-table td {
-            color: var(--text-secondary);
-        }
-
-        .data-preview-scroll {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
             padding: 16px 24px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             z-index: 1000;
             display: none;
-            animation: slideIn 0.3s ease;
+            font-weight: 700;
+            color: #475569;
+            transform: translateY(100%);
+            animation: slideIn 0.3s ease forwards;
         }
 
         .toast.show {
@@ -388,334 +128,304 @@
         }
 
         .toast.error {
-            border-color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
+            border-color: #FF7043;
+            background: #FFF3E0;
+            color: #d84315;
         }
 
         .toast.success {
-            border-color: var(--accent);
-            background: rgba(16, 185, 129, 0.1);
+            border-color: #4DD0E1;
+            background: #E0F7FA;
+            color: #00838F;
         }
 
         @keyframes slideIn {
             from {
-                transform: translateX(100%);
+                transform: translateY(100%);
                 opacity: 0;
             }
 
             to {
-                transform: translateX(0);
+                transform: translateY(0);
                 opacity: 1;
             }
         }
 
-        /* Responsive — Tablet */
-        @media (max-width: 768px) {
-            .bulk-main {
-                padding: 24px 0;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
-
-            .page-subtitle {
-                font-size: 0.875rem;
-                margin-bottom: 24px;
-            }
-
-            .step-card {
-                padding: 20px;
-            }
-
-            .step-content {
-                padding-left: 0;
-            }
-
-            .template-select {
-                max-width: 100%;
-            }
-
-            .data-upload-zone {
-                padding: 24px 16px;
-            }
-
-            .mapping-header,
-            .mapping-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .mapping-arrow {
-                display: none;
-            }
-
-            .mapping-header span:last-child {
-                text-align: left;
-            }
-
-            .preview-frame {
-                height: 280px;
-            }
-
-            .action-bar {
-                flex-direction: column;
-            }
-
-            .btn-large {
-                width: 100%;
-            }
-
-            .data-preview-table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .toast {
-                left: 16px;
-                right: 16px;
-                bottom: 16px;
-            }
+        /* Drag & Drop States */
+        .dragover {
+            background-color: rgba(255, 171, 145, 0.3);
+            border-color: #FF7043;
         }
 
-        /* Responsive — Mobile */
-        @media (max-width: 480px) {
-            .bulk-container {
-                padding: 0 12px;
-            }
+        .has-file {
+            background-color: rgba(224, 247, 250, 0.3);
+            border-color: #4DD0E1;
+        }
 
-            .page-title {
-                font-size: 1.25rem;
-            }
+        /* Data Preview Table */
+        .data-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            margin-top: 12px;
+        }
 
-            .step-card {
-                padding: 16px;
-            }
+        .data-preview-table th,
+        .data-preview-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 2px solid #f1f5f9;
+        }
 
-            .step-header {
-                gap: 10px;
-                margin-bottom: 14px;
-            }
+        .data-preview-table th {
+            color: #94a3b8;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
 
-            .step-number {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8125rem;
-            }
+        .data-preview-table td {
+            color: #475569;
+            font-weight: 600;
+        }
 
-            .step-header h3 {
-                font-size: 1rem;
-            }
-
-            .data-upload-zone {
-                padding: 20px 12px;
-            }
-
-            .upload-icon-small {
-                width: 40px;
-                height: 40px;
-            }
-
-            .data-key {
-                font-size: 0.75rem;
-                padding: 4px 8px;
-            }
-
-            .preview-frame {
-                height: 220px;
-            }
-
-            .progress-container {
-                padding: 16px;
-            }
+        .data-preview-scroll {
+            max-height: 200px;
+            overflow-y: auto;
         }
     </style>
 </head>
 
-<body class="app">
+<body class="antialiased min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <a href="/" class="logo">
-                <div class="logo-icon">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                </div>
-                PDF Form Filler
+    <header
+        class="bg-white/80 backdrop-blur-md border-b-2 border-slate-100 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+        <a href="/" class="flex items-center gap-3 group cursor-pointer hover:opacity-90">
+            <div
+                class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-lg group-hover:rotate-12 transition-transform">
+                <span class="material-symbols-outlined text-white text-2xl">description</span>
+            </div>
+            <span
+                class="font-bold text-2xl tracking-tight text-vibrant-turquoise hover:text-vibrant-coral transition-colors">PDF
+                Form Filler</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="/app.html"
+                class="text-slate-500 font-bold hover:text-vibrant-coral transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined">arrow_back</span> Back to Editor
             </a>
-            <button class="mobile-menu-btn" onclick="document.querySelector('.nav').classList.toggle('open')"
-                aria-label="Menu">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+            <div class="h-6 w-px bg-slate-200 mx-2 hidden sm:block"></div>
+            <button
+                class="hidden sm:flex bg-vibrant-coral text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#D84315] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#D84315] active:translate-y-1 active:shadow-none transition-all items-center gap-2">
+                <span class="material-symbols-outlined">help</span> Help
             </button>
-            <nav class="nav">
-                <a href="/app.html" class="nav-link">← Back to App</a>
-                <span class="nav-badge accent">Bulk Fill</span>
-            </nav>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="bulk-main">
-        <div class="bulk-container">
-            <h1 class="page-title">
-                <span class="gradient-text">Bulk Fill PDFs</span>
+    <main class="flex-1 max-w-4xl mx-auto w-full px-6 py-12">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-black text-slate-800 mb-4">
+                Vibrant <span
+                    class="text-vibrant-turquoise underline decoration-vibrant-coral decoration-8 underline-offset-8">Bulk
+                    Fill</span> Workflow
             </h1>
-            <p class="page-subtitle">Auto-fill multiple PDFs from CSV or JSON data in seconds</p>
+            <p class="text-slate-600 text-lg font-medium">Auto-fill multiple PDFs from your data in seconds! 🌈✨</p>
+        </div>
 
-            <div class="steps-container">
-                <!-- Step 1: Select Template -->
-                <div class="step-card" id="step1">
-                    <div class="step-header">
-                        <div class="step-number">1</div>
-                        <h3>Select Template</h3>
-                    </div>
-                    <div class="step-content">
-                        <select class="template-select" id="templateSelect">
+        <div class="space-y-8 relative">
+            <!-- Connecting Line -->
+            <div class="absolute left-[24px] top-12 bottom-12 w-1 bg-white/50 -z-10 rounded-full hidden md:block"></div>
+
+            <!-- Step 1: Select Template -->
+            <div class="glass-card p-8 rounded-glass flex flex-col md:flex-row items-start gap-6" id="step1">
+                <div class="step-bubble bg-vibrant-turquoise">1</div>
+                <div class="flex-1 w-full">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Select Template</h3>
+                    <div class="relative group">
+                        <select id="templateSelect"
+                            class="w-full appearance-none bg-white border-4 border-soft-turquoise rounded-3xl p-5 pr-12 text-lg font-bold text-slate-700 focus:border-vibrant-turquoise focus:ring-0 transition-all cursor-pointer">
                             <option value="">-- Select a template --</option>
                         </select>
-                        <p class="template-info" id="templateInfo">Choose a template with saved field definitions</p>
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <span class="material-symbols-outlined text-vibrant-turquoise text-3xl">expand_more</span>
+                        </div>
                     </div>
+                    <p id="templateInfo" class="mt-3 text-sm text-slate-500 font-medium ml-2">Choose a template with
+                        saved field definitions</p>
                 </div>
+            </div>
 
-                <!-- Step 2: Upload Data -->
-                <div class="step-card disabled" id="step2">
-                    <div class="step-header">
-                        <div class="step-number">2</div>
-                        <h3>Upload Data (CSV or JSON)</h3>
-                    </div>
-                    <div class="step-content">
-                        <div class="data-upload-zone" id="dataUploadZone">
-                            <div class="upload-icon-small">
-                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                </svg>
-                            </div>
-                            <p><strong>Drop CSV or JSON file here</strong></p>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">or click to browse</p>
-                            <input type="file" id="dataFileInput" accept=".csv,.json" hidden>
+            <!-- Step 2: Upload Data -->
+            <div class="glass-card p-8 rounded-glass flex flex-col md:flex-row items-start gap-6 border-l-8 border-vibrant-coral disabled"
+                id="step2">
+                <div class="step-bubble bg-vibrant-coral">2</div>
+                <div class="flex-1 w-full">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Upload Data (CSV or JSON)</h3>
+
+                    <div id="dataUploadZone"
+                        class="border-4 border-dashed border-soft-coral bg-white/50 rounded-3xl p-12 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-soft-coral/20 transition-all">
+                        <div
+                            class="w-24 h-24 bg-soft-coral rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-5xl text-white">cloud_upload</span>
                         </div>
-                        <div class="file-preview hidden" id="filePreview">
-                            <div class="file-preview-header">
-                                <span class="file-name" id="fileName"></span>
-                                <span class="row-count" id="rowCount"></span>
-                            </div>
-                            <div class="data-preview-scroll">
-                                <table class="data-preview-table" id="dataPreviewTable">
-                                    <thead></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-slate-700">Drop your CSV or JSON here!</p>
+                            <p class="text-slate-500 font-medium">or click to browse your computer</p>
+                        </div>
+                        <input type="file" id="dataFileInput" accept=".csv,.json" class="hidden">
+                    </div>
+
+                    <!-- File Preview Details -->
+                    <div id="filePreview" class="hidden mt-6 bg-white/60 p-6 rounded-2xl border-2 border-white">
+                        <div class="flex justify-between items-center mb-4 border-b-2 border-slate-100 pb-2">
+                            <span id="fileName" class="font-black text-vibrant-turquoise text-lg truncate"></span>
+                            <span id="rowCount"
+                                class="font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full text-sm"></span>
+                        </div>
+                        <div class="data-preview-scroll custom-scrollbar">
+                            <table id="dataPreviewTable" class="data-preview-table">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
+
                 </div>
+            </div>
 
-                <!-- Step 3: Map Fields -->
-                <div class="step-card disabled" id="step3">
-                    <div class="step-header">
-                        <div class="step-number">3</div>
-                        <h3>Map Fields</h3>
-                    </div>
-                    <div class="step-content">
-                        <div class="mapping-container" id="mappingContainer">
-                            <div class="mapping-header">
-                                <span>Data Column</span>
-                                <span></span>
-                                <span>PDF Field</span>
-                            </div>
-                            <div id="mappingRows"></div>
+            <!-- Step 3: Map Fields -->
+            <div class="glass-card p-8 rounded-glass flex flex-col md:flex-row items-start gap-6 border-l-8 border-warm-yellow disabled"
+                id="step3">
+                <div class="step-bubble bg-warm-yellow">3</div>
+                <div class="flex-1 w-full">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Map Fields</h3>
+                    <div class="bg-white/40 border-2 border-slate-100 rounded-2xl p-6">
+                        <div
+                            class="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest mb-4 px-2">
+                            <span>Data Column</span>
+                            <span class="hidden md:inline"></span>
+                            <span>PDF Field</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Step 4: Preview -->
-                <div class="step-card disabled" id="step4">
-                    <div class="step-header">
-                        <div class="step-number">4</div>
-                        <h3>Preview First Record</h3>
-                    </div>
-                    <div class="step-content">
-                        <button class="btn btn-secondary" id="previewBtn">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Generate Preview
-                        </button>
-                        <div class="preview-panel hidden" id="previewPanel" style="margin-top: 16px;">
-                            <iframe class="preview-frame" id="previewFrame"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 5: Generate -->
-                <div class="step-card disabled" id="step5">
-                    <div class="step-header">
-                        <div class="step-number">5</div>
-                        <h3>Generate & Download</h3>
-                    </div>
-                    <div class="step-content">
-                        <div class="progress-container hidden" id="progressContainer">
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
-                            </div>
-                            <p class="progress-status" id="progressStatus">Preparing...</p>
-                        </div>
-                        <div class="action-bar" id="actionBar">
-                            <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
-                                <input type="checkbox" id="mergeCheckbox" style="accent-color: var(--primary);">
-                                Merge into single PDF
-                            </label>
-                            <button class="btn btn-primary btn-large" id="generateBtn">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Generate All PDFs
-                            </button>
-                            <button class="btn btn-accent btn-large hidden" id="downloadBtn">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download
-                            </button>
-                            <button class="btn btn-secondary btn-large hidden" id="printBtn">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                </svg>
-                                Print All
-                            </button>
+                        <div id="mappingRows" class="space-y-3">
+                            <!-- Mapping Rows injected here by JS -->
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Step 4: Preview -->
+            <div class="glass-card p-8 rounded-glass flex flex-col md:flex-row items-start gap-6 border-l-8 border-slate-800 disabled"
+                id="step4">
+                <div class="step-bubble bg-slate-800">4</div>
+                <div class="flex-1 w-full">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Preview First Record</h3>
+
+                    <button id="previewBtn"
+                        class="w-full md:w-auto bg-white border-4 border-slate-800 text-slate-800 px-8 py-4 rounded-3xl font-black text-lg hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center gap-3 shadow-md hover:shadow-xl">
+                        <span class="material-symbols-outlined">visibility</span>
+                        Generate Preview
+                    </button>
+                    <p class="mt-3 text-sm text-slate-500 font-medium ml-2 italic">Make sure everything aligns perfectly
+                        before the big run!</p>
+
+                    <div id="previewPanel" class="hidden mt-6 bg-white p-2 rounded-2xl border-4 border-slate-100">
+                        <iframe id="previewFrame" class="w-full h-[500px] rounded-xl bg-slate-50"></iframe>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Step 5: Generate -->
+            <div class="glass-card p-10 rounded-glass flex flex-col md:flex-row items-start gap-6 bg-vibrant-turquoise/10 border-vibrant-turquoise border-2 disabled"
+                id="step5">
+                <div class="step-bubble bg-vibrant-turquoise">5</div>
+                <div class="flex-1 w-full">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6">Generate & Download</h3>
+
+                    <!-- Progress Container -->
+                    <div id="progressContainer"
+                        class="hidden mb-8 bg-white p-6 rounded-2xl border-2 border-soft-turquoise">
+                        <div class="h-6 bg-slate-100 rounded-full overflow-hidden mb-3">
+                            <div id="progressBar"
+                                class="h-full bg-vibrant-turquoise flex items-center justify-center text-xs font-black text-white transition-all duration-300"
+                                style="width: 0%">0%</div>
+                        </div>
+                        <p id="progressStatus" class="font-bold text-slate-500 text-center">Preparing magic...</p>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center gap-6" id="actionBar">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" id="mergeCheckbox"
+                                class="w-8 h-8 rounded-lg border-4 border-slate-300 text-vibrant-turquoise focus:ring-vibrant-turquoise focus:ring-offset-0 cursor-pointer transition-all hover:border-vibrant-turquoise checked:border-vibrant-turquoise">
+                            <span
+                                class="font-bold text-slate-700 select-none group-hover:text-vibrant-turquoise transition-colors">Merge
+                                into single PDF</span>
+                        </label>
+
+                        <button id="generateBtn"
+                            class="flex-1 w-full bg-vibrant-turquoise text-white px-6 py-2 rounded-[1.5rem] font-black text-lg shadow-[0_4px_0_0_#00ACC1] hover:translate-y-1 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="material-symbols-outlined text-2xl">rocket_launch</span>
+                            Generate All PDFs
+                        </button>
+
+                        <button id="downloadBtn"
+                            class="hidden flex-1 w-full bg-vibrant-coral text-white px-6 py-2 rounded-[1.5rem] font-black text-lg shadow-[0_4px_0_0_#D84315] hover:translate-y-1 hover:shadow-[0_2px_0_0_#D84315] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-2xl">download</span>
+                            Download PDFs
+                        </button>
+
+                        <button id="printBtn"
+                            class="hidden bg-slate-800 text-white px-8 py-2 rounded-[1.5rem] font-black text-lg shadow-[0_4px_0_0_#334155] hover:translate-y-1 hover:shadow-[0_2px_0_0_#334155] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3">
+                            <span class="material-symbols-outlined text-xl">print</span>Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 text-center">
+            <div
+                class="inline-flex items-center gap-2 bg-white/50 backdrop-blur-sm px-6 py-3 rounded-full border-2 border-slate-100 shadow-sm">
+                <span class="material-symbols-outlined text-vibrant-coral">auto_awesome</span>
+                <p class="text-sm font-bold text-slate-600">Pro Tip: Large datasets might take a minute to sprinkle the
+                    magic! ✨</p>
+            </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>PDF Form Filler — 100% Free, No Login Required</p>
+    <!-- New Style Footer -->
+    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
+                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                    </div>
+                    <span class="font-bold text-xl">PDF Form Filler</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                    Server Status: Having a Great Day
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Application Logic -->
     <script type="module">
         import { checkAuth, hasBulkFillAccess } from '/js/auth.js';
 
@@ -731,11 +441,15 @@
         });
     </script>
     <script type="module" src="/js/bulk-fill.js"></script>
+
+    <!-- Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
         }
     </script>
+
+    <!-- Global Styling overrides removed -->
 </body>
 
 </html>

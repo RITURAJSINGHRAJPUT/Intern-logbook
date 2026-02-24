@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>User Profile - PDF Form Filler</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4DD0E1">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#E0F7FA',
+                        'vibrant-turquoise': '#4DD0E1',
+                        'soft-coral': '#FFAB91',
+                        'vibrant-coral': '#FF7043',
+                        'sunny-yellow': '#FFF59D',
+                        'warm-yellow': '#FBC02D',
+                        'friendly-gray': '#546E7A',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'blob': '30% 70% 70% 30% / 30% 30% 70% 70%',
+                        'super-rounded': '2.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #FCFDFF;
+            color: #546E7A;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .hand-drawn-border {
+            border: 3px solid currentColor;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+        }
+
+        /* Profile card dynamic styling */
+        .profile-card {
+            background-color: white;
+            border-radius: 2.5rem;
+            border: 2px solid #E0F7FA;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(77, 208, 225, 0.2);
+            border-top-color: #4DD0E1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased h-screen flex flex-col">
+    <!-- Auth Check -->
+    <script type="module">
+        import { checkAuth } from './js/auth.js';
+        checkAuth(true); // Redirect to login if not authenticated
+    </script>
+
+    <!-- Navigation -->
+    <nav class="py-6 px-4 sm:px-8 max-w-7xl mx-auto w-full flex justify-between items-center relative z-20">
+        <a href="/app.html" class="flex items-center gap-3 group transition-transform hover:-translate-x-1">
+            <div
+                class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-sm group-hover:-rotate-3 transition-all">
+                <span class="material-symbols-outlined text-white text-2xl">arrow_back</span>
+            </div>
+            <span class="font-bold text-xl tracking-tight text-vibrant-turquoise hidden sm:inline">Back to
+                Dashboard</span>
+        </a>
+        <div class="flex items-center gap-4 sm:gap-6">
+            <a href="#" id="loginBtn"
+                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all">
+                Loading...
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4 relative overflow-hidden">
+        <!-- Playful Background Blobs -->
+        <div
+            class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-soft-turquoise rounded-full opacity-50 -z-10 blur-3xl">
+        </div>
+        <div class="absolute bottom-10 left-10 w-48 h-48 bg-soft-coral rounded-full opacity-20 -z-10 blur-3xl"></div>
+
+        <div class="w-full max-w-2xl relative z-10">
+            <div class="profile-card p-6 sm:p-10 relative overflow-hidden">
+                <!-- Header Decorative Element -->
+                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-soft-turquoise to-white -z-0"></div>
+
+                <!-- Profile Content -->
+                <div class="relative z-10">
+                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
+                        <!-- Avatar -->
+                        <div class="relative">
+                            <div class="w-24 h-24 sm:w-32 sm:h-32 bg-vibrant-turquoise text-white rounded-[2rem] flex items-center justify-center text-4xl sm:text-5xl font-bold shadow-lg border-4 border-white rotate-3"
+                                id="profileInitials">
+                                --
+                            </div>
+                            <div class="absolute -bottom-2 -right-2 bg-sunny-yellow text-warm-yellow hand-drawn-border px-3 py-1 text-xs font-bold transform -rotate-6 shadow-sm hidden"
+                                id="roleBadge">
+                                User
+                            </div>
+                        </div>
+
+                        <!-- Main Info -->
+                        <div class="text-center sm:text-left mt-4 sm:mt-8 flex-1">
+                            <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-1" id="displayEmail">Loading...
+                            </h1>
+                            <p class="text-slate-500 font-medium" id="displayJoinDate">Member since...</p>
+                        </div>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <form id="profileForm" class="space-y-6">
+                        <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                            <h2 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-vibrant-turquoise">manage_accounts</span>
+                                Personal Details
+                            </h2>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Full
+                                        Name</label>
+                                    <input type="text" id="inputName" placeholder="E.g. Jane Doe"
+                                        class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-2xl focus:border-vibrant-turquoise focus:bg-white transition-all shadow-sm">
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Email</label>
+                                        <input type="email" id="inputEmail" disabled
+                                            class="w-full bg-slate-100 border-2 border-slate-200 outline-none text-slate-500 font-bold px-4 py-3 rounded-2xl cursor-not-allowed opacity-80">
+                                        <p class="text-xs text-slate-400 mt-1 ml-2">Email cannot be changed directly.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Company
+                                            / Organization</label>
+                                        <input type="text" id="inputCompany" placeholder="Optional"
+                                            class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-2xl focus:border-vibrant-turquoise focus:bg-white transition-all shadow-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-4">
+                            <button type="submit" id="saveProfileBtn"
+                                class="relative overflow-hidden bg-vibrant-turquoise hover:bg-[#00ACC1] text-white font-bold py-3 px-8 rounded-full shadow-[0px_8px_0px_0px_#0097A7] transform transition-all hover:translate-y-[4px] hover:shadow-[0px_4px_0px_0px_#0097A7] active:translate-y-[8px] active:shadow-none flex items-center gap-2">
+                                <span class="material-symbols-outlined" id="saveIcon">save</span>
+                                <span id="saveText">Save Profile</span>
+                                <div id="saveSpinner" class="spinner w-5 h-5 border-2 hidden"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer"></div>
+
+    <script type="module" src="js/profile.js"></script>
+</body>
+
+</html>

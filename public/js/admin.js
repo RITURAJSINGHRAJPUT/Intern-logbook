@@ -1,6 +1,5 @@
 /**
- * Admin Panel Logic
- * Manages user listing, approval, template assignment
+ * Admin Panel Logic (Sidebar Redesign)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const filterSelect = document.getElementById('filterSelect');
     const paginationEl = document.getElementById('pagination');
+    const paginationInfo = document.getElementById('paginationInfo');
     const templateModal = document.getElementById('templateModal');
 
     let currentPage = 1;
     let allTemplates = [];
     let selectedUserUid = null;
 
-    // Wait for Firebase auth to be ready, then verify admin
     setTimeout(initAdmin, 1500);
 
     async function initAdmin() {
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Check admin status by hitting admin stats endpoint
             const res = await fetch('/api/admin/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -38,22 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (!res.ok) {
-                throw new Error('Failed to verify admin status');
-            }
+            if (!res.ok) throw new Error('Failed to verify admin status');
 
-            // Admin verified — show panel
             adminLoading.style.display = 'none';
             adminPanel.style.display = 'block';
 
-            // Load initial data
             await Promise.all([
                 loadStats(),
                 loadUsers(),
                 loadAllTemplates()
             ]);
 
-            // Setup event listeners
             setupListeners();
 
         } catch (error) {
@@ -64,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showAccessDenied() {
         adminLoading.style.display = 'none';
-        accessDenied.style.display = 'block';
+        accessDenied.style.display = 'flex';
         setTimeout(() => {
             window.location.replace('/app.html');
         }, 2500);
@@ -99,10 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const headers = await getAuthHeaders();
             const search = searchInput.value.trim();
             const filter = filterSelect.value;
+            const limit = 4; // Design shows 1-4 of 4
 
             const params = new URLSearchParams({
                 page: currentPage,
-                limit: 10,
+                limit: limit,
                 search,
                 filter
             });
@@ -125,71 +119,97 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!users || users.length === 0) {
             usersTableBody.innerHTML = `
                 <tr><td colspan="6" class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="8.5" cy="7" r="4"/>
-                        <line x1="20" y1="8" x2="20" y2="14"/>
-                        <line x1="23" y1="11" x2="17" y2="11"/>
-                    </svg>
-                    <p>No users found</p>
+                    <p>No users found matching criteria.</p>
                 </td></tr>`;
             return;
         }
 
-        usersTableBody.innerHTML = users.map(user => {
-            const statusBadge = !user.active
-                ? '<span class="badge badge-inactive">Inactive</span>'
-                : user.approved
-                    ? '<span class="badge badge-approved">Approved</span>'
-                    : '<span class="badge badge-pending">Pending</span>';
+        const colors = ['purple', 'blue', 'yellow'];
 
-            const roleBadge = user.role === 'admin'
-                ? ' <span class="badge badge-admin">Admin</span>'
-                : '';
+        usersTableBody.innerHTML = users.map((user, idx) => {
+            const initial = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+            const colorClass = colors[idx % colors.length];
 
-            const templates = user.allowedTemplates.length > 0
-                ? user.allowedTemplates.map(t =>
-                    `<span class="template-tag" title="${t}">${t.replace('.pdf', '')}</span>`
-                ).join('')
-                : '<span class="template-tag inactive">None</span>';
+            const statusAttr = user.approved
+                ? '<span class="status-pill approved">Approved</span>'
+                : '<span class="status-pill pending">Pending</span>';
+
+            const adminBadge = user.role === 'admin' ? '<span class="admin-tag">Admin</span>' : '';
+
+            let templatesHtml = '<span class="template-pill more" style="font-weight:normal;opacity:0.5;font-style:italic">No templates assigned</span>';
+            if (user.allowedTemplates && user.allowedTemplates.length > 0) {
+                if (user.role === 'admin' && user.allowedTemplates.length > 2) {
+                    templatesHtml = '<span class="template-pill more">All Forms</span>';
+                } else {
+                    const firstTemp = user.allowedTemplates[0].replace('.pdf', '');
+                    templatesHtml = `<span class="template-pill">${firstTemp}</span>`;
+                    if (user.allowedTemplates.length > 1) {
+                        templatesHtml += `<br><span class="template-pill more">+${user.allowedTemplates.length - 1} more</span>`;
+                    }
+                }
+            }
+
+            const bulkFillIcon = user.allowBulkFill
+                ? '<div class="bulk-status allowed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Allowed</div>'
+                : '<div class="bulk-status denied"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Denied</div>';
 
             const joinedDate = user.createdAt
                 ? new Date(user.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
                 : '-';
 
-            const lastLogin = user.lastLogin
-                ? new Date(user.lastLogin).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
-                : 'Never';
+            let lastActivityDate = 'Never';
+            let lastActivityTime = '';
+            if (user.lastLogin) {
+                const dateObj = new Date(user.lastLogin);
+                lastActivityDate = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                lastActivityTime = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            const actions = user.approved
+                ? `
+                    <button class="action-icon" title="View" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates || []).replace(/"/g, '&quot;')})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                    <button class="action-icon warning" title="Toggle Bulk Fill" onclick="adminActions.toggleBulkFill('${user.uid}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </button>
+                    <button class="action-icon danger" title="Deactivate" onclick="adminActions.toggleActive('${user.uid}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  `
+                : `
+                    <button class="approve-btn" onclick="adminActions.approve('${user.uid}')">Approve</button>
+                    <button class="action-icon danger" style="padding:6px;margin-left:8px;" title="Reject" onclick="adminActions.reject('${user.uid}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  `;
 
             return `
                 <tr>
                     <td>
-                        <div class="user-email">${user.email}</div>
-                        ${user.displayName ? `<div class="user-name">${user.displayName}</div>` : ''}
+                        <div class="user-cell">
+                            <div class="avatar-circle ${colorClass}">${initial}</div>
+                            <div class="user-info">
+                                <div class="user-name-wrapper">
+                                    <span class="user-name">${user.displayName || user.email.split('@')[0]}</span>
+                                    ${adminBadge}
+                                </div>
+                                <span class="user-email">${user.email}</span>
+                            </div>
+                        </div>
                     </td>
-                    <td>${statusBadge}${roleBadge}</td>
-                    <td><div class="template-tags">${templates}</div></td>
+                    <td>${statusAttr}</td>
+                    <td>${templatesHtml}</td>
+                    <td>${bulkFillIcon}</td>
                     <td>
-                        <button class="badge action-btn ${user.allowBulkFill ? 'badge-approved' : 'badge-inactive'}" 
-                                onclick="adminActions.toggleBulkFill('${user.uid}')" 
-                                style="border:none;cursor:pointer;padding:4px 8px;font-size:0.75rem">
-                            ${user.allowBulkFill ? '✅ Allowed' : '⛔ Denied'}
-                        </button>
+                        <div class="date-cell">
+                            <span class="date-main">${lastActivityDate}</span>
+                            <span class="date-sub">${lastActivityTime}</span>
+                        </div>
                     </td>
-                    <td style="white-space:nowrap;font-size:0.8rem;color:var(--text-muted)">${joinedDate}</td>
-                    <td style="white-space:nowrap;font-size:0.8rem;color:var(--text-muted)">${lastLogin}</td>
-                    <td>
-                        <div class="action-btns">
-                            ${!user.approved
-                    ? `<button class="action-btn approve" onclick="adminActions.approve('${user.uid}')">✓ Approve</button>`
-                    : `<button class="action-btn reject" onclick="adminActions.reject('${user.uid}')">✗ Reject</button>`
-                }
-                            <button class="action-btn" onclick="adminActions.toggleActive('${user.uid}')">
-                                ${user.active !== false ? '⏸ Deactivate' : '▶ Activate'}
-                            </button>
-                            <button class="action-btn" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates).replace(/"/g, '&quot;')})">
-                                📄 Templates
-                            </button>
+                    <td class="actions-col">
+                        <div class="action-row">
+                            ${actions}
                         </div>
                     </td>
                 </tr>`;
@@ -197,27 +217,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPagination(pagination) {
-        if (!pagination || pagination.totalPages <= 1) {
-            paginationEl.innerHTML = '';
+        if (!pagination) return;
+
+        const start = (pagination.page - 1) * pagination.limit + 1;
+        const end = Math.min(start + pagination.limit - 1, pagination.totalUsers);
+
+        if (pagination.totalUsers === 0) {
+            paginationInfo.innerHTML = `Showing 0 users`;
+        } else {
+            paginationInfo.innerHTML = `Showing <span>${start}-${end}</span> of <span>${pagination.totalUsers}</span> users`;
+        }
+
+        if (pagination.totalPages <= 1) {
+            paginationEl.innerHTML = `
+                <button class="page-btn" disabled>&lsaquo;</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled>&rsaquo;</button>
+            `;
             return;
         }
 
         let html = '';
-        html += `<button class="pagination-btn" onclick="adminActions.goToPage(${pagination.page - 1})" ${pagination.page <= 1 ? 'disabled' : ''}>← Prev</button>`;
+        html += `<button class="page-btn" onclick="adminActions.goToPage(${pagination.page - 1})" ${pagination.page <= 1 ? 'disabled' : ''}>&lsaquo;</button>`;
 
         for (let i = 1; i <= pagination.totalPages; i++) {
             if (i === pagination.page) {
-                html += `<button class="pagination-btn active">${i}</button>`;
-            } else if (Math.abs(i - pagination.page) <= 2 || i === 1 || i === pagination.totalPages) {
-                html += `<button class="pagination-btn" onclick="adminActions.goToPage(${i})">${i}</button>`;
-            } else if (Math.abs(i - pagination.page) === 3) {
-                html += `<span class="pagination-info">...</span>`;
+                html += `<button class="page-btn active">${i}</button>`;
+            } else {
+                html += `<button class="page-btn" onclick="adminActions.goToPage(${i})">${i}</button>`;
             }
         }
 
-        html += `<button class="pagination-btn" onclick="adminActions.goToPage(${pagination.page + 1})" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>Next →</button>`;
-        html += `<span class="pagination-info">${pagination.totalUsers} users</span>`;
-
+        html += `<button class="page-btn" onclick="adminActions.goToPage(${pagination.page + 1})" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>&rsaquo;</button>`;
         paginationEl.innerHTML = html;
     }
 
@@ -301,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('modalSave').addEventListener('click', saveTemplates);
 
-        // Close modal on overlay click
         templateModal.addEventListener('click', (e) => {
             if (e.target === templateModal) {
                 templateModal.classList.add('hidden');
@@ -309,51 +339,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === Global Actions (for onclick handlers) ===
+    // === Global Actions ===
     window.adminActions = {
         approve: async (uid) => {
             try {
                 const headers = await getAuthHeaders();
-                const res = await fetch(`/api/admin/users/${uid}/approve`, {
-                    method: 'POST',
-                    headers
-                });
+                const res = await fetch(`/api/admin/users/${uid}/approve`, { method: 'POST', headers });
                 if (!res.ok) throw new Error('Failed');
                 await Promise.all([loadStats(), loadUsers()]);
                 showToast('User approved');
-            } catch (error) {
-                showToast('Failed to approve user', 'error');
-            }
+            } catch (error) { showToast('Failed to approve', 'error'); }
         },
 
         reject: async (uid) => {
             try {
+                if (!confirm("Are you sure you want to reject/delete this user?")) return;
                 const headers = await getAuthHeaders();
-                const res = await fetch(`/api/admin/users/${uid}/reject`, {
-                    method: 'POST',
-                    headers
-                });
+                const res = await fetch(`/api/admin/users/${uid}/reject`, { method: 'POST', headers });
                 if (!res.ok) throw new Error('Failed');
                 await Promise.all([loadStats(), loadUsers()]);
                 showToast('User rejected');
-            } catch (error) {
-                showToast('Failed to reject user', 'error');
-            }
+            } catch (error) { showToast('Failed to reject', 'error'); }
         },
 
         toggleActive: async (uid) => {
             try {
                 const headers = await getAuthHeaders();
-                const res = await fetch(`/api/admin/users/${uid}/toggle-active`, {
-                    method: 'POST',
-                    headers
-                });
+                const res = await fetch(`/api/admin/users/${uid}/toggle-active`, { method: 'POST', headers });
                 if (!res.ok) throw new Error('Failed');
                 await loadUsers();
                 showToast('User status updated');
-            } catch (error) {
-                showToast('Failed to update user', 'error');
-            }
+            } catch (error) { showToast('Failed to update user', 'error'); }
         },
 
         assignTemplates: (uid, currentTemplates) => {
@@ -363,16 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBulkFill: async (uid) => {
             try {
                 const headers = await getAuthHeaders();
-                const res = await fetch(`/api/admin/users/${uid}/toggle-bulk`, {
-                    method: 'POST',
-                    headers
-                });
+                const res = await fetch(`/api/admin/users/${uid}/toggle-bulk`, { method: 'POST', headers });
                 if (!res.ok) throw new Error('Failed');
                 await loadUsers();
                 showToast('Bulk Fill access updated');
-            } catch (error) {
-                showToast('Failed to update Bulk Fill access', 'error');
-            }
+            } catch (error) { showToast('Failed to update Bulk Fill', 'error'); }
         },
 
         goToPage: (page) => {
@@ -381,7 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // === Toast Helper ===
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.textContent = message;
@@ -392,14 +402,13 @@ document.addEventListener('DOMContentLoaded', () => {
             bottom: 24px;
             right: 24px;
             padding: 14px 24px;
-            background: var(--bg-card);
-            border-radius: 10px;
+            background: #1c2030;
+            border-radius: 8px;
             border-left: 4px solid ${borderColor};
             box-shadow: 0 10px 15px rgba(0,0,0,0.3);
             z-index: 2000;
             color: white;
-            font-size: 0.9rem;
-            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
             animation: slideIn 0.3s ease;
         `;
 

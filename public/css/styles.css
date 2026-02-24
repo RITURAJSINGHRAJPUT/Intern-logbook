@@ -839,8 +839,10 @@ input:checked+.slider:before {
 .field-overlay {
     position: absolute;
     pointer-events: auto;
-    background: rgba(99, 102, 241, 0.1);
-    border: 2px solid var(--primary);
+    background: rgba(77, 208, 225, 0.15);
+    /* Soft turquoise */
+    border: 2px solid #4DD0E1;
+    /* Vibrant turquoise */
     border-radius: 4px;
     cursor: move;
     transition: box-shadow var(--transition-fast);
@@ -848,11 +850,12 @@ input:checked+.slider:before {
 
 .field-overlay:hover,
 .field-overlay.selected {
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 0 3px rgba(77, 208, 225, 0.3);
 }
 
 .field-overlay.selected {
-    border-color: var(--accent);
+    border-color: #00ACC1;
+    /* Darker vibrant turquoise */
 }
 
 .field-overlay input,
@@ -892,8 +895,10 @@ input:checked+.slider:before {
     align-items: center;
     gap: 2px;
     padding: 3px 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: #f8fafc;
+    /* Slate 50 */
+    border-bottom: 2px solid #e2e8f0;
+    /* Slate 200 */
     flex-shrink: 0;
 }
 
@@ -901,10 +906,11 @@ input:checked+.slider:before {
     width: 22px;
     height: 22px;
     border: none;
-    background: rgba(255, 255, 255, 0.2);
+    background: transparent;
     border-radius: 3px;
     cursor: pointer;
-    color: white;
+    color: #475569;
+    /* Slate 600 */
     font-size: 12px;
     display: flex;
     align-items: center;
@@ -913,17 +919,22 @@ input:checked+.slider:before {
 }
 
 .rich-editor-toolbar .toolbar-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
+    background: #e2e8f0;
+    /* Slate 200 */
+    color: #0f172a;
+    /* Slate 900 */
 }
 
 .rich-editor-toolbar .toolbar-btn:active {
-    background: rgba(255, 255, 255, 0.6);
+    background: #cbd5e1;
+    /* Slate 300 */
 }
 
 .rich-editor-toolbar .toolbar-divider {
     width: 1px;
     height: 16px;
-    background: rgba(255, 255, 255, 0.3);
+    background: #cbd5e1;
+    /* Slate 300 */
     margin: 0 4px;
 }
 

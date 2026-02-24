@@ -11,120 +11,245 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#1e1e2d">
 </head>
 
-<body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="container">
-                <a href="/app.html" class="logo">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="16" y1="13" x2="8" y2="13" />
-                            <line x1="16" y1="17" x2="8" y2="17" />
-                            <polyline points="10 9 9 9 8 9" />
-                        </svg>
-                    </div>
-                    <span>PDF Form Filler</span>
-                </a>
-                <nav class="nav">
-                    <span class="nav-badge" style="background:var(--gradient-primary);color:white">Admin Panel</span>
-                    <nav class="nav-links">
-                        <a href="/app.html" class="nav-link">← Dashboard</a>
-                        <a href="#" id="loginBtn" class="nav-link">Loading...</a>
-                    </nav>
-                </nav>
+<body class="admin-body">
+    <!-- Main App Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                </div>
+                <span class="brand-name">FormFiller</span>
             </div>
-        </header>
 
-        <!-- Admin Content -->
-        <div class="admin-content" id="adminContent">
+            <nav class="sidebar-nav">
+                <a href="/app.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    User Management
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="#" class="nav-item logout-nav" id="sidebarLogout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <h1 class="page-title">User Management</h1>
+                <div class="header-right">
+                    <button class="icon-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </button>
+                    <div class="profile-block">
+                        <div class="profile-text">
+                            <span class="profile-role">Admin Panel</span>
+                            <span class="profile-sub">Super Admin</span>
+                        </div>
+                        <div class="profile-avatar">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
             <!-- Loading State -->
             <div class="admin-loading" id="adminLoading">
                 <div class="spinner"></div>
-                <p>Verifying admin access...</p>
+                <p>Loading admin panel...</p>
             </div>
 
-            <!-- Admin Panel (hidden until verified) -->
-            <div id="adminPanel" style="display:none">
-                <h1 class="admin-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                        <path d="M2 17l10 5 10-5" />
-                        <path d="M2 12l10 5 10-5" />
-                    </svg>
-                    User Management
-                </h1>
+            <!-- Dashboard Content -->
+            <div class="content-body" id="adminPanel" style="display:none">
+                <!-- Data Cards -->
+                <div class="data-cards">
+                    <!-- Total Users -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-info">
+                                <span class="card-label">Total Users</span>
+                                <h2 class="card-value" id="statTotal">-</h2>
+                            </div>
+                            <div class="card-icon primary-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-footer success-text">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                class="trend-icon">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                            <span>12% increase from last month</span>
+                        </div>
+                    </div>
 
-                <!-- Stats Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="statTotal">-</div>
-                        <div class="stat-label">Total Users</div>
+                    <!-- Approved Users -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <div class="card-info">
+                                <span class="card-label">Approved Users</span>
+                                <h2 class="card-value" id="statApproved" style="color: #10b981;">-</h2>
+                            </div>
+                            <div class="card-icon success-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-footer subdued-text">
+                            <span>75% approval rate</span>
+                        </div>
                     </div>
-                    <div class="stat-card accent">
-                        <div class="stat-value" id="statApproved">-</div>
-                        <div class="stat-label">Approved</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-value" id="statPending">-</div>
-                        <div class="stat-label">Pending</div>
+
+                    <!-- Pending Requests -->
+                    <div class="data-card border-warning">
+                        <div class="card-header">
+                            <div class="card-info">
+                                <span class="card-label">Pending Requests</span>
+                                <h2 class="card-value" id="statPending" style="color: #f59e0b;">-</h2>
+                            </div>
+                            <div class="card-icon warning-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                    </path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                    <circle cx="12" cy="14" r="3"></circle>
+                                    <path d="M12 11v2"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-footer error-text">
+                            <span style="font-weight: 600;">! Requires immediate attention</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Controls -->
-                <div class="admin-controls">
-                    <input type="text" class="search-box" id="searchInput" placeholder="🔍  Search by email or name...">
-                    <select class="filter-select" id="filterSelect">
-                        <option value="all">All Users</option>
-                        <option value="approved">✅ Approved</option>
-                        <option value="pending">⏳ Pending</option>
-                    </select>
-                </div>
+                <!-- Filters & Table Area -->
+                <div class="table-container">
+                    <div class="table-controls">
+                        <div class="search-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                class="search-icon">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" class="table-search" id="searchInput"
+                                placeholder="Search by email or name...">
+                        </div>
+                        <div class="filter-actions">
+                            <select class="table-select" id="filterSelect">
+                                <option value="all">All Users</option>
+                                <option value="approved">Approved</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <button class="icon-btn square">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
 
-                <!-- Users Table -->
-                <div class="users-table-wrapper">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Status</th>
-                                <th>Templates</th>
-                                <th>Bulk Fill</th>
-                                <th>Joined</th>
-                                <th>Last Login</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr>
-                                <td colspan="6" class="empty-state">Loading users...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>USER DETAILS</th>
+                                    <th>STATUS</th>
+                                    <th>TEMPLATES</th>
+                                    <th>BULK FILL</th>
+                                    <th>LAST ACTIVITY</th>
+                                    <th class="actions-col">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
 
-                <!-- Pagination -->
-                <div class="pagination" id="pagination"></div>
+                    <!-- Pagination -->
+                    <div class="table-pagination">
+                        <div class="pagination-info" id="paginationInfo">Showing 0 users</div>
+                        <div class="pagination-controls" id="pagination"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Access Denied -->
             <div id="accessDenied" style="display:none">
-                <div class="empty-state" style="padding:100px 24px">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="width:64px;height:64px;color:#ef4444;margin-bottom:16px">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10" />
                         <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
                     </svg>
-                    <h2 style="color:white;margin-bottom:8px">Access Denied</h2>
-                    <p>You don't have admin privileges. Redirecting to dashboard...</p>
+                    <h2>Access Denied</h2>
+                    <p>You don't have admin privileges.</p>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Template Assignment Modal -->
@@ -136,7 +261,7 @@
             </div>
             <div class="modal-body">
                 <p style="color:var(--text-secondary);margin-bottom:16px;font-size:0.875rem">
-                    Select which templates this user can access. Leave all unchecked to remove access to all templates.
+                    Select which templates this user can access.
                 </p>
                 <div class="template-checkbox-list" id="templateCheckboxList">
                     <!-- Populated dynamically -->
@@ -144,16 +269,22 @@
             </div>
             <div class="modal-footer">
                 <button class="action-btn" id="modalCancel">Cancel</button>
-                <button class="action-btn approve" id="modalSave">Save Changes</button>
+                <button class="action-btn approve" id="modalSave"
+                    style="background:var(--primary);color:white;border:none;">Save Changes</button>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { checkAuth, logout, isAdmin, getIdToken } from './js/auth.js';
+        import { checkAuth, logout } from './js/auth.js';
 
-        // Check auth (redirect to login if not logged in)
         checkAuth(true);
+
+        // Sidebar Logout binding
+        document.getElementById('sidebarLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
     </script>
     <script src="js/admin.js"></script>
 </body>

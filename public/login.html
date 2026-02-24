@@ -2,344 +2,362 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PDF Form Filler</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PDF Form Filler - Welcome Back!</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#00BCD4">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFF9C4',
+                        'warm-yellow': '#FFD54F',
+                        'bright-yellow': '#FFEE58',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'super-rounded': '3rem',
+                    },
+                },
+            },
+        };
+    </script>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            /* Prevent scroll on split screen */
+            background-color: #FFFDF5;
+            color: #37474F;
+            font-family: 'Quicksand', sans-serif;
         }
 
-        .login-wrapper {
-            display: flex;
-            height: 100vh;
-            width: 100%;
+        .organic-blob {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
         }
 
-        /* Branding Side (Left) */
-        .brand-side {
-            flex: 1;
-            background: var(--bg-dark);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 4rem;
-            overflow: hidden;
-            display: none;
-            /* Hidden on mobile */
+        .button-tactile {
+            box-shadow: 0 6px 0 0 rgba(0, 188, 212, 0.3);
+            transition: all 0.15s ease-in-out;
         }
 
-        .brand-side::before {
-            content: '';
-            position: absolute;
-            top: -20%;
-            left: -20%;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
+        .button-tactile:active {
+            box-shadow: none;
+            transform: translateY(4px);
         }
 
-        .brand-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 400px;
+        .hand-drawn-path {
+            stroke-dasharray: 10;
+            stroke-linecap: round;
         }
 
-        .brand-logo {
-            margin-bottom: 2rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            justify-content: center;
+        .card-shadow {
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.1), 0 30px 60px -30px rgba(0, 0, 0, 0.1);
         }
 
-        .brand-logo svg {
-            width: 48px;
-            height: 48px;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
         }
 
-        .brand-title {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: var(--gradient-primary);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Custom scrollbar for full screen container */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .brand-text {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        /* Form Side (Right) */
-        .form-side {
-            flex: 1;
-            background: var(--bg-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
+        ::-webkit-scrollbar-thumb {
+            background: #B2EBF2;
+            border-radius: 4px;
         }
 
-        .form-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 2.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .form-header {
-            margin-bottom: 2rem;
-        }
-
-        .form-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-subtitle {
-            color: var(--text-secondary);
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 1rem;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-        }
-
-        .toggle-auth {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-
-        .toggle-auth a {
-            color: var(--primary-light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .toggle-auth a:hover {
-            color: var(--primary);
-        }
-
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            text-align: center;
-            display: none;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        @media (min-width: 1024px) {
-            .brand-side {
-                display: flex;
-            }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00BCD4;
         }
     </style>
 </head>
 
-<body>
-    <div class="login-wrapper">
+<body class="antialiased overflow-x-hidden min-h-screen bg-[#FFFDF5] flex flex-col">
+    <!-- Main Content wrapper (grows to fill screen minus footer) -->
+    <div class="flex flex-1 w-full min-h-[calc(100vh-100px)]">
+
         <!-- Brand Side -->
-        <div class="brand-side">
-            <div class="brand-content">
-                <div class="brand-logo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                        <line x1="16" y1="13" x2="8" y2="13" />
-                        <line x1="16" y1="17" x2="8" y2="17" />
-                        <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                    <span>PDF Form Filler</span>
+        <div
+            class="hidden lg:flex lg:w-1/2 bg-sunny-yellow relative flex-col items-center justify-center p-12 overflow-hidden">
+            <a href="/"
+                class="absolute top-0 left-0 w-full p-8 flex items-center gap-2 group cursor-pointer inline-flex z-50">
+                <div
+                    class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl -rotate-6 shadow-lg group-hover:rotate-0 transition-transform">
+                    <span class="material-symbols-outlined text-white text-2xl">face_6</span>
                 </div>
-                <h1 class="brand-title">Smart Forms,<br>Simple Filling.</h1>
-                <p class="brand-text">The easiest way to complete PDF documents online. Secure, fast, and completely
-                    free.</p>
+                <span
+                    class="font-black text-2xl tracking-tight text-friendly-navy hover:text-vibrant-coral transition-colors">PDF
+                    Form Filler</span>
+            </a>
+            <div class="absolute top-10 left-10 w-40 h-40 bg-[#e8f5ca]/40 organic-blob animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-64 h-56 bg-[#ffeebf]/50 organic-blob animate-pulse"
+                style="animation-delay: 1s;"></div>
+            <div class="absolute top-32 right-32 opacity-60">
+                <svg height="40" viewBox="0 0 100 40" width="100">
+                    <path d="M10,30 Q30,10 50,30 T90,30" fill="none" stroke="#87e0d2" stroke-dasharray="1 15"
+                        stroke-linecap="round" stroke-width="8"></path>
+                    <path d="M10,20 Q30,0 50,20 T90,20" fill="none" stroke="#fbc1a2" stroke-dasharray="1 15"
+                        stroke-linecap="round" stroke-width="8"></path>
+                </svg>
+            </div>
+            <span class="material-symbols-outlined absolute top-1/3 left-1/4 text-warm-yellow text-5xl opacity-80"
+                style="font-variation-settings: 'FILL' 0">star</span>
+            <div class="relative mb-6 transition-transform hover:scale-105 duration-300">
+                <div
+                    class="w-56 h-56 bg-bright-yellow rounded-full border-8 border-friendly-navy flex items-center justify-center shadow-2xl relative z-10">
+                    <div class="flex flex-col items-center pt-2">
+                        <div class="flex gap-8 mb-5">
+                            <div class="w-4 h-5 bg-friendly-navy rounded-full"></div>
+                            <div class="w-4 h-5 bg-friendly-navy rounded-full"></div>
+                        </div>
+                        <div class="w-20 h-2 bg-friendly-navy rounded-full"></div>
+                    </div>
+                </div>
+                <div
+                    class="absolute -top-10 -right-6 bg-white px-6 py-3 rounded-[2rem] border-4 border-friendly-navy font-black text-xl -rotate-6 shadow-xl z-20 flex items-center gap-2">
+                    Hello! 👋
+                </div>
+            </div>
+            <h1 class="text-6xl font-black text-friendly-navy text-center leading-tight">
+                Welcome back <br /> to the <span class="text-vibrant-coral">fun!</span>
+            </h1>
+            <div class="mt-8 text-xl font-bold text-friendly-navy/60 text-center max-w-sm relative z-10">
+                Log in to start tickling those PDFs and making paperwork play.
+                <span class="material-symbols-outlined text-vibrant-turquoise text-4xl align-middle ml-2">star</span>
             </div>
         </div>
 
         <!-- Form Side -->
-        <div class="form-side">
-            <div class="form-container">
-                <!-- Waiting for Approval Screen (hidden by default) -->
-                <div id="waitingScreen" style="display:none;text-align:center;padding:2rem 0;">
-                    <div class="waiting-icon" style="margin-bottom:1.5rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            style="width:64px;height:64px;color:var(--primary-light);animation:pulse 2s ease-in-out infinite">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                        </svg>
+        <div class="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 relative py-12">
+            <div class="w-full max-w-md">
+                <a href="/"
+                    class="lg:hidden flex items-center justify-center gap-2 mb-12 group cursor-pointer hover:opacity-80 transition-opacity">
+                    <div
+                        class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl -rotate-6 shadow-lg group-hover:rotate-0 transition-transform">
+                        <span class="material-symbols-outlined text-white text-2xl">face_6</span>
                     </div>
-                    <h2 style="color:white;margin-bottom:0.5rem;font-size:1.5rem">Waiting for Admin Approval</h2>
-                    <p style="color:var(--text-secondary);margin-bottom:0.25rem">Your account</p>
-                    <p class="waiting-email"
-                        style="color:var(--primary-light);font-weight:600;margin-bottom:1.5rem;word-break:break-all">
-                    </p>
-                    <p style="color:var(--text-secondary);margin-bottom:2rem;font-size:0.9rem">
-                        is pending admin approval. You'll be able to access the dashboard once approved.
-                    </p>
-                    <button id="waitingLogoutBtn" class="btn-login"
-                        style="background:var(--bg-elevated);box-shadow:none">Sign Out</button>
-                </div>
+                    <span class="font-black text-2xl tracking-tight text-friendly-navy">PDF Form Filler</span>
+                </a>
 
-                <div id="loginFormWrapper">
-                    <div class="form-header">
-                        <h2 class="form-title">Welcome Back</h2>
-                        <p class="form-subtitle">Please enter your details to sign in.</p>
+                <div
+                    class="bg-white p-8 md:p-12 rounded-[4rem] card-shadow border-[3px] border-dashed border-[#e6f7f9] relative">
+                    <span
+                        class="material-symbols-outlined absolute -top-4 -right-4 text-vibrant-coral text-6xl rotate-12"
+                        style="font-variation-settings: 'FILL' 1">auto_awesome</span>
+
+                    <!-- Waiting for Approval Screen -->
+                    <div id="waitingScreen" style="display:none;" class="text-center py-8">
+                        <div class="flex justify-center mb-6">
+                            <div
+                                class="bg-soft-turquoise w-20 h-20 rounded-full flex items-center justify-center animate-[pulse_2s_ease-in-out_infinite]">
+                                <span
+                                    class="material-symbols-outlined text-vibrant-turquoise text-4xl">hourglass_empty</span>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-black text-friendly-navy mb-2">Hang Tight!</h2>
+                        <p class="text-friendly-navy/60 font-bold mb-2">Your account <span id="waitingEmail"
+                                class="text-vibrant-turquoise block mt-1 break-all"></span></p>
+                        <p class="text-friendly-navy/60 font-bold mb-8">is pending admin approval. You'll be able to
+                            access the fun once approved.</p>
+                        <button id="waitingLogoutBtn"
+                            class="w-full bg-soft-coral/20 text-vibrant-coral border-2 border-vibrant-coral/30 hover:bg-vibrant-coral hover:text-white py-4 rounded-[2rem] font-black text-xl transition-all">
+                            Sign Out
+                        </button>
                     </div>
 
-                    <form id="loginForm">
-                        <div class="input-group" id="nameGroup" style="display: none;">
-                            <label for="fullName">Full Name</label>
-                            <input type="text" id="fullName" placeholder="John Doe">
-                        </div>
-                        <div class="input-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" placeholder="name@company.com" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" placeholder="••••••••" required>
-                        </div>
+                    <!-- Login/Signup Form -->
+                    <div id="loginFormWrapper">
+                        <h2 id="formTitle" class="text-4xl font-black text-friendly-navy mb-1">Log In</h2>
+                        <p id="formSubtitle" class="text-friendly-navy/50 font-bold mb-10 text-lg">Enter your details
+                            below</p>
 
-                        <button type="submit" class="btn-login" id="submitBtn">Sign In</button>
+                        <form id="loginForm" class="space-y-6 md:space-y-8">
+                            <div id="nameGroup" style="display: none;">
+                                <label
+                                    class="block text-[11px] font-black text-friendly-navy/80 mb-3 uppercase tracking-widest px-1">Full
+                                    Name</label>
+                                <input id="fullName"
+                                    class="w-full px-6 py-4 md:py-5 rounded-[1.5rem] bg-white border-2 border-[#d9f2f5] focus:border-vibrant-turquoise focus:ring-0 text-friendly-navy font-bold placeholder:text-friendly-navy/20 transition-all text-lg"
+                                    placeholder="Jane Doe" type="text" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[11px] font-black text-friendly-navy/80 mb-3 uppercase tracking-widest px-1">Email
+                                    Address</label>
+                                <input id="email" required
+                                    class="w-full px-6 py-4 md:py-5 rounded-[1.5rem] bg-white border-2 border-[#d9f2f5] focus:border-vibrant-turquoise focus:ring-0 text-friendly-navy font-bold placeholder:text-friendly-navy/20 transition-all text-lg"
+                                    placeholder="hello@friend.com" type="email" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[11px] font-black text-friendly-navy/80 mb-3 uppercase tracking-widest px-1">Password</label>
+                                <input id="password" required
+                                    class="w-full px-6 py-4 md:py-5 rounded-[1.5rem] bg-white border-2 border-[#d9f2f5] focus:border-vibrant-turquoise focus:ring-0 text-friendly-navy font-bold placeholder:text-friendly-navy/20 transition-all text-lg"
+                                    placeholder="••••••••" type="password" />
+                            </div>
+                            <div class="flex items-center justify-between px-1" id="rememberForgotWrapper">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input
+                                            class="w-6 h-6 rounded-md border-2 border-[#d9f2f5] text-vibrant-turquoise focus:ring-vibrant-turquoise focus:ring-offset-0 cursor-pointer appearance-none checked:bg-vibrant-turquoise transition-all"
+                                            type="checkbox" />
+                                    </div>
+                                    <span
+                                        class="text-sm font-bold text-friendly-navy/50 group-hover:text-friendly-navy transition-colors">Remember
+                                        me</span>
+                                </label>
+                                <a class="text-sm font-bold text-vibrant-turquoise hover:text-vibrant-coral transition-colors underline underline-offset-4 decoration-2"
+                                    href="#">Forgot?</a>
+                            </div>
 
-                        <div id="errorMessage" class="error-message"></div>
+                            <div id="errorMessage" style="display: none;"
+                                class="bg-vibrant-coral/10 text-vibrant-coral p-4 rounded-2xl font-bold text-sm text-center border-2 border-vibrant-coral/20">
+                            </div>
 
-                        <div class="toggle-auth">
-                            <a href="#" id="toggleAuth">Don't have an account? Sign Up</a>
+                            <button id="submitBtn"
+                                class="w-full bg-vibrant-turquoise text-white py-5 md:py-6 rounded-[2rem] font-black text-xl button-tactile hover:scale-[1.01] active:scale-[0.98] mt-4 flex items-center justify-center gap-2"
+                                type="submit">
+                                Let's Go! 🚀
+                            </button>
+                        </form>
+
+                        <div class="mt-10 pt-8 border-t-2 border-dashed border-[#f1f9fa] text-center">
+                            <p class="font-bold text-friendly-navy/40 text-sm">
+                                <span id="toggleTextPre">New here?</span>
+                                <button id="toggleAuth" type="button"
+                                    class="text-vibrant-coral font-black hover:underline underline-offset-4 decoration-2 ml-1 cursor-pointer bg-transparent border-0 p-0 m-0">
+                                    Join the fun
+                                </button>
+                            </p>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-            <button data-logout id="hiddenLogout" style="display:none"></button>
         </div>
     </div>
 
+    <!-- Global Footer -->
+    <footer class="bg-friendly-navy text-white py-6 px-6 relative z-10 w-full shrink-0">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
+                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                    </div>
+                    <span class="font-bold text-xl">PDF Form Filler</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                    Server Status: Having a Great Day
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Hidden element needed by auth.js -->
+    <button data-logout id="hiddenLogout" style="display:none"></button>
+
+    <!-- Auth Scripts -->
     <script type="module">
         import { login, register, checkAuth, logout } from './js/auth.js';
 
         // Check if already logged in (redirect to app if approved, show waiting if not)
         checkAuth(false, true);
 
-        // Check URL params for waiting state
+        // Check URL parameters for specific states
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('waiting') === 'true') {
-            // Will be handled by checkAuth above
+            const user = auth.currentUser;
+            if (user) showWaitingScreen(user.email);
+            else showWaitingScreen('your account');
+        } else if (urlParams.get('verify') === 'true') {
+            const user = auth.currentUser;
+            if (user) showWaitingScreen(user.email, true);
+            else showWaitingScreen('your account', true);
         }
 
         const loginForm = document.getElementById('loginForm');
         const submitBtn = document.getElementById('submitBtn');
         const errorMessage = document.getElementById('errorMessage');
         const toggleAuth = document.getElementById('toggleAuth');
-        const formTitle = document.querySelector('.form-title');
-        const formSubtitle = document.querySelector('.form-subtitle');
+        const toggleTextPre = document.getElementById('toggleTextPre');
+        const formTitle = document.getElementById('formTitle');
+        const formSubtitle = document.getElementById('formSubtitle');
         const nameGroup = document.getElementById('nameGroup');
         const fullNameInput = document.getElementById('fullName');
+        const rememberForgotWrapper = document.getElementById('rememberForgotWrapper');
         const waitingLogoutBtn = document.getElementById('waitingLogoutBtn');
+        const waitingEmailEl = document.getElementById('waitingEmail');
 
         let isLogin = true;
 
-        // Waiting screen logout
         if (waitingLogoutBtn) {
             waitingLogoutBtn.addEventListener('click', () => {
                 logout();
             });
         }
 
+        // This is a global listener to update waiting screen email if auth state detects pending user
+        window.addEventListener('auth-state-pending', (e) => {
+            if (e.detail && e.detail.email) {
+                if (waitingEmailEl) waitingEmailEl.textContent = e.detail.email;
+            }
+        });
+
         toggleAuth.addEventListener('click', (e) => {
             e.preventDefault();
             isLogin = !isLogin;
             if (isLogin) {
-                formTitle.textContent = 'Welcome Back';
-                formSubtitle.textContent = 'Please enter your details to sign in.';
-                submitBtn.textContent = 'Sign In';
-                toggleAuth.textContent = "Don't have an account? Sign Up";
+                formTitle.textContent = 'Log In';
+                formSubtitle.textContent = 'Enter your details below';
+                submitBtn.innerHTML = "Let's Go! 🚀";
+                toggleTextPre.textContent = "New here?";
+                toggleAuth.textContent = "Join the fun";
                 nameGroup.style.display = 'none';
                 fullNameInput.required = false;
+                rememberForgotWrapper.style.display = 'flex';
             } else {
                 formTitle.textContent = 'Create Account';
-                formSubtitle.textContent = 'Get started with your free account.';
-                submitBtn.textContent = 'Sign Up';
-                toggleAuth.textContent = 'Already have an account? Sign In';
+                formSubtitle.textContent = 'Get ready to have fun with paperwork.';
+                submitBtn.innerHTML = 'Sign Up ✨';
+                toggleTextPre.textContent = 'Already joined?';
+                toggleAuth.textContent = 'Log In here';
                 nameGroup.style.display = 'block';
                 fullNameInput.required = true;
+                rememberForgotWrapper.style.display = 'none'; // Hide remember me / forgot password
             }
             errorMessage.style.display = 'none';
         });
@@ -362,38 +380,17 @@
             }
 
             if (result.success) {
-                // checkAuth will handle the redirect based on approval status
-                // For registration, it will show waiting screen
-                // For login, it will redirect to app if approved
                 if (result.needsApproval) {
-                    // Registration completed — checkAuth will show waiting screen
-                    // Just wait for onAuthStateChanged to trigger
                     checkAuth(false, true);
                 }
-                // login success — onAuthStateChanged will handle redirect
             } else {
                 errorMessage.textContent = result.error || 'Authentication failed';
                 errorMessage.style.display = 'block';
-                submitBtn.textContent = isLogin ? 'Sign In' : 'Sign Up';
+                submitBtn.innerHTML = isLogin ? "Let's Go! 🚀" : 'Sign Up ✨';
                 submitBtn.disabled = false;
             }
         });
     </script>
-    <style>
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.6;
-                transform: scale(1.05);
-            }
-        }
-    </style>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');

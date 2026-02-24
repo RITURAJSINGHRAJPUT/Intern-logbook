@@ -340,7 +340,7 @@ function displayMappingUI() {
 
     dataHeaders.forEach(header => {
         const row = document.createElement('div');
-        row.className = 'mapping-row';
+        row.className = 'mapping-row bg-white rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between border-2 border-slate-100 shadow-sm gap-3';
 
         const mappedField = fieldMapping[header] || '';
         const selectOptions = templateFields.map(f =>
@@ -348,10 +348,10 @@ function displayMappingUI() {
         ).join('');
 
         row.innerHTML = `
-            <div><span class="data-key">${escapeHtml(header)}</span></div>
-            <div class="mapping-arrow">→</div>
+            <div><span class="data-key font-bold text-slate-700 flex items-center gap-2" style="word-break: break-all;">${escapeHtml(header)}</span></div>
+            <div class="mapping-arrow material-symbols-outlined text-slate-300 hidden md:block">west</div>
             <div>
-                <select class="mapping-select ${mappedField ? 'mapped' : ''}" data-header="${escapeHtml(header)}">
+                <select class="mapping-select flex-1 w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2 font-bold text-slate-600 focus:border-vibrant-turquoise focus:ring-0 transition-colors ${mappedField ? 'mapped border-vibrant-turquoise bg-soft-turquoise/20 text-vibrant-turquoise' : ''}" data-header="${escapeHtml(header)}">
                     <option value="">-- Not mapped --</option>
                     ${selectOptions}
                 </select>
@@ -367,10 +367,14 @@ function displayMappingUI() {
             const header = e.target.dataset.header;
             if (e.target.value) {
                 fieldMapping[header] = e.target.value;
-                e.target.classList.add('mapped');
+                e.target.classList.add('mapped', 'border-vibrant-turquoise', 'text-vibrant-turquoise');
+                e.target.classList.remove('bg-slate-50');
+                e.target.style.backgroundColor = 'rgba(224, 247, 250, 0.2)'; // bg-soft-turquoise/20
             } else {
                 delete fieldMapping[header];
-                e.target.classList.remove('mapped');
+                e.target.classList.remove('mapped', 'border-vibrant-turquoise', 'text-vibrant-turquoise');
+                e.target.classList.add('bg-slate-50');
+                e.target.style.backgroundColor = '';
             }
         });
     });
@@ -422,10 +426,7 @@ async function generatePreview() {
     } finally {
         previewBtn.disabled = false;
         previewBtn.innerHTML = `
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-            </svg>
+            <span class="material-symbols-outlined">visibility</span>
             Generate Preview
         `;
     }

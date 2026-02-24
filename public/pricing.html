@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PDF Form Filler - Pricing</title>
+    <meta name="description" content="Choose the perfect plan for your PDF form filling needs.">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00BCD4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFF9C4',
+                        'warm-yellow': '#FFD54F',
+                        'bright-yellow': '#FFEE58',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'super-rounded': '3rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #FFFDF5;
+            color: #37474F;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .pricing-bg {
+            background: radial-gradient(circle at top right, #FFF9C4 0%, transparent 40%),
+                radial-gradient(circle at bottom left, #B2EBF2 0%, transparent 40%);
+        }
+
+        .button-tactile {
+            box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.15s ease-in-out;
+        }
+
+        .button-tactile:active {
+            box-shadow: none;
+            transform: translateY(4px);
+        }
+
+        .pro-glow {
+            box-shadow: 0 0 40px rgba(255, 87, 34, 0.15);
+        }
+
+        .toggle-switch:checked+.toggle-label {
+            background-color: #00BCD4;
+        }
+
+        .toggle-switch:checked+.toggle-label .toggle-dot {
+            transform: translateX(2rem);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="antialiased overflow-x-hidden pricing-bg min-h-screen">
+    <!-- Auth Check -->
+    <script type="module">
+        import { checkAuth } from './js/auth.js';
+        checkAuth(false, true); // Redirect to app is handled in auth logic
+    </script>
+
+    <nav class="py-6 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50">
+        <a href="/" class="flex items-center gap-2 group cursor-pointer">
+            <div
+                class="bg-vibrant-turquoise w-8 h-8 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform">
+                <span class="material-symbols-outlined text-white text-xl">face_6</span>
+            </div>
+            <span class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+            <!-- <a class="font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors"
+                href="/Pricing.html">Pricing</a> -->
+            <a class="bg-vibrant-coral text-white px-5 py-2 rounded-full font-extrabold text-sm button-tactile"
+                href="/login.html">
+                Get Started
+            </a>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto px-6 pt-12 pb-32">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-friendly-navy mb-6">Choose Your Plan!</h1>
+            <p class="text-xl md:text-2xl text-friendly-navy/70 font-bold mb-10">Pick the perfect sidekick for your PDF
+                adventures.</p>
+            <div class="flex items-center justify-center gap-4 mb-12">
+                <span class="font-bold text-lg text-friendly-navy/60">Monthly</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input class="sr-only toggle-switch" type="checkbox" />
+                    <div
+                        class="toggle-label w-16 h-8 bg-soft-turquoise rounded-full p-1 transition-colors duration-300">
+                        <div class="toggle-dot w-6 h-6 bg-white rounded-full shadow transition-transform duration-300">
+                        </div>
+                    </div>
+                </label>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-lg text-friendly-navy">Yearly</span>
+                    <span
+                        class="bg-sunny-yellow text-vibrant-coral text-xs font-black px-2 py-1 rounded-lg border border-warm-yellow rotate-3">SAVE
+                        20%!</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8 mb-24">
+            <div
+                class="bg-white p-10 rounded-[3rem] shadow-xl border-4 border-transparent hover:border-soft-turquoise transition-all flex flex-col">
+                <div class="bg-soft-turquoise/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                    <span class="material-symbols-outlined text-4xl text-vibrant-turquoise">send</span>
+                </div>
+                <h3 class="text-3xl font-black mb-2">Casual Plan</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-5xl font-black">$0</span>
+                    <span class="text-friendly-navy/50 font-bold">/forever</span>
+                </div>
+                <p class="text-friendly-navy/70 font-bold mb-8 flex-grow">For the occasional traveler in the land of
+                    forms.</p>
+                <button onclick="window.location.href='/login.html'"
+                    class="w-full py-4 rounded-2xl font-black text-xl bg-soft-turquoise/20 text-vibrant-turquoise border-2 border-vibrant-turquoise/30 hover:bg-vibrant-turquoise hover:text-white transition-all">
+                    Start Free
+                </button>
+            </div>
+            <div
+                class="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-vibrant-coral relative pro-glow scale-105 z-10 flex flex-col">
+                <div
+                    class="absolute -top-5 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-6 py-2 rounded-full font-black text-sm tracking-widest shadow-lg">
+                    MOST POPULAR
+                </div>
+                <div class="bg-soft-coral/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                    <span class="material-symbols-outlined text-4xl text-vibrant-coral">rocket_launch</span>
+                </div>
+                <h3 class="text-3xl font-black mb-2">Power Plan</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-5xl font-black">$12</span>
+                    <span class="text-friendly-navy/50 font-bold">/month</span>
+                </div>
+                <p class="text-friendly-navy/70 font-bold mb-8 flex-grow">For the PDF wizards who need the magic touch
+                    every day.</p>
+                <button onclick="window.location.href='/login.html'"
+                    class="w-full py-4 rounded-2xl font-black text-xl bg-vibrant-coral text-white button-tactile">
+                    Go Power
+                </button>
+            </div>
+            <div
+                class="bg-white p-10 rounded-[3rem] shadow-xl border-4 border-transparent hover:border-sunny-yellow transition-all flex flex-col">
+                <div class="bg-sunny-yellow/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
+                    <span class="material-symbols-outlined text-4xl text-warm-yellow">groups</span>
+                </div>
+                <h3 class="text-3xl font-black mb-2">Business Plan</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-5xl font-black">$49</span>
+                    <span class="text-friendly-navy/50 font-bold">/month</span>
+                </div>
+                <p class="text-friendly-navy/70 font-bold mb-8 flex-grow">Perfect for teams who want to play and work
+                    together.</p>
+                <button onclick="window.location.href='/login.html'"
+                    class="w-full py-4 rounded-2xl font-black text-xl bg-vibrant-turquoise text-white button-tactile">
+                    Team Up
+                </button>
+            </div>
+        </div>
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-center mb-12">What's included? 🍭</h2>
+            <div class="bg-white rounded-[2.5rem] shadow-lg overflow-hidden border-4 border-soft-turquoise/20">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-soft-turquoise/10">
+                            <th class="p-6 text-xl font-black">Feature</th>
+                            <th class="p-6 text-center text-vibrant-turquoise font-black">Casual</th>
+                            <th class="p-6 text-center text-vibrant-coral font-black">Power</th>
+                            <th class="p-6 text-center text-warm-yellow font-black">Business</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-bold text-friendly-navy/80">
+                        <tr class="border-b border-soft-turquoise/10">
+                            <td class="p-6">Daily PDF Fills</td>
+                            <td class="p-6 text-center">3</td>
+                            <td class="p-6 text-center">Unlimited</td>
+                            <td class="p-6 text-center">Unlimited</td>
+                        </tr>
+                        <tr class="border-b border-soft-turquoise/10">
+                            <td class="p-6">Maximum File Size</td>
+                            <td class="p-6 text-center">10 MB</td>
+                            <td class="p-6 text-center">2 GB</td>
+                            <td class="p-6 text-center">10 GB</td>
+                        </tr>
+                        <tr class="border-b border-soft-turquoise/10">
+                            <td class="p-6">Custom Stickers &amp; Emojis</td>
+                            <td class="p-6 text-center text-friendly-navy/20">—</td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                        </tr>
+                        <tr class="border-b border-soft-turquoise/10">
+                            <td class="p-6">Hand-drawn Signatures</td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                        </tr>
+                        <tr class="border-b border-soft-turquoise/10">
+                            <td class="p-6">Shared Team Folder</td>
+                            <td class="p-6 text-center text-friendly-navy/20">—</td>
+                            <td class="p-6 text-center text-friendly-navy/20">—</td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-6">Priority Giggles</td>
+                            <td class="p-6 text-center text-friendly-navy/20">—</td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                            <td class="p-6 text-center"><span
+                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mt-24 text-center">
+            <h3 class="text-3xl font-extrabold mb-4">Still have questions?</h3>
+            <p class="text-xl font-bold text-friendly-navy/60 mb-8">Our support team is fueled by coffee and high-fives.
+            </p>
+            <a class="text-vibrant-coral font-black text-xl hover:underline underline-offset-8 decoration-4"
+                href="#">Chat with a Human →</a>
+        </div>
+    </main>
+    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
+                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                    </div>
+                    <span class="font-bold text-xl">PDF Form Filler</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                    Server Status: Having a Great Day
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+
+</html>

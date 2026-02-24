@@ -2,285 +2,453 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Edit PDF Form - PDF Form Filler</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#4DD0E1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icons/icon-192.svg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- Essential Custom Styles from original editor -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#E0F7FA',
+                        'vibrant-turquoise': '#4DD0E1',
+                        'soft-coral': '#FFAB91',
+                        'vibrant-coral': '#FF7043',
+                        'sunny-yellow': '#FFF59D',
+                        'warm-yellow': '#FBC02D',
+                        'friendly-gray': '#546E7A',
+                        'friendly-navy': '#37474F',
+                        'editor-bg': '#F1F5F9',
+                        'sidebar-dark': '#2D3748'
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'blob': '30% 70% 70% 30% / 30% 30% 70% 70%',
+                        'super-rounded': '2.5rem',
+                        'organic': '20px 40px 30px 50px',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #FCFDFF;
+            color: #546E7A;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .form-field-active {
+            border: 2px solid #4DD0E1;
+            box-shadow: 0 0 0 4px #E0F7FA;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        .hand-drawn-shadow {
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Original editor overrides for new UI */
+        .pdf-container {
+            background: transparent;
+            box-shadow: none;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+            overflow: visible;
+        }
+
+        .pdf-viewer {
+            position: relative;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 0.125rem;
+            border-top: 8px solid #4DD0E1;
+            margin: 0 auto;
+            /* Allow it to constrain to the container naturally rather than absolute width */
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Override original sidebar width locking */
+        .sidebar {
+            width: auto;
+            flex: none;
+            background: transparent;
+            border: none;
+        }
+
+        /* Hide original header */
+        .header.editor-header {
+            display: none !important;
+        }
+
+        .editor-main {
+            flex-direction: row;
+            height: calc(100vh - 72px);
+            /* Header height */
+            background-color: #F1F5F9;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
-<body class="editor-page">
-    <div class="app">
-        <!-- Editor Header -->
-        <header class="header editor-header">
-            <div class="container">
-                <a href="/app.html" class="logo">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                        </svg>
+<body class="antialiased h-screen flex flex-col overflow-hidden editor-page">
+    <div class="app flex-col h-full w-full">
+
+        <!-- Auth Check -->
+        <script type="module">
+            import { checkAuth } from './js/auth.js';
+            checkAuth(true);
+        </script>
+
+        <!-- New UI Header -->
+        <header class="bg-white border-b-2 border-slate-100 px-6 py-3 flex items-center justify-between z-20 shrink-0">
+            <div class="flex items-center gap-8">
+                <a href="/app.html" class="flex items-center gap-3 group cursor-pointer hover:opacity-90">
+                    <div
+                        class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-lg group-hover:rotate-12 transition-transform">
+                        <span class="material-symbols-outlined text-white text-2xl">description</span>
                     </div>
-                    <span>PDF Form Filler</span>
+                    <span class="font-bold text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
                 </a>
 
-                <!-- Toolbar -->
-                <div class="toolbar">
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" id="zoomOut" title="Zoom Out">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8" />
-                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                <line x1="8" y1="11" x2="14" y2="11" />
-                            </svg>
-                        </button>
-                        <span class="zoom-level" id="zoomLevel">100%</span>
-                        <button class="toolbar-btn" id="zoomIn" title="Zoom In">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8" />
-                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                <line x1="11" y1="8" x2="11" y2="14" />
-                                <line x1="8" y1="11" x2="14" y2="11" />
-                            </svg>
-                        </button>
+                <!-- Zoom & Nav Controls -->
+                <div
+                    class="hidden lg:flex items-center bg-slate-50 rounded-full px-4 py-1.5 gap-4 border border-slate-200">
+                    <button id="zoomOut"
+                        class="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
+                        <span class="material-symbols-outlined text-lg">zoom_out</span>
+                    </button>
+                    <span id="zoomLevel" class="text-xs font-bold text-slate-600">100%</span>
+                    <button id="zoomIn"
+                        class="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
+                        <span class="material-symbols-outlined text-lg">zoom_in</span>
+                    </button>
+                    <div class="h-4 w-px bg-slate-300"></div>
+                    <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                        <button id="prevPage"
+                            class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white"><span
+                                class="material-symbols-outlined text-sm">chevron_left</span></button>
+                        <span><span id="currentPage">1</span> / <span id="totalPages">1</span></span>
+                        <button id="nextPage"
+                            class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white"><span
+                                class="material-symbols-outlined text-sm">chevron_right</span></button>
                     </div>
-
-                    <div class="toolbar-divider"></div>
-
-                    <div class="toolbar-group page-nav">
-                        <button class="toolbar-btn" id="prevPage" title="Previous Page">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="15 18 9 12 15 6" />
-                            </svg>
-                        </button>
-                        <span class="page-info">
-                            <span id="currentPage">1</span> / <span id="totalPages">1</span>
-                        </span>
-                        <button class="toolbar-btn" id="nextPage" title="Next Page">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6" />
-                            </svg>
-                        </button>
-                        <button class="toolbar-btn add-page-btn" id="addPageBtn"
-                            title="Add another copy of this template page">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="12" y1="18" x2="12" y2="12" />
-                                <line x1="9" y1="15" x2="15" y2="15" />
-                            </svg>
-                        </button>
-                    </div>
+                    <!-- Hidden original add page logic target (can be exposed later) -->
+                    <button id="addPageBtn" class="hidden"></button>
                 </div>
+            </div>
 
-                <!-- Actions -->
-                <div class="header-actions">
-                    <div class="header-action-group">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="flattenCheckbox">
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="toggle-label">Flatten PDF</span>
-                    </div>
-                    <button class="btn btn-secondary" id="saveTemplateBtn"
-                        title="Save field positions for this template">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                            <polyline points="17 21 17 13 7 13 7 21" />
-                            <polyline points="7 3 7 8 15 8" />
-                        </svg>
-                        <span>Save Template</span>
-                    </button>
-                    <button class="btn btn-secondary" id="downloadCsvBtn" style="display: none;"
-                        title="Download CSV template for bulk filling">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="12" y1="18" x2="12" y2="12" />
-                            <line x1="9" y1="15" x2="15" y2="15" />
-                        </svg>
-                        <span>Bulk CSV</span>
-                    </button>
-                    <button class="btn btn-primary" id="downloadBtn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        <span>Download PDF</span>
-                    </button>
-                    <a href="#" id="loginBtn" class="btn btn-secondary">Loading...</a>
-                </div>
+            <div class="flex items-center gap-3 md:gap-4">
+                <button id="saveTemplateBtn"
+                    class="bg-white border-2 border-slate-200 text-slate-600 px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-all flex items-center gap-2 text-sm md:text-base">
+                    <span class="material-symbols-outlined hidden md:block">save</span> Save <span
+                        class="hidden md:inline">Template</span>
+                </button>
+                <button id="downloadBtn"
+                    class="bg-vibrant-turquoise text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2 text-sm md:text-base">
+                    <span class="material-symbols-outlined hidden md:block">download</span> Download <span
+                        class="hidden md:inline">PDF</span>
+                </button>
+                <button id="downloadCsvBtn" style="display: none;"
+                    class="bg-soft-coral text-vibrant-coral px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold border-2 border-soft-coral hover:bg-vibrant-coral hover:text-white transition-all flex items-center gap-2 text-sm md:text-base">
+                    <span class="material-symbols-outlined hidden md:block">table_chart</span> Bulk <span
+                        class="hidden md:inline">CSV</span>
+                </button>
             </div>
         </header>
 
-        <script type="module">
-            import { checkAuth } from './js/auth.js';
-            checkAuth(true); // Redirect to login if not authenticated
-        </script>
+        <!-- Main Editor Area Layout -->
+        <main class="editor-main flex-1 flex flex-row overflow-hidden bg-editor-bg w-full">
 
-        <!-- Main Editor Area -->
-        <main class="editor-main">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <h3>Add Field</h3>
-                    <div class="field-buttons">
-                        <button class="field-btn" data-type="text" title="Text Field">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="4 7 4 4 20 4 20 7" />
-                                <line x1="9" y1="20" x2="15" y2="20" />
-                                <line x1="12" y1="4" x2="12" y2="20" />
-                            </svg>
-                            <span>Text</span>
-                        </button>
-                        <button class="field-btn" data-type="day" title="Day of Week">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                            </svg>
-                            <span>Day</span>
-                        </button>
-                        <button class="field-btn" data-type="date" title="Date Field">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                            <span>Date</span>
-                        </button>
-                        <button class="field-btn" data-type="time" title="Time (12-hour)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                            <span>Time</span>
-                        </button>
-                        <button class="field-btn" data-type="checkbox" title="Checkbox">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 11 12 14 22 4" />
-                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                            </svg>
-                            <span>Checkbox</span>
-                        </button>
-                        <button class="field-btn" data-type="textarea" title="Multi-line Text">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <line x1="7" y1="8" x2="17" y2="8" />
-                                <line x1="7" y1="12" x2="17" y2="12" />
-                                <line x1="7" y1="16" x2="13" y2="16" />
-                            </svg>
-                            <span>Notes</span>
-                        </button>
-                        <button class="field-btn" data-type="signature" title="Signature">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 19l7-7 3 3-7 7-3-3z" />
-                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
-                                <path d="M2 2l7.586 7.586" />
-                            </svg>
-                            <span>Signature</span>
-                        </button>
+            <!-- Left Sidebar (Tools) -->
+            <aside class="w-20 md:w-72 bg-white border-r-2 border-slate-100 flex flex-col z-10 shrink-0">
+                <div class="p-3 md:p-6 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="mb-8">
+                        <h2 class="hidden md:block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Add
+                            Field</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="fieldButtonsContainer">
+                            <!-- Binding original data-type attributes to the new UI buttons -->
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-vibrant-turquoise hover:bg-soft-turquoise rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="text">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-vibrant-turquoise mb-1">text_fields</span>
+                                <span class="text-xs font-bold text-slate-600">Text</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-vibrant-coral hover:bg-soft-coral rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="day">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-vibrant-coral mb-1">today</span>
+                                <span class="text-xs font-bold text-slate-600">Day</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-vibrant-turquoise hover:bg-soft-turquoise rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="date">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-vibrant-turquoise mb-1">calendar_month</span>
+                                <span class="text-xs font-bold text-slate-600">Date</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-warm-yellow hover:bg-sunny-yellow rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="time">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-warm-yellow mb-1">schedule</span>
+                                <span class="text-xs font-bold text-slate-600">Time</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-vibrant-coral hover:bg-soft-coral rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="checkbox">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-vibrant-coral mb-1">check_box</span>
+                                <span class="text-xs font-bold text-slate-600">Checkbox</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-slate-400 hover:bg-slate-200 rounded-2xl md:rounded-3xl transition-all group w-full"
+                                data-type="textarea">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-slate-600 mb-1">notes</span>
+                                <span class="text-xs font-bold text-slate-600">Notes</span>
+                            </button>
+                            <button
+                                class="field-btn flex flex-col items-center justify-center p-3 md:p-4 bg-slate-50 border-2 border-transparent hover:border-vibrant-turquoise hover:bg-soft-turquoise rounded-2xl md:rounded-3xl transition-all group w-full md:col-span-2"
+                                data-type="signature">
+                                <span
+                                    class="material-symbols-outlined text-2xl md:text-3xl text-slate-400 group-hover:text-vibrant-turquoise mb-1">draw</span>
+                                <span class="text-xs font-bold text-slate-600">Signature</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="sidebar-section">
-                    <h3>Detected Fields</h3>
-                    <div class="fields-list" id="fieldsList">
-                        <!-- Fields will be populated here -->
+                <!-- Magic Tip Footer -->
+                <div class="hidden md:block p-6 border-t-2 border-slate-100 bg-slate-50/50">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="material-symbols-outlined text-vibrant-coral">auto_awesome</span>
+                        <span class="font-bold text-sm text-slate-700">Magic Tip</span>
                     </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">Drag fields anywhere on the document. We'll snap
+                        them to lines for you! ✨</p>
+                </div>
+            </aside>
+
+            <!-- Center Canvas Area -->
+            <div class="flex-1 overflow-auto p-4 md:p-12 flex flex-col items-center custom-scrollbar relative z-0"
+                id="mainScrollArea">
+
+                <!-- Helper Title (Optional) -->
+                <div class="max-w-4xl w-full mb-8 text-center hidden md:block">
+                    <h1 class="text-3xl font-bold text-slate-800 mb-2">Editor <span
+                            class="text-vibrant-turquoise underline decoration-sunny-yellow decoration-4 underline-offset-4">Studio</span>
+                    </h1>
                 </div>
 
-                <div class="sidebar-section">
-                    <h3>Selected Field</h3>
+                <!-- PDF Container (Original Hooks Maintained) -->
+                <div class="pdf-container relative w-full flex justify-center pb-24" id="pdfContainer">
+                    <!-- The pdfViewer and canvas are injected via JS naturally here -->
+                    <div class="pdf-viewer" id="pdfViewer">
+                        <canvas id="pdfCanvas"></canvas>
+                        <div class="fields-overlay" id="fieldsOverlay">
+                            <!-- Field overlays will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Decorative blobs (kept behind the canvas dynamically) -->
+                    <div
+                        class="absolute -left-10 top-40 w-32 h-32 bg-soft-coral/30 rounded-full blur-xl -z-10 pointer-events-none">
+                    </div>
+                    <div
+                        class="absolute -right-10 bottom-40 w-40 h-40 bg-sunny-yellow/30 organic blur-xl -z-10 pointer-events-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar (Properties) -->
+            <aside
+                class="w-64 md:w-80 bg-white border-l-2 border-slate-100 flex flex-col z-10 shrink-0 transform transition-transform duration-300 translate-x-full absolute right-0 h-full md:relative md:translate-x-0"
+                id="propertiesSidebar">
+                <div class="p-6 overflow-y-auto w-full custom-scrollbar flex-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest">Field Settings</h2>
+                        <button class="md:hidden p-1 text-slate-400 hover:text-slate-700" id="closePropertiesBtn">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <!-- Original Field Properties Container Wrapper -->
                     <div class="field-properties" id="fieldProperties">
-                        <p class="no-selection">Click a field to edit its properties</p>
+                        <p class="no-selection text-sm font-bold text-slate-400 text-center py-10">Click a field to edit
+                            its properties</p>
+                    </div>
+
+                    <!-- Detected Fields (Moved from left to bottom of right sidebar for spacing) -->
+                    <div class="mt-12 pt-8 border-t-2 border-slate-100">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Detected Fields
+                        </h3>
+                        <div class="fields-list" id="fieldsList">
+                            <!-- Fields will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto p-6 bg-slate-50/50 border-t-2 border-slate-100 text-center">
+                    <p class="text-xs font-bold text-slate-400 mb-2">Everything looks great! 🌈</p>
+                    <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-vibrant-turquoise w-[85%]"></div>
                     </div>
                 </div>
             </aside>
 
-            <!-- PDF Viewer -->
-            <div class="pdf-container" id="pdfContainer">
-                <div class="pdf-viewer" id="pdfViewer">
-                    <canvas id="pdfCanvas"></canvas>
-                    <div class="fields-overlay" id="fieldsOverlay">
-                        <!-- Field overlays will be rendered here -->
-                    </div>
-                </div>
-            </div>
+            <!-- Mobile Toggle Properties Button -->
+            <button
+                class="md:hidden absolute bottom-6 right-6 bg-vibrant-turquoise text-white p-4 rounded-full shadow-lg z-50 hover:bg-[#00ACC1] transition-colors"
+                id="togglePropertiesBtn">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
         </main>
 
-        <!-- Signature Modal -->
+        <!-- Signature Modal (Kept structural but styled slightly) -->
         <div class="modal hidden" id="signatureModal">
             <div class="modal-overlay"></div>
-            <div class="modal-content signature-modal">
-                <div class="modal-header">
-                    <h3>Add Signature</h3>
-                    <button class="modal-close" id="closeSignature">&times;</button>
+            <div
+                class="modal-content signature-modal border-4 border-friendly-navy rounded-3xl shadow-2xl p-6 relative">
+                <div class="modal-header border-b-2 border-slate-100 pb-4 mb-4 flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-slate-800">Add Signature</h3>
+                    <button class="modal-close text-2xl hover:text-vibrant-coral transition-colors"
+                        id="closeSignature">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <!-- Tabs -->
-                    <div class="signature-tabs">
-                        <button class="signature-tab active" data-tab="draw">Draw</button>
-                        <button class="signature-tab" data-tab="upload">Upload Image</button>
+                    <div class="signature-tabs flex gap-4 mb-6">
+                        <button
+                            class="signature-tab active flex-1 bg-slate-100 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200"
+                            data-tab="draw">Draw</button>
+                        <button
+                            class="signature-tab flex-1 bg-slate-100 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200"
+                            data-tab="upload">Upload</button>
                     </div>
 
-                    <!-- Draw Tab -->
-                    <div class="signature-tab-content active" id="drawTab">
-                        <canvas id="signatureCanvas" width="400" height="200"></canvas>
+                    <div class="signature-tab-content active border-2 border-dashed border-slate-300 rounded-2xl overflow-hidden"
+                        id="drawTab">
+                        <canvas id="signatureCanvas" width="400" height="200"
+                            class="w-full bg-slate-50 cursor-crosshair"></canvas>
                     </div>
 
-                    <!-- Upload Tab -->
                     <div class="signature-tab-content hidden" id="uploadTab">
-                        <div class="signature-upload-zone" id="signatureUploadZone">
-                            <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p>Drop PNG/JPG image here</p>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">or click to browse</p>
-                            <input type="file" id="signatureFileInput"
-                                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" hidden>
+                        <div class="signature-upload-zone border-2 border-dashed border-vibrant-turquoise bg-soft-turquoise/20 rounded-2xl flex flex-col items-center justify-center p-10 cursor-pointer hover:bg-soft-turquoise/40 transition-colors"
+                            id="signatureUploadZone">
+                            <span
+                                class="material-symbols-outlined text-5xl text-vibrant-turquoise mb-2">cloud_upload</span>
+                            <p class="font-bold text-slate-600">Drop PNG/JPG image here</p>
+                            <p class="text-sm font-bold text-slate-400">or click to browse</p>
+                            <input type="file" id="signatureFileInput" accept="image/png,image/jpeg,image/jpg" hidden>
                         </div>
-                        <div class="signature-preview hidden" id="signaturePreview">
-                            <img id="signaturePreviewImg" alt="Signature preview">
-                            <button class="btn btn-secondary btn-small" id="removeSignatureImage">Remove</button>
+                        <div class="signature-preview hidden text-center mt-4" id="signaturePreview">
+                            <img id="signaturePreviewImg" alt="Signature preview"
+                                class="max-h-40 mx-auto rounded-xl border border-slate-200 mb-4">
+                            <button
+                                class="btn btn-secondary text-vibrant-coral font-bold bg-soft-coral/20 px-4 py-2 rounded-lg"
+                                id="removeSignatureImage">Remove</button>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" id="clearSignature">Clear</button>
-                    <button class="btn btn-primary" id="saveSignature">Save Signature</button>
+                <div class="modal-footer flex justify-end gap-4 mt-6 pt-4 border-t-2 border-slate-100">
+                    <button class="btn btn-secondary font-bold text-slate-500 px-6 py-2 hover:bg-slate-100 rounded-xl"
+                        id="clearSignature">Clear</button>
+                    <button
+                        class="btn btn-primary bg-vibrant-turquoise text-white font-bold px-6 py-2 rounded-xl shadow-md hover:bg-[#00ACC1]"
+                        id="saveSignature">Save Signature</button>
                 </div>
             </div>
         </div>
 
         <!-- Loading Overlay -->
-        <div class="loading-overlay hidden" id="loadingOverlay">
-            <div class="loading-content">
-                <div class="spinner"></div>
-                <p id="loadingText">Loading PDF...</p>
+        <div class="loading-overlay hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center"
+            id="loadingOverlay">
+            <div
+                class="loading-content bg-white p-8 rounded-3xl shadow-2xl text-center border-4 border-vibrant-turquoise">
+                <div
+                    class="spinner border-4 border-soft-turquoise border-t-vibrant-turquoise rounded-full w-12 h-12 animate-spin mx-auto mb-4">
+                </div>
+                <p id="loadingText" class="font-bold text-slate-700 text-lg">Loading Fun...</p>
             </div>
         </div>
 
         <!-- Toast Container -->
-        <div class="toast-container" id="toastContainer"></div>
+        <div class="toast-container fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer"></div>
     </div>
 
+    <!-- Mobile sidebar toggles logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const togglePropsBtn = document.getElementById('togglePropertiesBtn');
+            const closePropsBtn = document.getElementById('closePropertiesBtn');
+            const propsSidebar = document.getElementById('propertiesSidebar');
+
+            if (togglePropsBtn && propsSidebar) {
+                togglePropsBtn.addEventListener('click', () => {
+                    propsSidebar.classList.remove('translate-x-full');
+                });
+            }
+            if (closePropsBtn && propsSidebar) {
+                closePropsBtn.addEventListener('click', () => {
+                    propsSidebar.classList.add('translate-x-full');
+                });
+            }
+        });
+    </script>
+
+    <!-- App Scripts (Maintain exact order and linking) -->
     <script src="js/pdfViewer.js"></script>
     <script src="js/fieldManager.js"></script>
     <script src="js/signature.js"></script>
-    <script src="js/components.js"></script>
-    <script src="js/editor.js"></script>
+    <script src="js/components.js?v=2.1"></script>
+    <script src="js/editor.js?v=2.1"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
