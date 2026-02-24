@@ -198,6 +198,19 @@ export async function getIdToken() {
 export async function login(email, password) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        // Establish server-side session
+        const idToken = await userCredential.user.getIdToken();
+        const res = await fetch('/api/sessionLogin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+        });
+
+        if (!res.ok) {
+            console.warn('Failed to establish server session');
+        }
+
         return { success: true, user: userCredential.user };
     } catch (error) {
         return { success: false, error: error.message };
@@ -229,6 +242,18 @@ export async function register(email, password, fullName) {
             console.error('Error sending verification email:', err);
         }
 
+        // Establish server-side session
+        const idToken = await userCredential.user.getIdToken();
+        const res = await fetch('/api/sessionLogin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+        });
+
+        if (!res.ok) {
+            console.warn('Failed to establish server session');
+        }
+
         return { success: true, user: userCredential.user, needsApproval: true, emailSent: true };
     } catch (error) {
         return { success: false, error: error.message };
@@ -241,6 +266,14 @@ export async function register(email, password, fullName) {
 export async function logout() {
     try {
         await signOut(auth);
+
+        // Clear server session
+        try {
+            await fetch('/api/sessionLogout', { method: 'POST' });
+        } catch (err) {
+            console.warn('Failed to clear server session:', err);
+        }
+
         window.location.href = '/login.html';
     } catch (error) {
         console.error('Logout error:', error);
