@@ -30,7 +30,6 @@ const previewPanel = document.getElementById('previewPanel');
 const previewFrame = document.getElementById('previewFrame');
 const generateBtn = document.getElementById('generateBtn');
 const downloadBtn = document.getElementById('downloadBtn');
-const printBtn = document.getElementById('printBtn');
 const progressContainer = document.getElementById('progressContainer');
 const progressBar = document.getElementById('progressBar');
 const progressStatus = document.getElementById('progressStatus');
@@ -181,9 +180,6 @@ function setupEventListeners() {
 
     // Download
     downloadBtn.addEventListener('click', downloadResults);
-
-    // Print
-    printBtn.addEventListener('click', printResults);
 
     // Modal buttons
     if (closeCreditsModalBtn) {
@@ -513,7 +509,6 @@ async function startGeneration() {
 
     generateBtn.disabled = true;
     downloadBtn.classList.add('hidden');
-    printBtn.classList.add('hidden');
     progressContainer.classList.remove('hidden');
     progressBar.style.width = '0%';
     progressBar.textContent = '0%';
@@ -581,9 +576,6 @@ async function pollJobStatus() {
             }
 
             downloadBtn.classList.remove('hidden');
-            if (mergeCheckbox.checked) {
-                printBtn.classList.remove('hidden');
-            }
             generateBtn.disabled = false;
 
             // Refresh credit count
@@ -615,19 +607,7 @@ function downloadResults() {
     window.location.href = `/api/bulk/download/${currentJobId}`;
 }
 
-/**
- * Print merged PDF
- */
-async function printResults() {
-    if (!currentJobId) return;
 
-    const printWindow = window.open(`/api/bulk/download/${currentJobId}`, '_blank');
-    if (printWindow) {
-        printWindow.addEventListener('load', () => {
-            printWindow.print();
-        });
-    }
-}
 
 /**
  * Set step enabled/disabled

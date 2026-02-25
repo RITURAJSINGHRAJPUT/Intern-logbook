@@ -298,8 +298,25 @@ async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping,
     };
     jobs.set(jobId, job);
 
-    const templatePath = path.join(TEMPLATES_DIR, templateFilename);
+    let templatePath = path.join(TEMPLATES_DIR, templateFilename);
     const templateFields = await getTemplateFields(templateFilename, userId);
+
+    if (!fsSync.existsSync(templatePath)) {
+        if (userId) {
+            const userTemplatePath = path.join(USERS_DIR, userId, templateFilename);
+            if (fsSync.existsSync(userTemplatePath)) {
+                templatePath = userTemplatePath;
+            } else {
+                job.status = 'error';
+                job.error = 'Template PDF not found';
+                return;
+            }
+        } else {
+            job.status = 'error';
+            job.error = 'Template PDF not found';
+            return;
+        }
+    }
 
     if (!templateFields) {
         job.status = 'error';

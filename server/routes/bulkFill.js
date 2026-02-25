@@ -196,7 +196,7 @@ router.get('/credits', async (req, res) => {
 router.get('/template/:filename/fields', async (req, res) => {
     try {
         const { filename } = req.params;
-        const userId = req.headers['x-user-id'];
+        const userId = req.headers['x-user-id'] || (req.user && req.user.uid);
         const fields = await getTemplateFields(filename, userId);
 
         if (!fields) {
@@ -324,15 +324,25 @@ router.post('/preview/:filename', express.json(), async (req, res) => {
     try {
         const { filename } = req.params;
         const { dataRow, fieldMapping } = req.body;
-        const userId = req.headers['x-user-id'];
+        const userId = req.headers['x-user-id'] || (req.user && req.user.uid);
 
         if (!dataRow || !fieldMapping) {
             return res.status(400).json({ error: 'Missing data row or field mapping' });
         }
 
-        const templatePath = path.join(TEMPLATES_DIR, filename);
+        let templatePath = path.join(TEMPLATES_DIR, filename);
         if (!fs.existsSync(templatePath)) {
-            return res.status(404).json({ error: 'Template not found' });
+            if (userId) {
+                // Try user's personal templates folder
+                const userTemplatePath = path.join(__dirname, '../../data/users', userId, filename);
+                if (fs.existsSync(userTemplatePath)) {
+                    templatePath = userTemplatePath;
+                } else {
+                    return res.status(404).json({ error: 'Template not found' });
+                }
+            } else {
+                return res.status(404).json({ error: 'Template not found' });
+            }
         }
 
         const fields = await getTemplateFields(filename, userId);
@@ -384,7 +394,7 @@ router.post('/generate/:filename', express.json(), async (req, res) => {
     try {
         const { filename } = req.params;
         const { data, fieldMapping, options = {} } = req.body;
-        const userId = req.headers['x-user-id'];
+        const userId = req.headers['x-user-id'] || (req.user && req.user.uid);
 
         if (!data || !Array.isArray(data)) {
             return res.status(400).json({ error: 'Invalid data array' });
@@ -394,9 +404,27 @@ router.post('/generate/:filename', express.json(), async (req, res) => {
             return res.status(400).json({ error: 'Field mapping is required' });
         }
 
-        const templatePath = path.join(TEMPLATES_DIR, filename);
+        let templatePath = path.join(TEMPLATES_DIR, filename);
+        console.log(`[Bulk Gen] Trying global path: ${templatePath}`);
         if (!fs.existsSync(templatePath)) {
-            return res.status(404).json({ error: 'Template not found' });
+            console.log(`[Bulk Gen] Global path not found.`);
+            if (userId) {
+                // Try user's personal templates folder
+                const userTemplatePath = path.join(__dirname, '../../data/users', userId, filename);
+                console.log(`[Bulk Gen] Trying user path: ${userTemplatePath}`);
+                if (fs.existsSync(userTemplatePath)) {
+                    console.log(`[Bulk Gen] User path FOUND.`);
+                    templatePath = userTemplatePath;
+                } else {
+                    console.log(`[Bulk Gen] User path NOT found. Returning 404.`);
+                    return res.status(404).json({ error: 'Template not found' });
+                }
+            } else {
+                console.log(`[Bulk Gen] No userId provided, returning 404.`);
+                return res.status(404).json({ error: 'Template not found' });
+            }
+        } else {
+            console.log(`[Bulk Gen] Global path FOUND.`);
         }
 
         if (!userId) {
