@@ -3,7 +3,7 @@
  * Caches app shell for offline support and fast loading
  */
 
-const CACHE_NAME = 'pdf-filler-v2';
+const CACHE_NAME = 'pdf-filler-v3';
 const OFFLINE_URL = '/offline.html';
 
 // App shell files to pre-cache
@@ -81,40 +81,28 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Static assets & pages → Cache first, fallback to network
+    // Static assets & pages → Stale-While-Revalidate
     event.respondWith(
-        caches.match(request).then((cached) => {
-            if (cached) {
-                // Return cache and update in background
-                event.waitUntil(
-                    fetch(request).then((response) => {
-                        if (response.ok) {
-                            caches.open(CACHE_NAME).then((cache) => {
-                                cache.put(request, response);
-                            });
-                        }
-                    }).catch(() => { /* offline, cache is fine */ })
-                );
-                return cached;
-            }
-
-            // Not in cache — try network
-            return fetch(request).then((response) => {
-                // Cache successful responses
-                if (response.ok) {
-                    const clone = response.clone();
+        caches.match(request).then((cachedResponse) => {
+            const fetchPromise = fetch(request).then((networkResponse) => {
+                // Return cache if it's there AND we're ok. Just update cache in background 
+                // for HTML and JS specifically to avoid thrashing.
+                if (networkResponse.ok && (request.destination === 'document' || request.destination === 'script' || request.destination === 'style')) {
+                    const clone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(request, clone);
                     });
                 }
-                return response;
+                return networkResponse;
             }).catch(() => {
-                // Offline and not cached — show offline page for navigation requests
                 if (request.mode === 'navigate') {
                     return caches.match(OFFLINE_URL);
                 }
                 return new Response('Offline', { status: 503 });
             });
+
+            // Return cached response immediately if available, otherwise wait for network
+            return cachedResponse || fetchPromise;
         })
     );
 });
