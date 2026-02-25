@@ -162,7 +162,7 @@ router.get('/:filename/fields', (req, res) => {
 router.post('/:filename/fields', express.json(), (req, res) => {
     try {
         const { filename } = req.params;
-        const { fields } = req.body;
+        const { fields, sessionId } = req.body;
         const userId = req.headers['x-user-id'];
 
         if (!filename || !filename.endsWith('.pdf')) {
@@ -173,8 +173,9 @@ router.post('/:filename/fields', express.json(), (req, res) => {
             return res.status(401).json({ error: 'User ID required to save fields' });
         }
 
+        const userDir = getUserDir(userId);
         const fieldsFile = filename.replace('.pdf', '.fields.json');
-        const userFieldsPath = path.join(getUserDir(userId), fieldsFile);
+        const userFieldsPath = path.join(userDir, fieldsFile);
 
         const fieldsData = {
             templateName: filename,
@@ -185,11 +186,125 @@ router.post('/:filename/fields', express.json(), (req, res) => {
 
         fs.writeFileSync(userFieldsPath, JSON.stringify(fieldsData, null, 2));
 
+        // Also copy the PDF to user's directory if it doesn't exist there yet
+        const userPdfPath = path.join(userDir, filename);
+        if (!fs.existsSync(userPdfPath)) {
+            // Try to copy from temp (uploaded PDF session)
+            if (sessionId) {
+                const tempPdfPath = path.join(__dirname, '../../temp', `${sessionId}.pdf`);
+                if (fs.existsSync(tempPdfPath)) {
+                    fs.copyFileSync(tempPdfPath, userPdfPath);
+                    console.log(`📄 PDF copied to user directory: ${filename}`);
+                }
+            }
+            // Also try from global templates directory
+            const globalPdfPath = path.join(TEMPLATES_DIR, filename);
+            if (!fs.existsSync(userPdfPath) && fs.existsSync(globalPdfPath)) {
+                fs.copyFileSync(globalPdfPath, userPdfPath);
+                console.log(`📄 PDF copied from global templates: ${filename}`);
+            }
+        }
+
         console.log(`✅ Template fields saved for user ${userId}: ${fieldsFile}`);
         res.json({ success: true, message: 'Template fields saved successfully' });
     } catch (error) {
         console.error('Error saving template fields:', error);
         res.status(500).json({ error: 'Failed to save template fields' });
+    }
+});
+
+// GET /api/templates/user/:userId - List user's saved templates
+router.get('/user/:userId', (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userDir = path.join(USERS_DIR, userId);
+
+        if (!fs.existsSync(userDir)) {
+            return res.json({ templates: [] });
+        }
+
+        // Find all .fields.json files in user dir
+        const fieldFiles = fs.readdirSync(userDir).filter(f => f.endsWith('.fields.json'));
+
+        const templates = fieldFiles.map(fieldFile => {
+            const pdfFilename = fieldFile.replace('.fields.json', '.pdf');
+            const pdfPath = path.join(userDir, pdfFilename);
+            const hasPdf = fs.existsSync(pdfPath);
+
+            // Read fields data for metadata
+            let savedAt = null;
+            let fieldCount = 0;
+            try {
+                const data = JSON.parse(fs.readFileSync(path.join(userDir, fieldFile), 'utf8'));
+                savedAt = data.savedAt;
+                fieldCount = (data.fields || []).length;
+            } catch (e) { /* ignore */ }
+
+            return {
+                name: pdfFilename.replace('.pdf', ''),
+                filename: pdfFilename,
+                url: hasPdf ? `/api/templates/user/${userId}/pdf/${encodeURIComponent(pdfFilename)}` : null,
+                hasPdf,
+                fieldCount,
+                savedAt,
+                isUserTemplate: true
+            };
+        }).filter(t => t.hasPdf); // Only show templates where the PDF exists
+
+        res.json({ templates });
+    } catch (error) {
+        console.error('Error listing user templates:', error);
+        res.status(500).json({ error: 'Failed to list user templates' });
+    }
+});
+
+// GET /api/templates/user/:userId/pdf/:filename - Serve a user's saved PDF
+router.get('/user/:userId/pdf/:filename', (req, res) => {
+    const { userId, filename } = req.params;
+    const pdfPath = path.join(USERS_DIR, userId, decodeURIComponent(filename));
+
+    if (!fs.existsSync(pdfPath)) {
+        return res.status(404).json({ error: 'PDF not found' });
+    }
+
+    res.sendFile(pdfPath);
+});
+
+// DELETE /api/templates/user/:userId/template/:filename - Delete a user's saved template
+router.delete('/user/:userId/template/:filename', (req, res) => {
+    try {
+        const { userId, filename } = req.params;
+        const decodedFilename = decodeURIComponent(filename);
+
+        if (!decodedFilename.endsWith('.pdf')) {
+            return res.status(400).json({ error: 'Invalid filename' });
+        }
+
+        const userDir = path.join(USERS_DIR, userId);
+        const pdfPath = path.join(userDir, decodedFilename);
+        const fieldsPath = path.join(userDir, decodedFilename.replace('.pdf', '.fields.json'));
+
+        let deleted = false;
+
+        if (fs.existsSync(pdfPath)) {
+            fs.unlinkSync(pdfPath);
+            deleted = true;
+        }
+
+        if (fs.existsSync(fieldsPath)) {
+            fs.unlinkSync(fieldsPath);
+            deleted = true;
+        }
+
+        if (deleted) {
+            console.log(`🗑️ Template deleted for user ${userId}: ${decodedFilename}`);
+            res.json({ success: true, message: 'Template deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Template not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        res.status(500).json({ error: 'Failed to delete template' });
     }
 });
 

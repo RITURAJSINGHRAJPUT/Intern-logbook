@@ -23,14 +23,13 @@ const { verifyBulkAccess } = require('../middleware/adminAuth');
 const { verifyToken } = require('../middleware/auth');
 const { db } = require('../config/firebase');
 
-// Apply auth conditionally (skip for generated file downloads accessed directly by browser)
+// Apply auth - all authenticated users can access bulk fill features
+// Credits are checked at generation time, not at route level
 router.use((req, res, next) => {
     if (req.path.startsWith('/preview-file/') || req.path.startsWith('/download/')) {
         return next();
     }
-    verifyToken(req, res, () => {
-        verifyBulkAccess(req, res, next);
-    });
+    verifyToken(req, res, next);
 });
 
 const TEMPLATES_DIR = path.join(__dirname, '../../pdf-format');
@@ -75,54 +74,89 @@ function getUserDir(userId) {
  */
 router.get('/templates', (req, res) => {
     try {
-        if (!fs.existsSync(TEMPLATES_DIR)) {
-            return res.json({ templates: [] });
-        }
-
-        const userId = req.headers['x-user-id'];
+        const userId = req.headers['x-user-id'] || (req.user && req.user.uid);
         console.log(`[Bulk] Listing templates for UserID: ${userId || 'Global'}`);
 
-        const files = fs.readdirSync(TEMPLATES_DIR)
-            .filter(file => file.toLowerCase().endsWith('.pdf'))
-            .map(file => {
-                let fieldCount = 0;
-                let hasFields = false;
+        let files = [];
 
-                // 1. Check user-specific fields
-                if (userId) {
-                    const userDir = getUserDir(userId);
-                    const userFieldsPath = path.join(userDir, file.replace('.pdf', '.fields.json'));
-                    if (fs.existsSync(userFieldsPath)) {
-                        try {
-                            const data = JSON.parse(fs.readFileSync(userFieldsPath, 'utf8'));
-                            fieldCount = data.fields ? data.fields.length : 0;
-                            hasFields = true;
-                        } catch (e) { }
+        // 1. Scan global templates (pdf-format directory)
+        if (fs.existsSync(TEMPLATES_DIR)) {
+            const globalFiles = fs.readdirSync(TEMPLATES_DIR)
+                .filter(file => file.toLowerCase().endsWith('.pdf'))
+                .map(file => {
+                    let fieldCount = 0;
+                    let hasFields = false;
+
+                    // Check user-specific fields first
+                    if (userId) {
+                        const userDir = getUserDir(userId);
+                        const userFieldsPath = path.join(userDir, file.replace('.pdf', '.fields.json'));
+                        if (fs.existsSync(userFieldsPath)) {
+                            try {
+                                const data = JSON.parse(fs.readFileSync(userFieldsPath, 'utf8'));
+                                fieldCount = data.fields ? data.fields.length : 0;
+                                hasFields = true;
+                            } catch (e) { }
+                        }
                     }
-                }
 
-                // 2. Fallback to global fields if not found for user
-                if (!hasFields) {
-                    const fieldsPath = path.join(TEMPLATES_DIR, file.replace('.pdf', '.fields.json'));
-                    if (fs.existsSync(fieldsPath)) {
-                        try {
-                            const data = JSON.parse(fs.readFileSync(fieldsPath, 'utf8'));
-                            fieldCount = data.fields ? data.fields.length : 0;
-                            hasFields = true;
-                        } catch (e) { }
+                    // Fallback to global fields
+                    if (!hasFields) {
+                        const fieldsPath = path.join(TEMPLATES_DIR, file.replace('.pdf', '.fields.json'));
+                        if (fs.existsSync(fieldsPath)) {
+                            try {
+                                const data = JSON.parse(fs.readFileSync(fieldsPath, 'utf8'));
+                                fieldCount = data.fields ? data.fields.length : 0;
+                                hasFields = true;
+                            } catch (e) { }
+                        }
                     }
-                }
 
-                if (!hasFields) return null;
+                    if (!hasFields) return null;
 
-                return {
-                    name: file.replace('.pdf', ''),
-                    filename: file,
-                    url: `/templates/${encodeURIComponent(file)}`,
-                    fieldCount
-                };
-            })
-            .filter(t => t !== null); // Remove templates without fields
+                    return {
+                        name: file.replace('.pdf', ''),
+                        filename: file,
+                        url: `/templates/${encodeURIComponent(file)}`,
+                        fieldCount
+                    };
+                })
+                .filter(t => t !== null);
+
+            files = globalFiles;
+        }
+
+        // 2. Also scan user's own saved templates
+        if (userId) {
+            const userDir = path.join(USERS_DIR, userId);
+            if (fs.existsSync(userDir)) {
+                const userFieldFiles = fs.readdirSync(userDir).filter(f => f.endsWith('.fields.json'));
+
+                userFieldFiles.forEach(fieldFile => {
+                    const pdfFilename = fieldFile.replace('.fields.json', '.pdf');
+
+                    // Skip if already listed from global templates
+                    if (files.some(f => f.filename === pdfFilename)) return;
+
+                    const userPdfPath = path.join(userDir, pdfFilename);
+                    if (!fs.existsSync(userPdfPath)) return;
+
+                    let fieldCount = 0;
+                    try {
+                        const data = JSON.parse(fs.readFileSync(path.join(userDir, fieldFile), 'utf8'));
+                        fieldCount = data.fields ? data.fields.length : 0;
+                    } catch (e) { }
+
+                    files.push({
+                        name: pdfFilename.replace('.pdf', '') + ' (My Template)',
+                        filename: pdfFilename,
+                        url: `/api/templates/user/${userId}/pdf/${encodeURIComponent(pdfFilename)}`,
+                        fieldCount,
+                        isUserTemplate: true
+                    });
+                });
+            }
+        }
 
         res.json({ templates: files });
     } catch (error) {

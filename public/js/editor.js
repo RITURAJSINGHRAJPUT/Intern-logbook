@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessionId = urlParams.get('session');
     const templateFile = urlParams.get('template');
     const isAdminMode = urlParams.get('adminMode') === 'true';
+    const isUserTemplate = urlParams.get('isUserTemplate') !== 'false'; // Default to true if missing (uploaded file)
+
+    // A template is read-only if it's not an admin mode AND it's not the user's template
+    const isReadOnly = !isAdminMode && !isUserTemplate;
 
     // Store template filename if provided
     if (templateFile) {
@@ -60,6 +64,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Initialize Field Manager
         window.fieldManager = new FieldManager('fieldsOverlay', window.pdfViewer);
+
+        // Apply read-only UI changes if necessary
+        if (isReadOnly) {
+            // Hide left sidebar (field types)
+            const leftSidebar = document.querySelector('.w-80.border-r');
+            if (leftSidebar) leftSidebar.style.display = 'none';
+
+            // Hide Save Template button
+            const saveBtn = document.getElementById('saveTemplateBtn');
+            if (saveBtn) saveBtn.style.display = 'none';
+
+            // Pass read-only flag to field manager
+            window.fieldManager.setReadOnly(true);
+
+            showToast('Viewing admin template. You can fill it out, but cannot change the fields.', 'info');
+        }
 
         // Try to load saved template fields first (if this is a template PDF)
         let fieldsLoaded = false;
@@ -116,9 +136,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 pageInstances[currentInstanceIndex].fields = JSON.parse(JSON.stringify(fields));
             }
         };
-
-        // Initialize Signature Pad
-        window.signaturePad = new SignaturePad('signatureCanvas');
 
         // Update UI
         updatePageInfo();
@@ -403,11 +420,6 @@ function setupSignatureModal() {
     const saveBtn = document.getElementById('saveSignature');
     const overlay = modal?.querySelector('.modal-overlay');
 
-    // Tab elements
-    const tabs = document.querySelectorAll('.signature-tab');
-    const drawTab = document.getElementById('drawTab');
-    const uploadTab = document.getElementById('uploadTab');
-
     // Upload elements
     const uploadZone = document.getElementById('signatureUploadZone');
     const fileInput = document.getElementById('signatureFileInput');
@@ -415,34 +427,8 @@ function setupSignatureModal() {
     const previewImg = document.getElementById('signaturePreviewImg');
     const removeBtn = document.getElementById('removeSignatureImage');
 
-    // Track current mode and uploaded image
-    let currentMode = 'draw';
+    // Track uploaded image
     let uploadedImageDataUrl = null;
-
-    // Tab switching
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const mode = tab.dataset.tab;
-            currentMode = mode;
-
-            // Update tab active state
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            // Show/hide content
-            if (mode === 'draw') {
-                drawTab.classList.remove('hidden');
-                drawTab.classList.add('active');
-                uploadTab.classList.remove('active');
-                uploadTab.classList.add('hidden');
-            } else {
-                uploadTab.classList.remove('hidden');
-                uploadTab.classList.add('active');
-                drawTab.classList.remove('active');
-                drawTab.classList.add('hidden');
-            }
-        });
-    });
 
     // Upload zone click
     uploadZone?.addEventListener('click', () => fileInput?.click());
@@ -492,56 +478,36 @@ function setupSignatureModal() {
 
     // Remove uploaded image
     removeBtn?.addEventListener('click', () => {
-        uploadedImageDataUrl = null;
-        previewImg.src = '';
-        previewContainer.classList.add('hidden');
-        uploadZone.classList.remove('hidden');
-        fileInput.value = '';
+        clearSignatureImage();
     });
 
     closeBtn?.addEventListener('click', () => hideModal('signatureModal'));
     overlay?.addEventListener('click', () => hideModal('signatureModal'));
 
     clearBtn?.addEventListener('click', () => {
-        if (currentMode === 'draw') {
-            window.signaturePad?.clear();
-        } else {
-            // Clear uploaded image
-            uploadedImageDataUrl = null;
-            previewImg.src = '';
-            previewContainer.classList.add('hidden');
-            uploadZone.classList.remove('hidden');
-            fileInput.value = '';
-        }
+        clearSignatureImage();
     });
 
-    saveBtn?.addEventListener('click', () => {
-        let dataUrl = null;
+    function clearSignatureImage() {
+        uploadedImageDataUrl = null;
+        if (previewImg) previewImg.src = '';
+        if (previewContainer) previewContainer.classList.add('hidden');
+        if (uploadZone) uploadZone.classList.remove('hidden');
+        if (fileInput) fileInput.value = '';
+    }
 
-        if (currentMode === 'draw') {
-            dataUrl = window.signaturePad?.toDataURL();
-            if (!dataUrl) {
-                showToast('Please draw your signature first', 'error');
-                return;
-            }
-        } else {
-            dataUrl = uploadedImageDataUrl;
-            if (!dataUrl) {
-                showToast('Please upload an image first', 'error');
-                return;
-            }
+    saveBtn?.addEventListener('click', () => {
+        if (!uploadedImageDataUrl) {
+            showToast('Please upload an image first', 'error');
+            return;
         }
 
-        window.fieldManager?.saveSignature(dataUrl);
+        window.fieldManager?.saveSignature(uploadedImageDataUrl);
         hideModal('signatureModal');
         showToast('Signature saved!', 'success');
 
         // Reset for next time
-        uploadedImageDataUrl = null;
-        previewImg.src = '';
-        previewContainer?.classList.add('hidden');
-        uploadZone?.classList.remove('hidden');
-        if (fileInput) fileInput.value = '';
+        clearSignatureImage();
     });
 }
 
@@ -652,47 +618,24 @@ function setupSaveTemplateButton() {
                 return;
             }
 
-            showLoading('Saving template...');
-
             const urlParams = new URLSearchParams(window.location.search);
             const isAdminMode = urlParams.get('adminMode') === 'true';
 
-            let response;
-
+            // For admin mode, save directly without naming prompt
             if (isAdminMode) {
-                const token = await window.getFirebaseToken();
-                response = await fetch(`/api/admin/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ fields })
-                });
-            } else {
-                const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
-                response = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-user-id': userId || ''
-                    },
-                    body: JSON.stringify({ fields })
-                });
+                await saveTemplateToServer(fields, currentTemplateFilename, true);
+                return;
             }
 
-            if (!response.ok) {
-                throw new Error('Failed to save template');
-            }
-
-            hideLoading();
-            showToast('Template saved! Fields will be loaded automatically next time.', 'success');
-
-            if (isAdminMode) {
-                setTimeout(() => {
-                    window.location.href = '/templates.html';
-                }, 2000);
-            }
+            // For regular users, show naming prompt
+            const defaultName = currentTemplateFilename.replace('.pdf', '').replace(/[_-]/g, ' ');
+            showTemplateNamePrompt(defaultName, async (templateName) => {
+                if (!templateName) return;
+                // Sanitize name: replace spaces/special chars with underscores, add .pdf
+                const sanitizedName = templateName.trim().replace(/[^a-zA-Z0-9\s\-_.]/g, '').replace(/\s+/g, '_');
+                const finalFilename = sanitizedName.endsWith('.pdf') ? sanitizedName : sanitizedName + '.pdf';
+                await saveTemplateToServer(fields, finalFilename, false);
+            });
 
         } catch (error) {
             console.error('Save template error:', error);
@@ -700,6 +643,127 @@ function setupSaveTemplateButton() {
             showToast('Failed to save template. Please try again.', 'error');
         }
     });
+}
+
+/**
+ * Show a styled template naming prompt
+ */
+function showTemplateNamePrompt(defaultName, callback) {
+    // Remove existing prompt if any
+    const existing = document.getElementById('templateNameOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'templateNameOverlay';
+    overlay.className = 'fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+    overlay.innerHTML = `
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border-2 border-slate-100 transform scale-100 transition-transform">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-vibrant-turquoise rounded-2xl flex items-center justify-center rotate-3 shadow-lg">
+                    <span class="material-symbols-outlined text-white text-2xl">save</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Save Template</h3>
+                    <p class="text-sm text-slate-400">Give your template a friendly name</p>
+                </div>
+            </div>
+            <input type="text" id="templateNameInput" value="${defaultName}"
+                class="w-full bg-slate-50 border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-xl focus:border-vibrant-turquoise transition-all text-lg mb-6"
+                placeholder="E.g. Daily Internship Report" autofocus>
+            <div class="flex justify-end gap-3">
+                <button id="templateNameCancel"
+                    class="px-5 py-2.5 rounded-full font-bold text-slate-500 hover:bg-slate-100 transition-all">Cancel</button>
+                <button id="templateNameSave"
+                    class="bg-vibrant-turquoise text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">save</span> Save
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const input = document.getElementById('templateNameInput');
+    input.select();
+
+    // Enter to save
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            overlay.remove();
+            callback(input.value);
+        } else if (e.key === 'Escape') {
+            overlay.remove();
+        }
+    });
+
+    document.getElementById('templateNameCancel').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    document.getElementById('templateNameSave').addEventListener('click', () => {
+        overlay.remove();
+        callback(input.value);
+    });
+
+    // Click outside to close
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+/**
+ * Save template fields (and PDF) to the server
+ */
+async function saveTemplateToServer(fields, filename, isAdminMode) {
+    showLoading('Saving template...');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let response;
+
+    try {
+        if (isAdminMode) {
+            const token = await window.getFirebaseToken();
+            response = await fetch(`/api/admin/templates/${encodeURIComponent(filename)}/fields`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ fields })
+            });
+        } else {
+            const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+            const sessionId = urlParams.get('session');
+            response = await fetch(`/api/templates/${encodeURIComponent(filename)}/fields`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId || ''
+                },
+                body: JSON.stringify({ fields, sessionId })
+            });
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to save template');
+        }
+
+        // Update the URL template parameter to the new name
+        currentTemplateFilename = filename;
+
+        hideLoading();
+        showToast('Template saved! You can find it in "My Saved Templates" on the dashboard.', 'success');
+
+        if (isAdminMode) {
+            setTimeout(() => {
+                window.location.href = '/templates.html';
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Save template error:', error);
+        hideLoading();
+        showToast('Failed to save template. Please try again.', 'error');
+    }
 }
 
 /**
@@ -724,11 +788,17 @@ function setupDownloadCsvButton() {
             showLoading('Generating CSV...');
 
             const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+            const token = window.getFirebaseToken ? await window.getFirebaseToken() : null;
+
+            const headers = {
+                'x-user-id': userId || ''
+            };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
             const response = await fetch(`/api/bulk/template-csv/${encodeURIComponent(currentTemplateFilename)}`, {
-                headers: {
-                    'x-user-id': userId || ''
-                }
+                headers
             });
 
             if (!response.ok) {

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Buy Credits | PDF Form Filler</title>
+
+    <!-- External Scripts and Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#E0F7FA',
+                        'vibrant-turquoise': '#4DD0E1',
+                        'soft-coral': '#FFAB91',
+                        'vibrant-coral': '#FF7043',
+                        'sunny-yellow': '#FFF59D',
+                        'warm-yellow': '#FBC02D',
+                        'friendly-gray': '#546E7A',
+                        'friendly-navy': '#37474F',
+                        'card-teal-bg': '#EAF7F6',
+                        'card-teal-pill': '#bce8e3',
+                        'card-teal-text': '#2DB5A5',
+                        'qr-dark': '#0F4741',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body {
+            background-color: #FCFDFF;
+            color: #546E7A;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between antialiased">
+    <!-- Auth Check -->
+    <script type="module">
+        import { checkAuth } from './js/auth.js';
+        checkAuth(true); // Redirect to login if not authenticated
+    </script>
+
+    <!-- Header matching global app styling -->
+    <nav class="w-full py-6 px-4 sm:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-20">
+        <a href="/app.html" class="flex items-center gap-3 group cursor-pointer hover:opacity-90">
+            <div
+                class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-lg group-hover:rotate-6 transition-transform">
+                <span class="material-symbols-outlined text-white text-2xl">description</span>
+            </div>
+            <span class="font-bold text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
+        </a>
+
+        <div class="flex items-center gap-4 sm:gap-6">
+            <a href="/profile.html" id="profileBtn"
+                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all">
+                <span class="material-symbols-outlined text-[20px]">account_circle</span>
+                <span class="whitespace-nowrap">Profile</span>
+            </a>
+            <a href="#" id="loginBtn"
+                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all">
+                Loading...
+            </a>
+            <a href="/admin"
+                class="bg-sunny-yellow text-warm-yellow border-2 border-warm-yellow px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#FBC02D] hover:translate-y-1 hover:shadow-none transition-all hidden"
+                id="adminBtn">
+                Admin
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-8 relative mt-10 md:mt-2">
+        <!-- Main Card Container -->
+        <div
+            class="max-w-[1000px] w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col md:flex-row border-[8px] border-slate-100">
+
+            <!-- Left Side: Package Details -->
+            <div class="md:w-1/2 p-10 md:p-14 bg-card-teal-bg flex flex-col relative rounded-l-[2rem]">
+                <div>
+                    <!-- Badge -->
+                    <div
+                        class="inline-flex items-center gap-1 bg-card-teal-pill text-card-teal-text px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest mb-8 uppercase shadow-sm">
+                        <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                        SELECTED PACKAGE
+                    </div>
+
+                    <h1 class="text-4xl md:text-[2.75rem] font-black text-slate-800 mb-4 tracking-tight leading-none">
+                        Magic Credit Pack
+                    </h1>
+                    <p class="text-slate-500 text-[17px] font-semibold leading-relaxed max-w-sm mb-12">
+                        Fuel your PDF Form Filler adventures with lightning-fast processing and AI magic.
+                    </p>
+
+                    <!-- Feature 1 -->
+                    <div
+                        class="bg-white rounded-3xl p-5 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.03)] mb-4 hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-vibrant-coral/20">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-[3.25rem] h-[3.25rem] bg-[#ffebee] rounded-full flex items-center justify-center text-[#ff5722]">
+                                <span class="material-symbols-outlined text-[26px]">diamond</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-extrabold text-slate-800 text-lg leading-tight">500 Pro Credits</span>
+                                <span class="text-xs text-slate-400 font-bold mt-0.5">Perfect for heavy lifting</span>
+                            </div>
+                        </div>
+                        <span class="font-black text-2xl text-[#ff5722] tracking-tight">$49</span>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div
+                        class="bg-white rounded-3xl p-5 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-vibrant-turquoise/20">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-[3.25rem] h-[3.25rem] bg-[#e0f2f1] rounded-full flex items-center justify-center text-vibrant-turquoise">
+                                <span class="material-symbols-outlined text-[26px]">bolt</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-extrabold text-slate-800 text-lg leading-tight">Instant
+                                    Activation</span>
+                                <span class="text-xs text-slate-400 font-bold mt-0.5">Ready to use in seconds</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spacer -->
+                <div class="flex-grow min-h-[4rem]"></div>
+
+                <!-- Mini Mascot Quote -->
+                <div class="flex items-start gap-4 mt-8 ml-2">
+                    <div class="relative">
+                        <div
+                            class="absolute -top-1 -right-3 bg-[#ff3b30] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm z-10">
+                            TIP!
+                        </div>
+                        <div
+                            class="w-[4.5rem] h-[4.5rem] bg-[#ffb74d] rounded-full shadow-[0_6px_15px_rgba(255,183,77,0.4)] flex items-center justify-center overflow-hidden border-4 border-white">
+                            <!-- Using a cute cat emoji as a placeholder for the illustration -->
+                            <span class="text-[2.5rem]">🐱</span>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white px-5 py-3.5 mt-2 rounded-tl-[1.25rem] rounded-tr-[1.25rem] rounded-br-[1.25rem] rounded-bl-sm shadow-sm text-slate-500 text-sm font-bold w-48 relative">
+                        "Scan the code, let's start the magic!"
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Payment QR -->
+            <div class="md:w-1/2 p-8 md:p-14 bg-white flex flex-col items-center justify-center text-center">
+                <h2 class="text-3xl font-black text-slate-800 mb-1">Magic Pay QR</h2>
+                <p class="text-[15px] text-slate-400 font-bold mb-10">Fast, secure, and purely magical</p>
+
+                <!-- QR Code Block -->
+                <!-- Gradient wrapper for that subtle multi-color border radius -->
+                <div
+                    class="p-1.5 rounded-[2.8rem] bg-gradient-to-br from-[#80cbc4] via-[#e0f2f1] to-[#b2dfdb] mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] inline-block">
+                    <div
+                        class="bg-qr-dark rounded-[2.5rem] w-[17rem] h-[17rem] p-8 flex items-center justify-center relative">
+                        <!-- Actual QR Code Image (Placeholder) -->
+                        <div
+                            class="bg-[#F5F5F5] w-full h-full p-2 rounded-xl flex items-center justify-center hover:scale-105 transition-transform duration-500 shadow-inner">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://scholarsync.com/checkout/credits"
+                                alt="Payment QR Code"
+                                class="w-full h-full object-contain mix-blend-multiply opacity-90 rounded-lg pointer-events-none" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer Section -->
+                <div class="mb-10 w-full flex flex-col items-center">
+                    <p class="text-[10px] tracking-widest text-slate-300 font-black mb-3">EXPIRES IN</p>
+                    <div
+                        class="flex items-center justify-center gap-4 text-[#FF5722] font-black text-[2.5rem] leading-none mb-1">
+                        <div class="flex flex-col items-center">
+                            <span>04</span>
+                        </div>
+                        <span class="text-slate-200 -mt-1">:</span>
+                        <div class="flex flex-col items-center">
+                            <span>59</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center justify-center gap-[3.25rem] text-slate-300 font-black text-[9px] tracking-widest">
+                        <span>MIN</span>
+                        <span>SEC</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="w-full max-w-[280px]">
+                    <button
+                        class="w-full bg-[#FF4500] text-white py-[1.15rem] rounded-full font-black text-lg shadow-[0_8px_25px_rgba(255,69,0,0.35)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(255,69,0,0.45)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+                        Complete Payment
+                    </button>
+
+                    <button
+                        class="w-full bg-[#FAFAFA] hover:bg-[#F3F4F6] text-slate-500 tracking-tight py-3.5 rounded-full font-bold transition-all mb-8 border border-slate-100">
+                        Use another payment method
+                    </button>
+                </div>
+
+                <!-- Security Footer -->
+                <div
+                    class="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-extrabold tracking-widest mt-auto">
+                    <span class="material-symbols-outlined text-[14px]">security</span>
+                    SECURE SSL ENCRYPTED
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global App Footer -->
+    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8 w-full">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
+                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                    </div>
+                    <span class="font-bold text-xl">PDF Form Filler</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                    Server Status: Having a Great Day
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App JS for Navigation Auth Logic -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

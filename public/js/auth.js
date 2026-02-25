@@ -402,12 +402,11 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
         });
     }
 
-    // Show bulk fill container if admin OR allowBulkFill is true
-    if (isAdminUser || allowBulkFill) {
-        const bulkFillContainer = document.getElementById('bulkFillContainer');
-        if (bulkFillContainer) {
-            bulkFillContainer.classList.remove('hidden');
-        }
+    // Show bulk fill container to ALL authenticated users
+    // Credits are checked at generation time, not at access time
+    const bulkFillContainer = document.getElementById('bulkFillContainer');
+    if (bulkFillContainer) {
+        bulkFillContainer.classList.remove('hidden');
     }
 }
 

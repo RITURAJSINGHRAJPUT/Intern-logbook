@@ -22,6 +22,10 @@ class FieldManager {
     initEventListeners() {
         // Click on overlay to add new field or deselect
         this.overlay.addEventListener('click', (e) => {
+            if (this.isReadOnly) {
+                this.deselectAll();
+                return;
+            }
             if (e.target === this.overlay && this.addingFieldType) {
                 this.addFieldAtPosition(e.offsetX, e.offsetY);
             } else if (e.target === this.overlay) {
@@ -33,6 +37,18 @@ class FieldManager {
         this.overlay.parentElement.addEventListener('pageRendered', (e) => {
             this.updateFieldPositions(e.detail);
         });
+    }
+
+    /**
+     * Set read-only mode (hides edit controls but allows filling values)
+     */
+    setReadOnly(isReadOnly) {
+        this.isReadOnly = isReadOnly;
+        if (isReadOnly) {
+            this.cancelAddingField();
+            this.deselectAll();
+        }
+        this.renderFields();
     }
 
     /**
@@ -259,47 +275,52 @@ class FieldManager {
             wrapper.appendChild(input);
         }
 
-        // Add resize handle
-        const resizeHandle = document.createElement('div');
-        resizeHandle.className = 'resize-handle se';
-        resizeHandle.addEventListener('mousedown', (e) => this.startResize(e, field));
-        resizeHandle.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            this.startResize({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { }, stopPropagation: () => { } }, field, true);
-        }, { passive: false });
-        wrapper.appendChild(resizeHandle);
-
-        // Add delete button
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '×';
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.deleteField(field.id);
-        });
-        wrapper.appendChild(deleteBtn);
-
-        // Make draggable (mouse)
-        wrapper.addEventListener('mousedown', (e) => {
-            if (e.target === wrapper || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-                if (e.target === wrapper) {
-                    this.startDrag(e, field);
-                }
-                this.selectField(field.id);
-            }
-        });
-
-        // Make draggable (touch)
-        wrapper.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            const target = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (target === wrapper || target === wrapper.querySelector('.field-overlay')) {
+        if (!this.isReadOnly) {
+            // Add resize handle
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle se';
+            resizeHandle.addEventListener('mousedown', (e) => this.startResize(e, field));
+            resizeHandle.addEventListener('touchstart', (e) => {
                 e.preventDefault();
-                this.startDrag({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { } }, field, true);
-                this.selectField(field.id);
-            }
-        }, { passive: false });
+                const touch = e.touches[0];
+                this.startResize({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { }, stopPropagation: () => { } }, field, true);
+            }, { passive: false });
+            wrapper.appendChild(resizeHandle);
+
+            // Add delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.deleteField(field.id);
+            });
+            wrapper.appendChild(deleteBtn);
+
+            // Make draggable (mouse)
+            wrapper.addEventListener('mousedown', (e) => {
+                if (e.target === wrapper || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    if (e.target === wrapper) {
+                        this.startDrag(e, field);
+                    }
+                    this.selectField(field.id);
+                }
+            });
+
+            // Make draggable (touch)
+            wrapper.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target === wrapper || target === wrapper.querySelector('.field-overlay')) {
+                    e.preventDefault();
+                    this.startDrag({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => { } }, field, true);
+                    this.selectField(field.id);
+                }
+            }, { passive: false });
+        } else {
+            // In read-only mode, still allow selecting field for typing
+            wrapper.addEventListener('click', () => this.selectField(field.id));
+        }
 
         this.overlay.appendChild(wrapper);
     }

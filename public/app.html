@@ -149,6 +149,16 @@
             display: none !important;
         }
 
+        /* Hide scrollbar on profile modal */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         .spinner {
             width: 40px;
             height: 40px;
@@ -189,12 +199,17 @@
             <span class="font-bold text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
         </a>
         <div class="flex items-center gap-4 sm:gap-6">
-            <span class="hidden md:block font-semibold text-vibrant-coral mr-2">100% Free! 🎈</span>
-            <a href="/profile.html" id="profileBtn"
+            <a href="/Buy-Credits.html"
+                class="flex font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-4 py-2 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50">
+                <span class="material-symbols-outlined text-[20px]">generating_tokens</span>
+                <span class="whitespace-nowrap">Buy Credits</span>
+            </a>
+            <button id="profileBtn"
+                onclick="document.getElementById('profileModal').classList.remove('opacity-0','pointer-events-none');document.getElementById('profileModal').firstElementChild.classList.remove('scale-95');document.getElementById('profileModal').firstElementChild.classList.add('scale-100');"
                 class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all">
                 <span class="material-symbols-outlined text-[20px]">account_circle</span>
                 <span class="whitespace-nowrap">Profile</span>
-            </a>
+            </button>
             <a href="#" id="loginBtn"
                 class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all">
                 Loading...
@@ -271,6 +286,15 @@
                             <div class="spinner !border-[3px] !w-6 !h-6"></div>
                             <span>Fetching secure templates...</span>
                         </div>
+                    </div>
+
+                    <!-- My Saved Templates Section -->
+                    <div id="myTemplatesSection" class="mt-10 w-full max-w-2xl hidden">
+                        <p class="font-bold text-vibrant-turquoise mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined">folder_special</span>
+                            My Saved Templates:
+                        </p>
+                        <div id="myTemplatesGrid" class="flex flex-wrap justify-center gap-4"></div>
                     </div>
 
                     <!-- Bulk Fill Container -->
@@ -378,11 +402,230 @@
         </div>
     </footer>
 
+    <!-- Profile Modal -->
+    <div id="profileModal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div
+            class="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl border-2 border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto no-scrollbar">
+            <!-- Close Button -->
+            <button id="closeProfileModal"
+                class="absolute top-5 right-5 z-20 w-10 h-10 bg-slate-100 hover:bg-vibrant-coral hover:text-white rounded-full flex items-center justify-center text-slate-400 transition-all shadow-sm">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <!-- Header Gradient -->
+            <div class="h-28 bg-gradient-to-r from-soft-turquoise to-white relative"></div>
+
+            <!-- Profile Content -->
+            <div class="px-8 pb-8 -mt-16 relative z-10">
+                <div class="flex flex-col items-center mb-6">
+                    <!-- Avatar -->
+                    <div class="mb-2">
+                        <div class="w-24 h-24 bg-vibrant-turquoise text-white rounded-[2rem] flex items-center justify-center text-4xl font-bold shadow-lg border-4 border-white rotate-3"
+                            id="modalProfileInitials">
+                            --
+                        </div>
+                    </div>
+                    <div class="bg-sunny-yellow text-warm-yellow px-3 py-1 text-xs font-bold shadow-sm rounded-lg mb-2 hidden"
+                        id="modalRoleBadge">
+                        User
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800" id="modalDisplayName">Loading...</h2>
+                    <p class="text-slate-400 font-medium text-sm" id="modalJoinDate">Member since...</p>
+                </div>
+
+                <!-- Profile Form -->
+                <form id="modalProfileForm" class="space-y-5">
+                    <div class="bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-vibrant-turquoise">manage_accounts</span>
+                            Personal Details
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Full
+                                    Name</label>
+                                <input type="text" id="modalInputName" placeholder="E.g. Jane Doe"
+                                    class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-2.5 rounded-xl focus:border-vibrant-turquoise transition-all shadow-sm">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Email</label>
+                                    <input type="email" id="modalInputEmail" disabled
+                                        class="w-full bg-slate-100 border-2 border-slate-200 outline-none text-slate-500 font-bold px-4 py-2.5 rounded-xl cursor-not-allowed opacity-80">
+                                    <p class="text-[10px] text-slate-400 mt-1 ml-1">Email cannot be changed.</p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Company</label>
+                                    <input type="text" id="modalInputCompany" placeholder="Optional"
+                                        class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-2.5 rounded-xl focus:border-vibrant-turquoise transition-all shadow-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" id="modalSaveProfileBtn"
+                            class="bg-vibrant-turquoise hover:bg-[#00ACC1] text-white font-bold py-2.5 px-6 rounded-full shadow-[0px_6px_0px_0px_#0097A7] hover:translate-y-[3px] hover:shadow-[0px_3px_0px_0px_#0097A7] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined" id="modalSaveIcon">save</span>
+                            <span id="modalSaveText">Save Profile</span>
+                            <div id="modalSaveSpinner"
+                                class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin hidden">
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Toast Container -->
+    <div class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2" id="profileToastContainer"></div>
+
     <!-- App JS -->
     <script src="js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+
+    <!-- Profile Modal Logic -->
+    <script type="module">
+        import { getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Reuse the Firebase app already initialized by auth.js
+        const fbApp = getApp();
+        const fbAuth = getAuth(fbApp);
+        const db = getFirestore(fbApp);
+
+        const modal = document.getElementById('profileModal');
+        const closeBtn = document.getElementById('closeProfileModal');
+        const form = document.getElementById('modalProfileForm');
+        const els = {
+            initials: document.getElementById('modalProfileInitials'),
+            displayName: document.getElementById('modalDisplayName'),
+            joinDate: document.getElementById('modalJoinDate'),
+            roleBadge: document.getElementById('modalRoleBadge'),
+            inputName: document.getElementById('modalInputName'),
+            inputEmail: document.getElementById('modalInputEmail'),
+            inputCompany: document.getElementById('modalInputCompany'),
+            saveBtn: document.getElementById('modalSaveProfileBtn'),
+            saveText: document.getElementById('modalSaveText'),
+            saveIcon: document.getElementById('modalSaveIcon'),
+            saveSpinner: document.getElementById('modalSaveSpinner'),
+            toastContainer: document.getElementById('profileToastContainer')
+        };
+
+        let userDocRef = null;
+        let profileLoaded = false;
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeBtn.click();
+        });
+
+        // Load profile when auth is ready
+        onAuthStateChanged(fbAuth, async (user) => {
+            if (user && !profileLoaded) {
+                userDocRef = doc(db, 'users', user.uid);
+                try {
+                    const snap = await getDoc(userDocRef);
+                    if (snap.exists()) {
+                        const d = snap.data();
+                        const initial = (d.fullName || user.email || '?').charAt(0).toUpperCase();
+                        els.initials.textContent = initial;
+                        els.displayName.textContent = d.fullName || user.email.split('@')[0];
+
+                        let joinText = 'Member since recently';
+                        if (d.createdAt) {
+                            const date = d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt);
+                            if (!isNaN(date)) joinText = `Member since ${date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}`;
+                        }
+                        els.joinDate.textContent = joinText;
+
+                        els.roleBadge.classList.remove('hidden');
+                        if (d.isAdmin) {
+                            els.roleBadge.textContent = 'Admin 👑';
+                            els.roleBadge.className = 'absolute -bottom-2 -right-2 bg-vibrant-coral text-white border-2 border-white px-3 py-1 text-xs font-bold transform -rotate-6 shadow-sm rounded-lg';
+                        } else {
+                            els.roleBadge.textContent = 'Standard User';
+                        }
+
+                        els.inputName.value = d.fullName || '';
+                        els.inputEmail.value = user.email;
+                        els.inputCompany.value = d.companyName || '';
+                    } else {
+                        els.displayName.textContent = user.email;
+                        els.inputEmail.value = user.email;
+                        els.initials.textContent = user.email.charAt(0).toUpperCase();
+                    }
+                    profileLoaded = true;
+                } catch (err) {
+                    console.error('Profile load error:', err);
+                }
+            }
+        });
+
+        // Save profile
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userDocRef) return;
+
+            const newName = els.inputName.value.trim();
+            const newCompany = els.inputCompany.value.trim();
+
+            els.saveText.textContent = 'Saving...';
+            els.saveIcon.classList.add('hidden');
+            els.saveSpinner.classList.remove('hidden');
+            els.saveBtn.disabled = true;
+
+            try {
+                await updateDoc(userDocRef, { fullName: newName, companyName: newCompany });
+                els.displayName.textContent = newName || els.inputEmail.value.split('@')[0];
+                els.initials.textContent = (newName || els.inputEmail.value).charAt(0).toUpperCase();
+                showProfileToast('Profile updated successfully!', 'success');
+            } catch (err) {
+                console.error('Profile save error:', err);
+                showProfileToast('Failed to update profile.', 'error');
+            } finally {
+                els.saveText.textContent = 'Save Profile';
+                els.saveIcon.classList.remove('hidden');
+                els.saveSpinner.classList.add('hidden');
+                els.saveBtn.disabled = false;
+            }
+        });
+
+        function showProfileToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const isError = type === 'error';
+            toast.className = `p-4 rounded-xl shadow-lg border-2 flex items-center gap-3 transform translate-x-full transition-transform duration-300 ${isError ? 'bg-red-50 border-red-200 text-red-700' : 'bg-soft-turquoise border-vibrant-turquoise text-slate-700'
+                }`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined ${isError ? 'text-red-500' : 'text-vibrant-turquoise'} p-2 rounded-lg bg-white shadow-sm">
+                    ${isError ? 'error' : 'task_alt'}
+                </span>
+                <p class="font-bold pr-4">${message}</p>
+            `;
+            toast.style.animation = 'toast-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+            if (!document.getElementById('profileToastKF')) {
+                const s = document.createElement('style');
+                s.id = 'profileToastKF';
+                s.innerHTML = '@keyframes toast-slide-in { 0% { transform: translateX(100%) scale(0.9); opacity: 0; } 100% { transform: translateX(0) scale(1); opacity: 1; } }';
+                document.head.appendChild(s);
+            }
+            els.toastContainer.appendChild(toast);
+            setTimeout(() => { toast.style.transform = 'translateX(100%)'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
         }
     </script>
 </body>

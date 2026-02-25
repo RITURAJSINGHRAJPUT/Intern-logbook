@@ -196,13 +196,7 @@ function setupEventListeners() {
 
     if (buyCreditsBtn) {
         buyCreditsBtn.addEventListener('click', () => {
-            showToast('Redirecting to payment gateway...', 'success');
-            setTimeout(() => {
-                creditsModal.classList.add('opacity-0', 'pointer-events-none');
-                creditsModal.firstElementChild.classList.remove('scale-100');
-                creditsModal.firstElementChild.classList.add('scale-95');
-            }, 1000);
-            // Replace with actual payment logic (e.g. window.location.href = '/pricing.html')
+            window.location.href = '/Buy-Credits.html';
         });
     }
 }

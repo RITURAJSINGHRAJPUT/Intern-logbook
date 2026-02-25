@@ -364,22 +364,7 @@
                         id="closeSignature">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="signature-tabs flex gap-4 mb-6">
-                        <button
-                            class="signature-tab active flex-1 bg-slate-100 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200"
-                            data-tab="draw">Draw</button>
-                        <button
-                            class="signature-tab flex-1 bg-slate-100 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200"
-                            data-tab="upload">Upload</button>
-                    </div>
-
-                    <div class="signature-tab-content active border-2 border-dashed border-slate-300 rounded-2xl overflow-hidden"
-                        id="drawTab">
-                        <canvas id="signatureCanvas" width="400" height="200"
-                            class="w-full bg-slate-50 cursor-crosshair"></canvas>
-                    </div>
-
-                    <div class="signature-tab-content hidden" id="uploadTab">
+                    <div class="signature-tab-content active" id="uploadTab">
                         <div class="signature-upload-zone border-2 border-dashed border-vibrant-turquoise bg-soft-turquoise/20 rounded-2xl flex flex-col items-center justify-center p-10 cursor-pointer hover:bg-soft-turquoise/40 transition-colors"
                             id="signatureUploadZone">
                             <span
@@ -446,7 +431,6 @@
     <!-- App Scripts (Maintain exact order and linking) -->
     <script src="js/pdfViewer.js"></script>
     <script src="js/fieldManager.js"></script>
-    <script src="js/signature.js"></script>
     <script src="js/components.js?v=2.1"></script>
     <script src="js/editor.js?v=2.1"></script>
     <script>
