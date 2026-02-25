@@ -191,6 +191,11 @@
                     <span class="material-symbols-outlined hidden md:block">save</span> Save <span
                         class="hidden md:inline">Template</span>
                 </button>
+                <button id="emailPdfBtn"
+                    class="bg-white text-vibrant-turquoise px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold border-2 border-vibrant-turquoise hover:bg-soft-turquoise transition-all flex items-center gap-2 text-sm md:text-base">
+                    <span class="material-symbols-outlined hidden md:block">mail</span> Email <span
+                        class="hidden md:inline">PDF</span>
+                </button>
                 <button id="downloadBtn"
                     class="bg-vibrant-turquoise text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2 text-sm md:text-base">
                     <span class="material-symbols-outlined hidden md:block">download</span> Download <span
@@ -404,6 +409,35 @@
             </div>
         </div>
 
+        <!-- Email Prompt Modal -->
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+            id="emailPromptOverlay">
+            <div
+                class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border-2 border-slate-100 transform scale-100 transition-transform">
+                <div class="flex items-center gap-3 mb-6">
+                    <div
+                        class="w-12 h-12 bg-vibrant-turquoise rounded-2xl flex items-center justify-center rotate-3 shadow-lg">
+                        <span class="material-symbols-outlined text-white text-2xl">mail</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Email Document</h3>
+                        <p class="text-sm text-slate-400">Send this completed PDF to your email</p>
+                    </div>
+                </div>
+                <input type="email" id="emailPromptInput"
+                    class="w-full bg-slate-50 border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-xl focus:border-vibrant-turquoise transition-all text-lg mb-6"
+                    placeholder="E.g. user@example.com" autofocus>
+                <div class="flex justify-end gap-3">
+                    <button id="emailPromptCancel"
+                        class="px-5 py-2.5 rounded-full font-bold text-slate-500 hover:bg-slate-100 transition-all">Cancel</button>
+                    <button id="emailPromptSend"
+                        class="bg-vibrant-turquoise text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">send</span> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast Container -->
         <div class="toast-container fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer"></div>
     </div>
@@ -431,8 +465,8 @@
     <!-- App Scripts (Maintain exact order and linking) -->
     <script src="js/pdfViewer.js"></script>
     <script src="js/fieldManager.js"></script>
-    <script src="js/components.js?v=2.1"></script>
-    <script src="js/editor.js?v=2.1"></script>
+    <script src="js/components.js?v=2.2"></script>
+    <script src="js/editor.js?v=2.2"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');

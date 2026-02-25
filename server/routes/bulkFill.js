@@ -517,6 +517,30 @@ router.get('/download/:jobId', (req, res) => {
 
     const filename = job.outputType === 'zip' ? 'filled-forms.zip' : 'filled-forms-merged.pdf';
 
+    // Auto-email the file to the logged-in user
+    const sessionCookie = req.cookies && req.cookies.session ? req.cookies.session : '';
+    if (sessionCookie) {
+        (async () => {
+            try {
+                const admin = require('firebase-admin');
+                const decodedClaims = await admin.auth().verifySessionCookie(sessionCookie, true);
+                let userEmail = decodedClaims.email;
+                if (!userEmail && decodedClaims.uid) {
+                    const userRecord = await admin.auth().getUser(decodedClaims.uid);
+                    userEmail = userRecord.email;
+                }
+                if (userEmail) {
+                    console.log(`[Bulk Download] Auto-emailing to: ${userEmail}`);
+                    const { sendPdfEmail } = require('../services/emailService');
+                    await sendPdfEmail(userEmail, job.outputFile, filename);
+                    console.log(`[Bulk Download] Email sent successfully to: ${userEmail}`);
+                }
+            } catch (err) {
+                console.error('[Bulk Download] Auto-email error:', err.message);
+            }
+        })();
+    }
+
     res.download(job.outputFile, filename, (err) => {
         if (!err) {
             // Cleanup after download

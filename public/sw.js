@@ -3,7 +3,7 @@
  * Caches app shell for offline support and fast loading
  */
 
-const CACHE_NAME = 'pdf-filler-v4';
+const CACHE_NAME = 'pdf-filler-v5';
 const OFFLINE_URL = '/offline.html';
 
 // App shell files to pre-cache

@@ -193,6 +193,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set up download button
     setupDownloadButton(sessionId);
 
+    // Set up email pdf button
+    setupEmailButton(sessionId);
+
     // Set up save template button
     setupSaveTemplateButton();
 
@@ -537,7 +540,115 @@ function setupDownloadButton(sessionId) {
             // Determine if single or multiple instances
             const isSingleInstance = allInstances.length === 1;
 
+            const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+
             // Generate PDF
+            const generateRes = await fetch(`/api/generate/${sessionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': userId || ''
+                },
+                body: JSON.stringify({
+                    fields: isSingleInstance ? allInstances[0].fields : null,
+                    instances: isSingleInstance ? null : allInstances,
+                    flatten
+                })
+            });
+
+            if (!generateRes.ok) {
+                throw new Error('Failed to generate PDF');
+            }
+
+            const generateData = await generateRes.json();
+
+            // Download the file
+            window.location.href = `/api/download/${sessionId}`;
+
+            hideLoading();
+            const pageWord = allInstances.length > 1 ? `${allInstances.length} pages` : 'PDF';
+
+            // Show toast based on email status
+            if (generateData.emailSent) {
+                showToast(`${pageWord} downloaded & emailed successfully! 🚀`, 'success');
+            } else {
+                showToast(`${pageWord} downloaded! Starting new session...`, 'success');
+            }
+
+            // Redirect to home after a delay
+            setTimeout(() => {
+                window.location.href = '/app.html';
+            }, 3000);
+
+        } catch (error) {
+            console.error('Download error:', error);
+            hideLoading();
+            showToast('Failed to download PDF. Please try again.', 'error');
+        }
+    });
+}
+
+/**
+ * Set up Email PDF button
+ */
+function setupEmailButton(sessionId) {
+    const emailPdfBtn = document.getElementById('emailPdfBtn');
+    const flattenCheckbox = document.getElementById('flattenCheckbox');
+
+    // Email Prompt Elements
+    const emailPromptOverlay = document.getElementById('emailPromptOverlay');
+    const emailPromptInput = document.getElementById('emailPromptInput');
+    const emailPromptCancel = document.getElementById('emailPromptCancel');
+    const emailPromptSend = document.getElementById('emailPromptSend');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdminMode = urlParams.get('adminMode') === 'true';
+
+    if (isAdminMode && emailPdfBtn) {
+        emailPdfBtn.style.display = 'none';
+        return;
+    }
+
+    // Show prompt on click
+    emailPdfBtn?.addEventListener('click', () => {
+        if (emailPromptOverlay) {
+            emailPromptOverlay.classList.remove('hidden');
+            emailPromptInput?.focus();
+        }
+    });
+
+    // Handle cancel
+    emailPromptCancel?.addEventListener('click', () => {
+        emailPromptOverlay?.classList.add('hidden');
+        if (emailPromptInput) emailPromptInput.value = '';
+    });
+
+    // Close on click outside
+    emailPromptOverlay?.addEventListener('click', (e) => {
+        if (e.target === emailPromptOverlay) {
+            emailPromptOverlay.classList.add('hidden');
+            if (emailPromptInput) emailPromptInput.value = '';
+        }
+    });
+
+    // Handle send operation
+    const handleSend = async () => {
+        const email = emailPromptInput?.value?.trim();
+
+        if (!email || !email.includes('@')) {
+            showToast('Please enter a valid email address.', 'error');
+            return;
+        }
+
+        emailPromptOverlay?.classList.add('hidden');
+        showLoading('Generating PDF and sending email...');
+
+        try {
+            // First: Generate the PDF (same as download process)
+            const allInstances = getAllInstanceFields();
+            const flatten = flattenCheckbox?.checked || false;
+            const isSingleInstance = allInstances.length === 1;
+
             const generateRes = await fetch(`/api/generate/${sessionId}`, {
                 method: 'POST',
                 headers: {
@@ -554,25 +665,46 @@ function setupDownloadButton(sessionId) {
                 throw new Error('Failed to generate PDF');
             }
 
-            // Download the file
-            window.location.href = `/api/download/${sessionId}`;
+            // Second: Call the Email endpoint
+            const emailRes = await fetch(`/api/email/${sessionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const emailData = await emailRes.json();
+
+            if (!emailRes.ok) {
+                throw new Error(emailData.error || 'Failed to send email');
+            }
 
             hideLoading();
-            const pageWord = allInstances.length > 1 ? `${allInstances.length} pages` : 'PDF';
-            showToast(`${pageWord} downloaded! Starting new session...`, 'success');
+            showToast('Email sent successfully!', 'success');
 
-            // Redirect to home after a delay
-            setTimeout(() => {
-                window.location.href = '/app.html';
-            }, 3000);
+            if (emailPromptInput) emailPromptInput.value = '';
 
         } catch (error) {
-            console.error('Download error:', error);
+            console.error('Email action error:', error);
             hideLoading();
-            showToast('Failed to download PDF. Please try again.', 'error');
+            showToast(error.message || 'Failed to send email. Please try again.', 'error');
+        }
+    };
+
+    emailPromptSend?.addEventListener('click', handleSend);
+
+    emailPromptInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSend();
+        } else if (e.key === 'Escape') {
+            emailPromptOverlay?.classList.add('hidden');
+            emailPromptInput.value = '';
         }
     });
 }
+
 
 /**
  * Update page info display

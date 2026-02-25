@@ -110,6 +110,9 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
     const { sessionId } = req.params;
     const { fields, instances, flatten = false } = req.body;
     const session = sessions.get(sessionId);
+    const userId = req.headers['x-user-id'];
+
+    console.log(`[Generate] Request received for session: ${sessionId}, has-session: ${!!session}, cookie: ${!!(req.cookies && req.cookies.session)}`);
 
     if (!session) {
         return res.status(404).json({ error: 'Session not found' });
@@ -143,7 +146,38 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
         session.filledPath = filledPath;
         sessions.set(sessionId, session);
 
-        res.json({ success: true, downloadReady: true });
+        // --- Auto-Email Feature ---
+        let emailSent = false;
+        const sessionCookie = req.cookies && req.cookies.session ? req.cookies.session : '';
+        if (sessionCookie) {
+            try {
+                const admin = require('firebase-admin');
+                const decodedClaims = await admin.auth().verifySessionCookie(sessionCookie, true);
+
+                // Get the user's email either from claims or by fetching the user record
+                let userEmail = decodedClaims.email;
+                if (!userEmail && decodedClaims.uid) {
+                    const userRecord = await admin.auth().getUser(decodedClaims.uid);
+                    userEmail = userRecord.email;
+                }
+
+                if (userEmail) {
+                    const { sendPdfEmail } = require('../services/emailService');
+                    // Await the email so we can tell the frontend if it succeeded
+                    try {
+                        await sendPdfEmail(userEmail, filledPath, 'filled-form.pdf');
+                        emailSent = true;
+                    } catch (err) {
+                        console.error(`Failed to auto-email ${userEmail}:`, err);
+                    }
+                }
+            } catch (authErr) {
+                console.error('Auto-email error (verifying session cookie):', authErr);
+                // We swallow the error so the PDF download still succeeds even if email fails
+            }
+        }
+
+        res.json({ success: true, downloadReady: true, emailSent });
     } catch (error) {
         console.error('Generate error:', error);
         res.status(500).json({ error: 'Failed to generate PDF' });
@@ -154,14 +188,40 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
  * Download filled PDF
  * GET /api/download/:sessionId
  */
-router.get('/download/:sessionId', (req, res) => {
+router.get('/download/:sessionId', async (req, res) => {
     const { sessionId } = req.params;
     const session = sessions.get(sessionId);
 
     const filledPath = path.join(TEMP_DIR, `${sessionId}_filled.pdf`);
 
+    console.log(`[Download] Request for session: ${sessionId}, file-exists: ${fs.existsSync(filledPath)}, cookie: ${!!(req.cookies && req.cookies.session)}`);
+
     if (!fs.existsSync(filledPath)) {
         return res.status(404).json({ error: 'Filled PDF not found. Please generate first.' });
+    }
+
+    // Trigger auto-email in background (don't block the download)
+    const sessionCookie = req.cookies && req.cookies.session ? req.cookies.session : '';
+    if (sessionCookie) {
+        (async () => {
+            try {
+                const admin = require('firebase-admin');
+                const decodedClaims = await admin.auth().verifySessionCookie(sessionCookie, true);
+                let userEmail = decodedClaims.email;
+                if (!userEmail && decodedClaims.uid) {
+                    const userRecord = await admin.auth().getUser(decodedClaims.uid);
+                    userEmail = userRecord.email;
+                }
+                if (userEmail) {
+                    console.log(`[Download] Auto-emailing PDF to: ${userEmail}`);
+                    const { sendPdfEmail } = require('../services/emailService');
+                    await sendPdfEmail(userEmail, filledPath, 'filled-form.pdf');
+                    console.log(`[Download] Email sent successfully to: ${userEmail}`);
+                }
+            } catch (err) {
+                console.error('[Download] Auto-email error:', err.message);
+            }
+        })();
     }
 
     res.download(filledPath, 'filled-form.pdf', (err) => {
@@ -173,6 +233,42 @@ router.get('/download/:sessionId', (req, res) => {
             }, 5000);
         }
     });
+});
+
+/**
+ * Email filled PDF
+ * POST /api/email/:sessionId
+ */
+router.post('/email/:sessionId', async (req, res) => {
+    const { sessionId } = req.params;
+    const { email } = req.body;
+    const session = sessions.get(sessionId);
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email address is required' });
+    }
+
+    const filledPath = path.join(TEMP_DIR, `${sessionId}_filled.pdf`);
+
+    if (!fs.existsSync(filledPath)) {
+        return res.status(404).json({ error: 'Filled PDF not found. Please generate first.' });
+    }
+
+    try {
+        const { sendPdfEmail } = require('../services/emailService');
+        await sendPdfEmail(email, filledPath, 'filled-form.pdf');
+
+        // Optionally clean up session after email
+        setTimeout(() => {
+            deleteSessionFiles(sessionId);
+            sessions.delete(sessionId);
+        }, 300000); // Wait 5 minutes before cleanup, or based on your needs
+
+        res.json({ success: true, message: 'Email sent successfully!' });
+    } catch (error) {
+        console.error('Email error:', error);
+        res.status(500).json({ error: 'Failed to send email. Ensure SMTP is configured correctly.' });
+    }
 });
 
 /**
