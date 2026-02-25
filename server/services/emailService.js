@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
 
-const MAX_EMAIL_SIZE = 25 * 1024 * 1024; // 25 MB Gmail limit
-const COMPRESS_THRESHOLD = 20 * 1024 * 1024; // Compress if over 20 MB (leaves room for email overhead)
+const MAX_EMAIL_SIZE = 18 * 1024 * 1024; // ~18 MB raw = ~25 MB after base64 encoding (Gmail limit)
+const COMPRESS_THRESHOLD = 15 * 1024 * 1024; // Compress if over 15 MB
 
 /**
  * Compresses a file into a ZIP archive.

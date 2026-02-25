@@ -67,18 +67,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Apply read-only UI changes if necessary
         if (isReadOnly) {
-            // Hide left sidebar (field types)
+            // Hide left sidebar (field types) — users can't add/remove fields
             const leftSidebar = document.querySelector('.w-80.border-r');
             if (leftSidebar) leftSidebar.style.display = 'none';
 
-            // Hide Save Template button
-            const saveBtn = document.getElementById('saveTemplateBtn');
-            if (saveBtn) saveBtn.style.display = 'none';
+            // Keep Save Template button visible so users can save their own copy
+            // (e.g., with their signature filled in for bulk fill)
 
             // Pass read-only flag to field manager
             window.fieldManager.setReadOnly(true);
 
-            showToast('Viewing admin template. You can fill it out, but cannot change the fields.', 'info');
+            showToast('Viewing admin template. You can fill values and save your own copy.', 'info');
         }
 
         // Try to load saved template fields first (if this is a template PDF)
