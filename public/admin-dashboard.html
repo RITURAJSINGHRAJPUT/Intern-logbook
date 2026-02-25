@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Dashboard - PDF Form Filler</title>
+
+    <!-- Design System (Tailwind + Fonts) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/admin.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00BCD4">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFF9C4',
+                        'warm-yellow': '#FFD54F',
+                        'bright-yellow': '#FFEE58',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'blob': '30% 70% 70% 30% / 30% 30% 70% 70%',
+                        'super-rounded': '3rem',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .organic-shape {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+
+        .blob-1 {
+            border-radius: 41% 59% 41% 59% / 65% 36% 64% 35%;
+        }
+
+        .blob-2 {
+            border-radius: 65% 35% 71% 29% / 32% 57% 43% 68%;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .hand-drawn-border {
+            border: 3px solid currentColor;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+        }
+
+        /* Overrides for dynamic js elements */
+        .template-card {
+            background-color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 2.5rem;
+            border: 2px solid #E0F7FA;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .template-card:hover {
+            border-color: #4DD0E1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: scale(1.05);
+        }
+
+        .template-card:nth-child(even) {
+            transform: rotate(-1deg);
+            border-color: #FFAB91;
+        }
+
+        .template-card:nth-child(even):hover {
+            border-color: #FF7043;
+            transform: rotate(-1deg) scale(1.05);
+        }
+
+        .template-card:nth-child(3n) {
+            transform: rotate(1deg);
+            border-color: #FFF59D;
+        }
+
+        .template-card:nth-child(3n):hover {
+            border-color: #FBC02D;
+            transform: rotate(1deg) scale(1.05);
+        }
+
+        .template-card svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #4DD0E1;
+        }
+
+        .template-card:nth-child(even) svg {
+            color: #FF7043;
+        }
+
+        .template-card:nth-child(3n) svg {
+            color: #FBC02D;
+        }
+
+        .template-card span {
+            font-weight: 700;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .template-locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .lock-badge {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        /* Dragover state for upload */
+        #uploadZone.dragover {
+            background-color: rgba(224, 247, 250, 0.5);
+            /* soft-turquoise/50 */
+            border-color: #4DD0E1;
+            transform: scale(1.05);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(77, 208, 225, 0.2);
+            border-top-color: #4DD0E1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script>
+        window.addEventListener('error', function (e) {
+            alert('JS Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+            alert('Promise Error: ' + e.reason);
+        });
+    </script>
+</head>
+
+<body class="antialiased overflow-x-hidden min-h-screen">
+    <!-- Auth Check -->
+    <script type="module">
+        import { checkAuth, logout } from './js/auth.js';
+        checkAuth(true); // Redirect to login if not authenticated
+
+        // Define global admin logout for the header
+        window.adminLogout = function (e) {
+            e.preventDefault();
+            logout();
+        }
+    </script>
+
+    <!-- Main Content Area -->
+    <main class="flex flex-col min-h-screen w-full">
+        <!-- Top Header -->
+        <header
+            class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
+            <!-- Left: Logo & Nav -->
+            <div class="flex items-center gap-8">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div
+                        class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl rotate-3 shadow-md group-hover:rotate-0 transition-transform cursor-pointer">
+                        <span class="material-symbols-outlined text-white text-xl">face_6</span>
+                    </div>
+                    <span class="font-bold text-xl text-friendly-navy tracking-tight hidden sm:block">FormFiller</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-2">
+                    <a href="/admin-dashboard.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="/user_management.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                        <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+                        User Management
+                    </a>
+                    <a href="/templates.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                        <span class="material-symbols-outlined text-[18px]">file_copy</span>
+                        Templates
+                    </a>
+                    <a href="#"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                        <span class="material-symbols-outlined text-[18px]">settings</span>
+                        Settings
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Right: Actions & Profile -->
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-turquoise border-2 border-slate-100 hover:border-vibrant-turquoise flex items-center justify-center text-slate-400 hover:text-vibrant-turquoise transition-all cursor-pointer tactile-sm hidden sm:flex">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                </button>
+                <!-- Logout Button -->
+                <a href="#"
+                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-coral hover:text-vibrant-coral border-2 border-slate-100 hover:border-vibrant-coral flex items-center justify-center text-slate-400 transition-all cursor-pointer tactile-sm"
+                    onclick="window.adminLogout(event)" title="Logout">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </a>
+
+                <div class="flex items-center gap-3 pl-4 border-l-2 border-slate-100">
+                    <div class="flex flex-col items-end hidden md:flex">
+                        <span class="text-[13px] font-extrabold text-friendly-navy">Admin Panel</span>
+                        <span class="text-[11px] font-bold text-slate-400">Super Admin</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white bg-slate-100">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
+                            alt="Admin" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 w-full relative">
+            <section class="relative px-4 pt-16 pb-24 overflow-hidden">
+                <div class="absolute top-0 left-10 w-64 h-64 bg-soft-turquoise/40 blob-1 -z-10 animate-pulse"></div>
+                <div class="absolute bottom-0 right-10 w-80 h-80 bg-soft-coral/20 blob-2 -z-10"></div>
+
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-5xl md:text-7xl font-bold text-slate-800 mb-6 leading-tight">
+                        PDFs Made <br />
+                        <span class="text-vibrant-turquoise relative inline-block">
+                            Fun &amp; Easy!
+                            <svg class="absolute -bottom-2 left-0 w-full" fill="none" height="10" viewBox="0 0 200 10"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 9C30 3 170 3 199 9" stroke="#4DD0E1" stroke-linecap="round"
+                                    stroke-width="4">
+                                </path>
+                            </svg>
+                        </span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-slate-600 mb-12 max-w-2xl mx-auto">
+                        Say goodbye to boring forms. Fill, sign, and send documents in seconds with a smile!
+                    </p>
+
+                    <div class="relative max-w-xl mx-auto mb-16">
+                        <!-- Upload Dropzone -->
+                        <div id="uploadZone"
+                            class="relative bg-white border-4 border-dashed border-vibrant-turquoise p-10 md:p-16 rounded-[3rem] shadow-xl rotate-1 hover:rotate-0 transition-all cursor-pointer group">
+                            <div
+                                class="bg-soft-turquoise w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span
+                                    class="material-symbols-outlined text-5xl text-vibrant-turquoise">cloud_upload</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Pop your PDF here!</h3>
+                            <p class="text-slate-500 mb-4">Click to browse or just drag it in</p>
+                            <div
+                                class="inline-block px-4 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                Up to 10MB • Stay Awesome
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf,application/pdf" class="hidden">
+
+                        <!-- Loading State -->
+                        <div id="uploadLoading"
+                            class="hidden relative bg-white border-4 border-dashed border-vibrant-turquoise p-10 rounded-[3rem] shadow-xl text-center">
+                            <div class="spinner mx-auto mb-6"></div>
+                            <h3 class="text-2xl font-bold text-slate-700">Working magic...</h3>
+                            <p class="text-slate-500">Getting your PDF ready for you!</p>
+                        </div>
+
+                        <div
+                            class="absolute -top-6 -right-6 w-20 h-20 bg-sunny-yellow rounded-full flex items-center justify-center border-4 border-white shadow-lg rotate-12 hidden md:flex z-10">
+                            <span class="material-symbols-outlined text-warm-yellow text-4xl">celebration</span>
+                        </div>
+                    </div>
+
+                    <!-- Templates Section -->
+                    <div id="templatesSection" class="flex flex-col items-center">
+                        <p class="font-bold text-vibrant-coral mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined">auto_awesome</span>
+                            Need a quick start? Try a template:
+                        </p>
+                        <div id="templatesGrid" class="flex flex-wrap justify-center gap-4">
+                            <!-- Loading templates state -->
+                            <div class="flex items-center gap-3 text-slate-500">
+                                <div class="spinner !border-[3px] !w-6 !h-6"></div>
+                                <span>Fetching secure templates...</span>
+                            </div>
+                        </div>
+
+                        <!-- Bulk Fill Container -->
+                        <div id="bulkFillContainer" class="mt-16 hidden">
+                            <a href="/bulk-fill.html"
+                                class="bg-vibrant-turquoise text-white px-10 py-5 rounded-full font-bold text-xl shadow-[0_10px_0_0_#00ACC1] hover:shadow-[0_5px_0_0_#00ACC1] hover:translate-y-1 active:translate-y-2 transition-all flex items-center gap-3 mx-auto max-w-max">
+                                <span class="material-symbols-outlined">dynamic_feed</span>
+                                Bulk Fill Magic!
+                            </a>
+                            <p class="mt-4 text-sm font-medium text-slate-400">Fill hundreds of forms from one
+                                spreadsheet
+                                🪄</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How it works -->
+            <section class="py-24 bg-soft-turquoise/30 rounded-[5rem] mx-4 my-8 relative z-10">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-4xl font-bold text-center text-slate-800 mb-16 relative">
+                        How the Magic Happens
+                        <span class="block h-1 w-24 bg-vibrant-coral mx-auto mt-4 rounded-full"></span>
+                    </h2>
+                    <div class="grid md:grid-cols-3 gap-12">
+                        <div class="relative group text-center">
+                            <div
+                                class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:rotate-12 transition-transform border-4 border-vibrant-turquoise">
+                                <span
+                                    class="material-symbols-outlined text-5xl text-vibrant-turquoise">upload_file</span>
+                            </div>
+                            <h4 class="text-2xl font-bold mb-4 text-slate-800">1. Toss it in</h4>
+                            <p class="text-slate-600 leading-relaxed font-medium">
+                                Upload any PDF from your computer or cloud. We don't mind the format!
+                            </p>
+                        </div>
+                        <div class="relative group text-center translate-y-8">
+                            <div
+                                class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:-rotate-12 transition-transform border-4 border-vibrant-coral">
+                                <span class="material-symbols-outlined text-5xl text-vibrant-coral">draw</span>
+                            </div>
+                            <h4 class="text-2xl font-bold mb-4 text-slate-800">2. Get Creative</h4>
+                            <p class="text-slate-600 leading-relaxed font-medium">
+                                Our super-simple editor lets you add text, ticks, and signatures without breaking a
+                                sweat.
+                            </p>
+                        </div>
+                        <div class="relative group text-center">
+                            <div
+                                class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:rotate-12 transition-transform border-4 border-warm-yellow">
+                                <span class="material-symbols-outlined text-5xl text-warm-yellow">handyman</span>
+                            </div>
+                            <h4 class="text-2xl font-bold mb-4 text-slate-800">3. Done &amp; Dusted!</h4>
+                            <p class="text-slate-600 leading-relaxed font-medium">
+                                Download your shiny new PDF. We'll delete our copy so your data stays yours.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Privacy Section -->
+            <section class="max-w-5xl mx-auto px-4 py-20">
+                <div
+                    class="bg-soft-coral/10 rounded-[3rem] p-8 md:p-12 border-4 border-soft-coral/30 relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                        <div
+                            class="w-24 h-24 bg-vibrant-coral text-white rounded-[2rem] flex items-center justify-center shadow-lg rotate-6 shrink-0">
+                            <span class="material-symbols-outlined text-5xl">lock</span>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h3 class="text-3xl font-bold text-slate-800 mb-4">Your Secret is Safe! 🔒</h3>
+                            <p class="text-lg text-slate-600 font-medium leading-relaxed">
+                                We're like a digital shredder! All files are automatically deleted after 30 minutes.
+                                We never store your personal details—your privacy is our biggest priority.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-vibrant-coral opacity-10 rounded-full">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="bg-friendly-navy text-white py-6 px-6 mt-auto w-full z-10 relative">
+            <div class="max-w-7xl mx-auto">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
+                            <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+                        </div>
+                        <span class="font-bold text-xl">PDF Form Filler</span>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
+                        <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
+                        <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
+                        <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
+                        <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+                    <p>© 2026 Admin Dashboard Extension</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                        System All Go
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <!-- App JS -->
+    <script src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+
+</html>

@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error loading users:', error);
             usersTableBody.innerHTML = `
-                <tr><td colspan="6" class="empty-state">
-                    <p style="color:#ef4444">Failed to load users. Please try again.</p>
+                <tr><td colspan="6" class="px-6 py-12 text-center text-slate-500 font-bold">
+                    <p class="text-rose-500">Failed to load users. Please try again.</p>
                 </td></tr>`;
         }
     }
@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderUsersTable(users) {
         if (!users || users.length === 0) {
             usersTableBody.innerHTML = `
-                <tr><td colspan="6" class="empty-state">
-                    <p>No users found matching criteria.</p>
+                <tr><td colspan="6" class="px-6 py-12 text-center text-slate-500 font-bold">
+                    No users found matching criteria.
                 </td></tr>`;
             return;
         }
@@ -131,27 +131,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const colorClass = colors[idx % colors.length];
 
             const statusAttr = user.approved
-                ? '<span class="status-pill approved">Approved</span>'
-                : '<span class="status-pill pending">Pending</span>';
+                ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[1rem] text-[10px] font-extrabold tracking-wide bg-[#E0F7FA] text-[#00ACC1]"><span class="w-1.5 h-1.5 rounded-full bg-[#00ACC1]"></span> Approved</span>'
+                : '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[1rem] text-[10px] font-extrabold tracking-wide bg-[#FFF8E1] text-[#FFB300]"><span class="w-1.5 h-1.5 rounded-full bg-[#FFB300]"></span> Pending</span>';
 
-            const adminBadge = user.role === 'admin' ? '<span class="admin-tag">Admin</span>' : '';
+            const adminBadge = user.role === 'admin'
+                ? '<span class="px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-widest text-[#FF5252] bg-[#FFEBEE] border border-[#FFCDD2] inline-flex items-center shadow-sm">ADMIN</span>'
+                : '';
 
-            let templatesHtml = '<span class="template-pill more" style="font-weight:normal;opacity:0.5;font-style:italic">No templates assigned</span>';
+            let templatesHtml = '<span class="text-[11px] font-bold text-slate-400 italic">No templates</span>';
             if (user.allowedTemplates && user.allowedTemplates.length > 0) {
                 if (user.role === 'admin' && user.allowedTemplates.length > 2) {
-                    templatesHtml = '<span class="template-pill more">All Forms</span>';
+                    templatesHtml = '<span class="px-2.5 py-1 rounded-[12px] text-[11px] font-bold bg-slate-100 text-slate-500">All Forms</span>';
                 } else {
                     const firstTemp = user.allowedTemplates[0].replace('.pdf', '');
-                    templatesHtml = `<span class="template-pill">${firstTemp}</span>`;
+                    templatesHtml = `<span class="px-2.5 py-1 rounded-[12px] text-[11px] font-bold bg-slate-100 text-slate-500">${firstTemp}</span>`;
                     if (user.allowedTemplates.length > 1) {
-                        templatesHtml += `<br><span class="template-pill more">+${user.allowedTemplates.length - 1} more</span>`;
+                        templatesHtml += ` <span class="px-2 py-1 rounded-[12px] text-[11px] font-bold bg-white text-slate-500 border border-slate-200 shadow-sm ml-1">+${user.allowedTemplates.length - 1}</span>`;
                     }
                 }
             }
 
             const bulkFillIcon = user.allowBulkFill
-                ? '<div class="bulk-status allowed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Allowed</div>'
-                : '<div class="bulk-status denied"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Denied</div>';
+                ? '<div class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-[12px] text-[11px] font-bold bg-white text-emerald-500 border border-emerald-200 w-max tracking-wide"><span class="material-symbols-outlined text-[14px]">check_circle</span> Allowed</div>'
+                : '<div class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-[12px] text-[11px] font-bold bg-white text-slate-400 border border-slate-200 w-max tracking-wide"><span class="material-symbols-outlined text-[14px]">cancel</span> Denied</div>';
 
             const joinedDate = user.createdAt
                 ? new Date(user.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -167,48 +169,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const actions = user.approved
                 ? `
-                    <button class="action-icon" title="View" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates || []).replace(/"/g, '&quot;')})">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-turquoise hover:bg-soft-turquoise/30 transition-colors" title="View" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates || []).replace(/"/g, '&quot;')})">
+                        <span class="material-symbols-outlined text-[18px]">assignment</span>
                     </button>
-                    <button class="action-icon warning" title="Toggle Bulk Fill" onclick="adminActions.toggleBulkFill('${user.uid}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-warm-yellow hover:bg-sunny-yellow/30 transition-colors" title="Toggle Bulk Fill" onclick="adminActions.toggleBulkFill('${user.uid}')">
+                        <span class="material-symbols-outlined text-[18px]">layers</span>
                     </button>
-                    <button class="action-icon danger" title="Deactivate" onclick="adminActions.toggleActive('${user.uid}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-coral hover:bg-soft-coral/30 transition-colors" title="Deactivate" onclick="adminActions.toggleActive('${user.uid}')">
+                        <span class="material-symbols-outlined text-[18px]">block</span>
                     </button>
                   `
                 : `
-                    <button class="approve-btn" onclick="adminActions.approve('${user.uid}')">Approve</button>
-                    <button class="action-icon danger" style="padding:6px;margin-left:8px;" title="Reject" onclick="adminActions.reject('${user.uid}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <button class="px-3 py-1 rounded-lg text-[11px] font-bold bg-vibrant-turquoise text-white hover:bg-[#00acc1] shadow-sm transition-colors tactile-sm" onclick="adminActions.approve('${user.uid}')">Approve</button>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-coral hover:bg-soft-coral/30 transition-colors ml-1" title="Reject" onclick="adminActions.reject('${user.uid}')">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
                     </button>
                   `;
 
+            // Make background color class dynamically valid for Tailwind or use inline styling
+            const initialColorMap = {
+                'purple': '#8b5cf6',
+                'blue': '#3b82f6',
+                'yellow': '#eab308'
+            };
+            const bgColorHex = initialColorMap[colorClass] || '#64748b';
+
             return `
-                <tr>
-                    <td>
-                        <div class="user-cell">
-                            <div class="avatar-circle ${colorClass}">${initial}</div>
-                            <div class="user-info">
-                                <div class="user-name-wrapper">
-                                    <span class="user-name">${user.displayName || user.email.split('@')[0]}</span>
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-5 py-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-[8px] flex items-center justify-center text-white font-bold shadow-sm text-sm" style="background-color: ${bgColorHex}">${initial}</div>
+                            <div class="flex flex-col gap-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-extrabold text-[#37474F] text-[13px] truncate">${user.displayName || user.email.split('@')[0]}</span>
                                     ${adminBadge}
                                 </div>
-                                <span class="user-email">${user.email}</span>
+                                <span class="text-[11px] font-bold text-slate-400 truncate">${user.email}</span>
                             </div>
                         </div>
                     </td>
-                    <td>${statusAttr}</td>
-                    <td>${templatesHtml}</td>
-                    <td>${bulkFillIcon}</td>
-                    <td>
-                        <div class="date-cell">
-                            <span class="date-main">${lastActivityDate}</span>
-                            <span class="date-sub">${lastActivityTime}</span>
+                    <td class="px-5 py-3 align-middle">${statusAttr}</td>
+                    <td class="px-5 py-3 hidden md:table-cell align-middle">${templatesHtml}</td>
+                    <td class="px-5 py-3 hidden lg:table-cell align-middle">${bulkFillIcon}</td>
+                    <td class="px-5 py-3 align-middle">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="font-bold text-slate-600 text-[12px]">${lastActivityDate}</span>
+                            <span class="text-[10px] font-bold text-slate-400">${lastActivityTime}</span>
                         </div>
                     </td>
-                    <td class="actions-col">
-                        <div class="action-row">
+                    <td class="px-5 py-3 text-right align-middle">
+                        <div class="flex items-center justify-end gap-1.5 transition-opacity">
                             ${actions}
                         </div>
                     </td>
@@ -230,25 +240,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (pagination.totalPages <= 1) {
             paginationEl.innerHTML = `
-                <button class="page-btn" disabled>&lsaquo;</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn" disabled>&rsaquo;</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-100 text-slate-300 font-bold bg-white" disabled>&lsaquo;</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-vibrant-turquoise bg-white text-vibrant-turquoise font-bold">1</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-100 text-slate-300 font-bold bg-white" disabled>&rsaquo;</button>
             `;
             return;
         }
 
         let html = '';
-        html += `<button class="page-btn" onclick="adminActions.goToPage(${pagination.page - 1})" ${pagination.page <= 1 ? 'disabled' : ''}>&lsaquo;</button>`;
+        html += `<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-colors font-bold bg-white" onclick="adminActions.goToPage(${pagination.page - 1})" ${pagination.page <= 1 ? 'opacity-50 pointer-events-none' : ''}>&lsaquo;</button>`;
 
         for (let i = 1; i <= pagination.totalPages; i++) {
             if (i === pagination.page) {
-                html += `<button class="page-btn active">${i}</button>`;
+                html += `<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-vibrant-turquoise text-vibrant-turquoise font-bold bg-white shadow-sm">${i}</button>`;
             } else {
-                html += `<button class="page-btn" onclick="adminActions.goToPage(${i})">${i}</button>`;
+                html += `<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-colors font-bold bg-white" onclick="adminActions.goToPage(${i})">${i}</button>`;
             }
         }
 
-        html += `<button class="page-btn" onclick="adminActions.goToPage(${pagination.page + 1})" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>&rsaquo;</button>`;
+        html += `<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-colors font-bold bg-white" onclick="adminActions.goToPage(${pagination.page + 1})" ${pagination.page >= pagination.totalPages ? 'opacity-50 pointer-events-none' : ''}>&rsaquo;</button>`;
         paginationEl.innerHTML = html;
     }
 
@@ -264,19 +274,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function showModal() {
+        templateModal.classList.remove('opacity-0', 'pointer-events-none');
+        document.getElementById('modalContentInner').classList.remove('scale-95');
+        document.getElementById('modalContentInner').classList.add('scale-100');
+    }
+
+    function hideModal() {
+        templateModal.classList.add('opacity-0', 'pointer-events-none');
+        document.getElementById('modalContentInner').classList.add('scale-95');
+        document.getElementById('modalContentInner').classList.remove('scale-100');
+    }
+
     function openTemplateModal(uid, currentTemplates) {
         selectedUserUid = uid;
         const list = document.getElementById('templateCheckboxList');
 
         list.innerHTML = allTemplates.map(t => `
-            <label class="template-checkbox-item">
-                <input type="checkbox" value="${t.filename}" 
-                    ${currentTemplates.includes(t.filename) ? 'checked' : ''}>
-                <span>${t.name}</span>
+            <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 cursor-pointer transition-colors group">
+                <div class="relative flex items-center justify-center">
+                    <input type="checkbox" value="${t.filename}" 
+                        ${currentTemplates.includes(t.filename) ? 'checked' : ''}
+                        class="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded focus:ring-0 focus:outline-none checked:bg-vibrant-turquoise checked:border-vibrant-turquoise transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-white text-[16px] absolute pointer-events-none opacity-0 peer-checked:opacity-100">check</span>
+                </div>
+                <span class="font-bold text-slate-600 group-hover:text-friendly-navy">${t.name}</span>
             </label>
         `).join('');
 
-        templateModal.classList.remove('hidden');
+        showModal();
     }
 
     async function saveTemplates() {
@@ -297,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok) throw new Error('Failed to save');
 
-            templateModal.classList.add('hidden');
+            hideModal();
             await loadUsers();
             showToast('Templates updated successfully');
         } catch (error) {
@@ -323,18 +349,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.getElementById('modalClose').addEventListener('click', () => {
-            templateModal.classList.add('hidden');
+            hideModal();
         });
 
         document.getElementById('modalCancel').addEventListener('click', () => {
-            templateModal.classList.add('hidden');
+            hideModal();
         });
 
         document.getElementById('modalSave').addEventListener('click', saveTemplates);
 
         templateModal.addEventListener('click', (e) => {
             if (e.target === templateModal) {
-                templateModal.classList.add('hidden');
+                hideModal();
             }
         });
     }
@@ -401,15 +427,17 @@ document.addEventListener('DOMContentLoaded', () => {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            padding: 14px 24px;
-            background: #1c2030;
-            border-radius: 8px;
-            border-left: 4px solid ${borderColor};
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+            padding: 16px 24px;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            border-left: 6px solid ${borderColor};
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             z-index: 2000;
-            color: white;
-            font-size: 0.85rem;
-            animation: slideIn 0.3s ease;
+            color: #37474F;
+            font-weight: 700;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         `;
 
         document.body.appendChild(toast);

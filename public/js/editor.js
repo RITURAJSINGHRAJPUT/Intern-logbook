@@ -15,16 +15,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session');
     const templateFile = urlParams.get('template');
+    const isAdminMode = urlParams.get('adminMode') === 'true';
 
     // Store template filename if provided
     if (templateFile) {
         currentTemplateFilename = decodeURIComponent(templateFile);
     }
 
-    if (!sessionId) {
+    if (!sessionId && !isAdminMode) {
         showToast('No session found. Please upload a PDF first.', 'error');
         setTimeout(() => {
             window.location.href = '/app.html';
+        }, 2000);
+        return;
+    }
+
+    if (isAdminMode && !templateFile) {
+        showToast('No template specified to edit.', 'error');
+        setTimeout(() => {
+            window.location.href = '/templates.html';
         }, 2000);
         return;
     }
@@ -33,15 +42,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     showLoading('Loading PDF...');
 
     try {
-        // Verify session exists
-        const sessionRes = await fetch(`/api/session/${sessionId}`);
-        if (!sessionRes.ok) {
-            throw new Error('Session expired or not found');
+        if (sessionId) {
+            // Verify session exists
+            const sessionRes = await fetch(`/api/session/${sessionId}`);
+            if (!sessionRes.ok) {
+                throw new Error('Session expired or not found');
+            }
         }
 
         // Initialize PDF Viewer
         window.pdfViewer = new PDFViewer('pdfViewer', 'pdfCanvas');
-        await window.pdfViewer.loadPDF(`/api/pdf/${sessionId}`);
+        if (sessionId) {
+            await window.pdfViewer.loadPDF(`/api/pdf/${sessionId}`);
+        } else {
+            await window.pdfViewer.loadPDF(`/templates/${encodeURIComponent(currentTemplateFilename)}`);
+        }
 
         // Initialize Field Manager
         window.fieldManager = new FieldManager('fieldsOverlay', window.pdfViewer);
@@ -52,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
                 const templateFieldsRes = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
-                    headers: { 'x-user-id': userId || '' }
+                    headers: { 'x-user-id': 'admin' } // we can just pass an empty one or dummy since it hits global fallback anyway
                 });
                 if (templateFieldsRes.ok) {
                     const templateData = await templateFieldsRes.json();
@@ -74,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // If no template fields, try to load detected fields
-        if (!fieldsLoaded) {
+        if (!fieldsLoaded && sessionId) {
             const fieldsRes = await fetch(`/api/fields/${sessionId}`);
             if (fieldsRes.ok) {
                 const data = await fieldsRes.json();
@@ -537,6 +552,14 @@ function setupDownloadButton(sessionId) {
     const downloadBtn = document.getElementById('downloadBtn');
     const flattenCheckbox = document.getElementById('flattenCheckbox');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdminMode = urlParams.get('adminMode') === 'true';
+
+    if (isAdminMode && downloadBtn) {
+        downloadBtn.style.display = 'none';
+        return;
+    }
+
     downloadBtn?.addEventListener('click', async () => {
         showLoading('Generating PDF...');
 
@@ -631,16 +654,32 @@ function setupSaveTemplateButton() {
 
             showLoading('Saving template...');
 
-            const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdminMode = urlParams.get('adminMode') === 'true';
 
-            const response = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-user-id': userId || ''
-                },
-                body: JSON.stringify({ fields })
-            });
+            let response;
+
+            if (isAdminMode) {
+                const token = await window.getFirebaseToken();
+                response = await fetch(`/api/admin/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ fields })
+                });
+            } else {
+                const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+                response = await fetch(`/api/templates/${encodeURIComponent(currentTemplateFilename)}/fields`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': userId || ''
+                    },
+                    body: JSON.stringify({ fields })
+                });
+            }
 
             if (!response.ok) {
                 throw new Error('Failed to save template');
@@ -648,6 +687,12 @@ function setupSaveTemplateButton() {
 
             hideLoading();
             showToast('Template saved! Fields will be loaded automatically next time.', 'success');
+
+            if (isAdminMode) {
+                setTimeout(() => {
+                    window.location.href = '/templates.html';
+                }, 2000);
+            }
 
         } catch (error) {
             console.error('Save template error:', error);

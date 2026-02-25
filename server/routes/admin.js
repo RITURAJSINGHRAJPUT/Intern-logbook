@@ -240,6 +240,137 @@ router.get('/templates', (req, res) => {
 });
 
 /**
+ * POST /api/admin/templates/upload
+ * Upload a new global template
+ */
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        if (!fs.existsSync(TEMPLATES_DIR)) {
+            fs.mkdirSync(TEMPLATES_DIR, { recursive: true });
+        }
+        cb(null, TEMPLATES_DIR);
+    },
+    filename: (req, file, cb) => {
+        // use original name but ensure it's a pdf
+        let filename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+        if (!filename.toLowerCase().endsWith('.pdf')) {
+            filename += '.pdf';
+        }
+        cb(null, filename);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'));
+        }
+    }
+});
+
+router.post('/templates/upload', upload.single('template'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No template file uploaded' });
+        }
+
+        console.log(`📄 New template uploaded by admin ${req.user.uid}: ${req.file.filename}`);
+        res.json({
+            success: true,
+            template: {
+                filename: req.file.filename,
+                name: req.file.filename.replace('.pdf', '')
+            }
+        });
+    } catch (error) {
+        console.error('Error uploading template:', error);
+        res.status(500).json({ error: error.message || 'Failed to upload template' });
+    }
+});
+
+/**
+ * DELETE /api/admin/templates/:filename
+ * Delete a global template and its associated fields
+ */
+router.delete('/templates/:filename', (req, res) => {
+    try {
+        const { filename } = req.params;
+
+        if (!filename.endsWith('.pdf')) {
+            return res.status(400).json({ error: 'Invalid filename' });
+        }
+
+        const pdfPath = path.join(TEMPLATES_DIR, filename);
+        const fieldsPath = path.join(TEMPLATES_DIR, filename.replace('.pdf', '.fields.json'));
+
+        let deleted = false;
+
+        if (fs.existsSync(pdfPath)) {
+            fs.unlinkSync(pdfPath);
+            deleted = true;
+        }
+
+        if (fs.existsSync(fieldsPath)) {
+            fs.unlinkSync(fieldsPath);
+        }
+
+        if (deleted) {
+            console.log(`🗑️ Template deleted by admin ${req.user.uid}: ${filename}`);
+            res.json({ success: true, message: 'Template deleted' });
+        } else {
+            res.status(404).json({ error: 'Template not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        res.status(500).json({ error: 'Failed to delete template' });
+    }
+});
+
+/**
+ * POST /api/admin/templates/:filename/fields
+ * Save global fields for a template
+ */
+router.post('/templates/:filename/fields', (req, res) => {
+    try {
+        const { filename } = req.params;
+        const { fields } = req.body;
+
+        if (!filename || !filename.endsWith('.pdf')) {
+            return res.status(400).json({ error: 'Invalid filename' });
+        }
+
+        if (!fs.existsSync(TEMPLATES_DIR)) {
+            fs.mkdirSync(TEMPLATES_DIR, { recursive: true });
+        }
+
+        const fieldsFile = filename.replace('.pdf', '.fields.json');
+        const globalFieldsPath = path.join(TEMPLATES_DIR, fieldsFile);
+
+        const fieldsData = {
+            templateName: filename,
+            updatedBy: req.user.uid,
+            savedAt: new Date().toISOString(),
+            isGlobal: true,
+            fields: fields || []
+        };
+
+        fs.writeFileSync(globalFieldsPath, JSON.stringify(fieldsData, null, 2));
+
+        console.log(`✅ Global template fields saved by admin ${req.user.uid}: ${fieldsFile}`);
+        res.json({ success: true, message: 'Global fields saved successfully' });
+    } catch (error) {
+        console.error('Error saving global template fields:', error);
+        res.status(500).json({ error: 'Failed to save global template fields' });
+    }
+});
+
+/**
  * POST /api/admin/setup-first-admin
  * One-time setup: creates admin doc for the authenticated user.
  * Only works if zero admins exist in the collection.

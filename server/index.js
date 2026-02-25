@@ -47,7 +47,7 @@ app.get('/editor', verifySessionCookie, (req, res) => {
 
 // Serve admin panel for authenticated users
 app.get('/admin', verifySessionCookie, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/admin.html'));
+    res.sendFile(path.join(__dirname, '../public/user_management.html'));
 });
 
 // Start cleanup job

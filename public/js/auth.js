@@ -59,14 +59,25 @@ export function checkAuth(requireAuth = false, redirectIfAuth = false) {
                         }
                     }
 
+                    // Check if admin and update UI
+                    const isAdminUser = (await checkIsAdmin(user.uid)) || isMasterAdmin;
+
                     // User is verified, meaning they're allowed into the basic app!
                     if (redirectIfAuth) {
-                        window.location.replace('/app.html');
+                        if (isAdminUser) {
+                            window.location.replace('/admin-dashboard.html');
+                        } else {
+                            window.location.replace('/app.html');
+                        }
                         return;
                     }
 
-                    // Check if admin and update UI
-                    const isAdminUser = (await checkIsAdmin(user.uid)) || isMasterAdmin;
+                    // If they are an admin and somehow try to access /app.html directly, redirect them
+                    if (isAdminUser && window.location.pathname.endsWith('/app.html')) {
+                        window.location.replace('/admin-dashboard.html');
+                        return;
+                    }
+
                     // Pass userData.approved as the bulk access flag (as per new requirements)
                     updateAuthUI(user, isAdminUser, userData.approved === true || userData.allowBulkFill || false, userData);
                 } else {
@@ -384,6 +395,11 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
                 navLinks.insertBefore(adminLink, navLinks.firstChild);
             }
         }
+
+        // Update all links pointing to /app.html to point to /admin-dashboard.html
+        document.querySelectorAll('a[href="/app.html"]').forEach(link => {
+            link.href = '/admin-dashboard.html';
+        });
     }
 
     // Show bulk fill container if admin OR allowBulkFill is true

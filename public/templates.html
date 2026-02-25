@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Template Management - Admin Panel</title>
+
+    <!-- Design System (Tailwind + Fonts) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/admin.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00BCD4">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFF9C4',
+                        'warm-yellow': '#FFD54F',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Dragover state for upload */
+        #uploadZone.dragover {
+            background-color: rgba(224, 247, 250, 0.5);
+            /* soft-turquoise/50 */
+            border-color: #4DD0E1;
+            transform: scale(1.02);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(77, 208, 225, 0.2);
+            border-top-color: #4DD0E1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased overflow-x-hidden min-h-screen bg-slate-50 flex flex-col">
+    <!-- Auth Check -->
+    <script type="module">
+        import { checkAuth, logout } from './js/auth.js';
+        checkAuth(true); // Redirect to login if not authenticated
+
+        window.adminLogout = function (e) {
+            e.preventDefault();
+            logout();
+        }
+    </script>
+
+    <!-- Top Header -->
+    <header
+        class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
+        <!-- Left: Logo & Nav -->
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-3">
+                <div
+                    class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl rotate-3 shadow-md group-hover:rotate-0 transition-transform cursor-pointer">
+                    <span class="material-symbols-outlined text-white text-xl">face_6</span>
+                </div>
+                <span class="font-bold text-xl text-friendly-navy tracking-tight hidden sm:block">FormFiller</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-2">
+                <a href="/admin-dashboard.html"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="/admin"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                    <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+                    User Management
+                </a>
+                <a href="/templates.html"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
+                    <span class="material-symbols-outlined text-[18px]">file_copy</span>
+                    Templates
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                    <span class="material-symbols-outlined text-[18px]">settings</span>
+                    Settings
+                </a>
+            </nav>
+        </div>
+
+        <!-- Right: Actions & Profile -->
+        <div class="flex items-center gap-5">
+            <a href="#"
+                class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-coral hover:text-vibrant-coral border-2 border-slate-100 hover:border-vibrant-coral flex items-center justify-center text-slate-400 transition-all cursor-pointer tactile-sm"
+                onclick="window.adminLogout(event)" title="Logout">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+            </a>
+
+            <div class="flex items-center gap-3 pl-4 border-l-2 border-slate-100">
+                <div class="flex flex-col items-end hidden md:flex">
+                    <span class="text-[13px] font-extrabold text-friendly-navy">Admin Panel</span>
+                    <span class="text-[11px] font-bold text-slate-400">Super Admin</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white bg-slate-100">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
+                        alt="Admin" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="mb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-bold text-friendly-navy flex items-center gap-3">
+                    <span class="material-symbols-outlined text-vibrant-turquoise text-4xl">inventory_2</span>
+                    Global Templates
+                </h1>
+                <p class="text-slate-500 mt-2 font-medium">Manage the master templates available to users. Upload new
+                    PDFs or edit global input fields.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Upload Section -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 sticky top-28">
+                    <h2 class="text-xl font-bold text-friendly-navy mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-vibrant-coral">upload_file</span>
+                        Add New Template
+                    </h2>
+
+                    <div id="uploadZone"
+                        class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center cursor-pointer transition-all hover:border-vibrant-turquoise hover:bg-slate-50 mt-4 group">
+                        <div
+                            class="w-16 h-16 bg-soft-turquoise/30 text-vibrant-turquoise rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">add_photo_alternate</span>
+                        </div>
+                        <p class="font-bold text-slate-600 mb-1">Click to upload or drag PDF</p>
+                        <p class="text-sm font-medium text-slate-400">Max size 10MB</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf,application/pdf" class="hidden">
+
+                    <div id="uploadProgress" class="hidden mt-6">
+                        <div class="flex items-center gap-3 text-sm font-bold text-slate-600 mb-2">
+                            <div class="spinner"></div>
+                            <span>Uploading Template...</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2">
+                            <div class="bg-vibrant-turquoise h-2 rounded-full w-2/3 animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-friendly-navy flex items-center gap-2">
+                            <span class="material-symbols-outlined text-warm-yellow">auto_awesome_mosaic</span>
+                            Available Templates
+                        </h2>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 px-1">search</span>
+                            <input type="text" id="searchInput" placeholder="Search templates..."
+                                class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm font-medium text-slate-700 w-64 focus:ring-2 focus:ring-vibrant-turquoise">
+                        </div>
+                    </div>
+
+                    <!-- Loader -->
+                    <div id="templatesLoading" class="py-12 flex flex-col items-center justify-center text-slate-400">
+                        <div class="spinner !w-10 !h-10 mb-4"></div>
+                        <p class="font-bold">Loading templates...</p>
+                    </div>
+
+                    <!-- Grid -->
+                    <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="hidden py-16 flex-col items-center justify-center text-center">
+                        <div
+                            class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4 border-4 border-white shadow-sm">
+                            <span class="material-symbols-outlined text-5xl">folder_off</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-friendly-navy mb-2">No templates found</h3>
+                        <p class="text-slate-500 font-medium">Upload a PDF to get started with global templates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-friendly-navy text-white py-6 px-6 mt-auto w-full z-10 relative">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
+            <p>© 2026 Admin Dashboard Extension</p>
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
+                System All Go
+            </div>
+        </div>
+    </footer>
+
+    <!-- Templates Management Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+            const uploadProgress = document.getElementById('uploadProgress');
+
+            const templatesLoading = document.getElementById('templatesLoading');
+            const templatesGrid = document.getElementById('templatesGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchInput = document.getElementById('searchInput');
+
+            let allTemplates = [];
+
+            // --- Init ---
+            setTimeout(loadTemplates, 1000); // slight delay for smooth loading effect
+
+            // --- Load Templates ---
+            async function loadTemplates() {
+                try {
+                    const token = await window.getFirebaseToken();
+                    const headers = { 'Authorization': `Bearer ${token}` };
+
+                    const res = await fetch('/api/admin/templates', { headers });
+                    if (!res.ok) throw new Error('Failed to fetch templates');
+
+                    const data = await res.json();
+                    allTemplates = data.templates || [];
+
+                    renderTemplates();
+                } catch (error) {
+                    console.error('Templates error:', error);
+                    showToast('Failed to load templates', 'error');
+                } finally {
+                    templatesLoading.classList.add('hidden');
+                }
+            }
+
+            // --- Render Templates ---
+            function renderTemplates() {
+                const query = searchInput.value.toLowerCase();
+                const filtered = allTemplates.filter(t => t.name.toLowerCase().includes(query));
+
+                if (filtered.length === 0) {
+                    templatesGrid.classList.add('hidden');
+                    if (allTemplates.length === 0) {
+                        emptyState.classList.remove('hidden');
+                        emptyState.querySelector('h3').textContent = 'No templates yet';
+                        emptyState.querySelector('p').textContent = 'Upload a PDF to get started.';
+                    } else {
+                        emptyState.classList.remove('hidden');
+                        emptyState.querySelector('h3').textContent = 'No matches found';
+                        emptyState.querySelector('p').textContent = 'Try a different search term.';
+                    }
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                templatesGrid.classList.remove('hidden');
+
+                templatesGrid.innerHTML = filtered.map(t => `
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 hover:border-vibrant-turquoise hover:shadow-md transition-all group flex flex-col justify-between">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 bg-white rounded-xl shadow-sm text-vibrant-turquoise flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-2xl">description</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-friendly-navy text-lg truncate" title="${t.name}">${t.name}</h3>
+                                <p class="text-xs font-bold text-slate-400 truncate">${t.filename}</p>
+                            </div>
+                            <!-- Delete button -->
+                            <button onclick="deleteTemplate('${t.filename}')" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-vibrant-coral hover:border-vibrant-coral hover:bg-soft-coral/20 flex items-center justify-center transition-colors shadow-sm opacity-0 group-hover:opacity-100">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2 mt-auto">
+                            <a href="/editor.html?adminMode=true&template=${encodeURIComponent(t.filename)}" class="px-3 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold text-center hover:bg-slate-100 transition-colors flex justify-center items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">draw</span>
+                                Edit Fields
+                            </a>
+                            <a href="/templates/${t.filename}" target="_blank" class="px-3 py-2 bg-vibrant-turquoise/10 border border-vibrant-turquoise text-vibrant-turquoise rounded-xl text-xs font-bold text-center hover:bg-vibrant-turquoise hover:text-white transition-colors flex justify-center items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                View PDF
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // --- Delete Template ---
+            window.deleteTemplate = async (filename) => {
+                if (!confirm(`Are you sure you want to delete ${filename}? This affects ALL users.`)) return;
+
+                try {
+                    const token = await window.getFirebaseToken();
+                    const res = await fetch(`/api/admin/templates/${filename}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Deletion failed');
+
+                    showToast('Template deleted successfully');
+                    await loadTemplates();
+                } catch (error) {
+                    console.error('Delete error', error);
+                    showToast('Failed to delete template', 'error');
+                }
+            };
+
+            // --- Upload Logic ---
+            uploadZone.addEventListener('click', () => fileInput.click());
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => uploadZone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('dragover'), false);
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) handleFiles(files[0]);
+            });
+
+            fileInput.addEventListener('change', function () {
+                if (this.files.length > 0) handleFiles(this.files[0]);
+            });
+
+            async function handleFiles(file) {
+                if (file.type !== 'application/pdf') {
+                    showToast('Please upload a PDF file', 'error');
+                    return;
+                }
+
+                uploadZone.classList.add('hidden');
+                uploadProgress.classList.remove('hidden');
+
+                const formData = new FormData();
+                formData.append('template', file);
+
+                try {
+                    const token = await window.getFirebaseToken();
+                    const res = await fetch('/api/admin/templates/upload', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+
+                    if (!res.ok) {
+                        const error = await res.json();
+                        throw new Error(error.error || 'Upload failed');
+                    }
+
+                    showToast('Template uploaded successfully!');
+                    await loadTemplates();
+                } catch (error) {
+                    console.error('Upload Error:', error);
+                    showToast(error.message, 'error');
+                } finally {
+                    uploadProgress.classList.add('hidden');
+                    uploadZone.classList.remove('hidden');
+                    fileInput.value = '';
+                }
+            }
+
+            searchInput.addEventListener('input', renderTemplates);
+
+            // --- Toast Util ---
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 24px;
+                    right: 24px;
+                    padding: 16px 24px;
+                    background: white;
+                    border-radius: 16px;
+                    border: 2px solid #e2e8f0;
+                    border-left: 6px solid ${borderColor};
+                    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+                    z-index: 2000;
+                    color: #37474F;
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                    animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                `;
+
+                // Add animation styles dynamically
+                if (!document.getElementById('toastStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'toastStyles';
+                    style.innerHTML = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+                    document.head.appendChild(style);
+                }
+
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(10px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>
