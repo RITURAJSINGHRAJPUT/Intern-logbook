@@ -21,6 +21,7 @@ const {
 const { generateFilledPDF } = require('../services/pdfGenerator');
 const { verifyBulkAccess } = require('../middleware/adminAuth');
 const { verifyToken } = require('../middleware/auth');
+const { db } = require('../config/firebase');
 
 // Apply auth conditionally (skip for generated file downloads accessed directly by browser)
 router.use((req, res, next) => {
@@ -127,6 +128,30 @@ router.get('/templates', (req, res) => {
     } catch (error) {
         console.error('Error listing bulk templates:', error);
         res.status(500).json({ error: 'Failed to list templates' });
+    }
+});
+
+/**
+ * GET /api/bulk/credits
+ * Get the current user's bulk fill credits
+ */
+router.get('/credits', async (req, res) => {
+    try {
+        const userId = req.headers['x-user-id'];
+        if (!userId) {
+            return res.status(401).json({ error: 'User ID missing' });
+        }
+
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const userData = userDoc.data();
+        res.json({ bulkCredits: userData.bulkCredits || 0 });
+    } catch (error) {
+        console.error('Error fetching credits:', error);
+        res.status(500).json({ error: 'Failed to fetch credits' });
     }
 });
 
@@ -339,6 +364,31 @@ router.post('/generate/:filename', express.json(), async (req, res) => {
         if (!fs.existsSync(templatePath)) {
             return res.status(404).json({ error: 'Template not found' });
         }
+
+        if (!userId) {
+            return res.status(401).json({ error: 'Unauthorized: User ID missing' });
+        }
+
+        // Check user bulk credits
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const userData = userDoc.data();
+        const requiredCredits = data.length;
+        const currentCredits = userData.bulkCredits || 0;
+
+        if (currentCredits < requiredCredits) {
+            return res.status(402).json({
+                error: `Insufficient credits. You need ${requiredCredits} credits but only have ${currentCredits}. Please contact an admin.`
+            });
+        }
+
+        // Deduct credits
+        await db.collection('users').doc(userId).update({
+            bulkCredits: currentCredits - requiredCredits
+        });
 
         // Start async job
         const jobId = uuidv4();

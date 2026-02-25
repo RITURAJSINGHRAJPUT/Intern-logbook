@@ -13,6 +13,7 @@ let dataHeaders = [];
 let fieldMapping = {};
 let currentJobId = null;
 let currentUser = null;
+let currentCredits = 0;
 
 // DOM Elements
 const templateSelect = document.getElementById('templateSelect');
@@ -36,6 +37,13 @@ const progressStatus = document.getElementById('progressStatus');
 const mergeCheckbox = document.getElementById('mergeCheckbox');
 const toast = document.getElementById('toast');
 
+// Modal Elements
+const creditsModal = document.getElementById('creditsModal');
+const modalRequiredCredits = document.getElementById('modalRequiredCredits');
+const modalCurrentCredits = document.getElementById('modalCurrentCredits');
+const closeCreditsModalBtn = document.getElementById('closeCreditsModalBtn');
+const buyCreditsBtn = document.getElementById('buyCreditsBtn');
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     // Check auth first
@@ -47,6 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.getCurrentUserId) {
             currentUser = await window.getCurrentUserId();
             console.log('Bulk Fill - User ID:', currentUser);
+            await fetchUserCredits();
         }
     } catch (e) {
         console.error('Error getting user ID:', e);
@@ -55,6 +64,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadTemplates();
     setupEventListeners();
 });
+
+/**
+ * Fetch and display user's current bulk fill credits
+ */
+async function fetchUserCredits() {
+    try {
+        const res = await fetch('/api/bulk/credits', {
+            headers: await getAuthHeaders(currentUser)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            currentCredits = data.bulkCredits || 0;
+            const creditsBadge = document.getElementById('creditsCount');
+            if (creditsBadge) {
+                creditsBadge.textContent = currentCredits;
+                // Add a little pop animation
+                creditsBadge.parentElement.classList.add('scale-105', 'shadow-md');
+                setTimeout(() => {
+                    creditsBadge.parentElement.classList.remove('scale-105', 'shadow-md');
+                }, 300);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch credits:', error);
+    }
+}
 
 /**
  * Helper to get authentication headers including JWT token
@@ -148,6 +184,27 @@ function setupEventListeners() {
 
     // Print
     printBtn.addEventListener('click', printResults);
+
+    // Modal buttons
+    if (closeCreditsModalBtn) {
+        closeCreditsModalBtn.addEventListener('click', () => {
+            creditsModal.classList.add('opacity-0', 'pointer-events-none');
+            creditsModal.firstElementChild.classList.remove('scale-100');
+            creditsModal.firstElementChild.classList.add('scale-95');
+        });
+    }
+
+    if (buyCreditsBtn) {
+        buyCreditsBtn.addEventListener('click', () => {
+            showToast('Redirecting to payment gateway...', 'success');
+            setTimeout(() => {
+                creditsModal.classList.add('opacity-0', 'pointer-events-none');
+                creditsModal.firstElementChild.classList.remove('scale-100');
+                creditsModal.firstElementChild.classList.add('scale-95');
+            }, 1000);
+            // Replace with actual payment logic (e.g. window.location.href = '/pricing.html')
+        });
+    }
 }
 
 /**
@@ -446,6 +503,20 @@ async function startGeneration() {
         return;
     }
 
+    const requiredCredits = uploadedData.length;
+    if (requiredCredits > currentCredits) {
+        if (modalRequiredCredits) modalRequiredCredits.textContent = requiredCredits;
+        if (modalCurrentCredits) modalCurrentCredits.textContent = currentCredits;
+        if (creditsModal) {
+            creditsModal.classList.remove('opacity-0', 'pointer-events-none');
+            creditsModal.firstElementChild.classList.remove('scale-95');
+            creditsModal.firstElementChild.classList.add('scale-100');
+        } else {
+            showToast(`Insufficient Credits! You need ${requiredCredits} but only have ${currentCredits}.`, 'error');
+        }
+        return;
+    }
+
     generateBtn.disabled = true;
     downloadBtn.classList.add('hidden');
     printBtn.classList.add('hidden');
@@ -520,6 +591,10 @@ async function pollJobStatus() {
                 printBtn.classList.remove('hidden');
             }
             generateBtn.disabled = false;
+
+            // Refresh credit count
+            await fetchUserCredits();
+
             showToast('Bulk generation complete!', 'success');
 
         } else if (job.status === 'error') {

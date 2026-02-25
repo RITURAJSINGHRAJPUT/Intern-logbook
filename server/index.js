@@ -50,6 +50,17 @@ app.get('/admin', verifySessionCookie, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/user_management.html'));
 });
 
+// Global API 404 handler
+app.use('/api', (req, res) => {
+    res.status(404).json({ error: `Not Found: ${req.method} ${req.originalUrl}` });
+});
+
+// Global API Error handler
+app.use('/api', (err, req, res, next) => {
+    console.error('API Error Detected:', err);
+    res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
+});
+
 // Start cleanup job
 startCleanupJob();
 

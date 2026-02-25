@@ -3,7 +3,7 @@
  * Caches app shell for offline support and fast loading
  */
 
-const CACHE_NAME = 'pdf-filler-v3';
+const CACHE_NAME = 'pdf-filler-v4';
 const OFFLINE_URL = '/offline.html';
 
 // App shell files to pre-cache
@@ -62,8 +62,10 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Skip non-GET requests
-    if (request.method !== 'GET') return;
+    // Skip non-GET requests (POST, PUT, DELETE APIs)
+    if (request.method !== 'GET') {
+        return; // Let the browser handle these normally
+    }
 
     // Skip cross-origin requests (Firebase, Google Fonts CDN, etc.)
     if (url.origin !== location.origin) return;

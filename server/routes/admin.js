@@ -63,6 +63,7 @@ router.get('/users', async (req, res) => {
                 approved: data.approved || false,
                 active: data.active !== false, // default true
                 allowBulkFill: data.allowBulkFill || false,
+                bulkCredits: data.bulkCredits || 0,
                 allowedTemplates: data.allowedTemplates || [],
                 createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
                 lastLogin: data.lastLogin ? data.lastLogin.toDate().toISOString() : null,
@@ -212,6 +213,32 @@ router.put('/users/:uid/templates', async (req, res) => {
     } catch (error) {
         console.error('Error updating templates:', error);
         res.status(500).json({ error: 'Failed to update templates' });
+    }
+});
+
+/**
+ * PUT /api/admin/users/:uid/credits
+ * Update bulk fill credits for a user
+ * Body: { bulkCredits: 100 }
+ */
+router.put('/users/:uid/credits', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const { bulkCredits } = req.body;
+
+        if (typeof bulkCredits !== 'number' || bulkCredits < 0) {
+            return res.status(400).json({ error: 'bulkCredits must be a positive number' });
+        }
+
+        await db.collection('users').doc(uid).update({
+            bulkCredits: bulkCredits
+        });
+
+        console.log(`🪙 Credits updated to ${bulkCredits} for user ${uid} by admin ${req.user.uid}`);
+        res.json({ success: true, bulkCredits });
+    } catch (error) {
+        console.error('Error updating credits:', error);
+        res.status(500).json({ error: error.message || 'Failed to update credits' });
     }
 });
 
