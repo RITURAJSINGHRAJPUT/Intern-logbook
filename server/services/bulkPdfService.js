@@ -265,20 +265,12 @@ function applyDataToFields(templateFields, dataRow, fieldMapping) {
     }
     console.log(`Applied data to ${matchedCount} fields`);
     console.log('-------------------------');
-
     return filledFields;
 }
 
 /**
- * Generate a single filled PDF
- */
-async function generateSinglePDF(templatePath, fields, dataRow, fieldMapping) {
-    const filledFields = applyDataToFields(fields, dataRow, fieldMapping);
-    return await generateFilledPDF(templatePath, filledFields, true);
-}
-
-/**
- * Generate bulk PDFs
+ * Generate bulk PDFs — optimized: loads template & embeds fonts once,
+ * then copies pages and draws fields for every row.
  * @param {string} jobId - Job identifier
  * @param {string} templateFilename - Template PDF filename
  * @param {Array} dataRows - Array of data objects
@@ -287,6 +279,8 @@ async function generateSinglePDF(templatePath, fields, dataRow, fieldMapping) {
  */
 async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping, options = {}) {
     const { merge = false, filenameField = null, userId = null } = options;
+    const { StandardFonts } = require('pdf-lib');
+    const { fillPdfPages } = require('./pdfGenerator');
 
     const job = {
         id: jobId,
@@ -324,49 +318,73 @@ async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping,
         return;
     }
 
+    // --- Load template ONCE ---
+    const templateBytes = await fs.readFile(templatePath);
+    const templatePdf = await PDFDocument.load(templateBytes, { ignoreEncryption: true });
+    const templatePageIndices = templatePdf.getPageIndices();
+
     const pdfBuffers = [];
     const pdfNames = [];
 
     try {
-        for (let i = 0; i < dataRows.length; i++) {
-            try {
-                const pdfBuffer = await generateSinglePDF(
-                    templatePath,
-                    templateFields,
-                    dataRows[i],
-                    fieldMapping
-                );
-                pdfBuffers.push(pdfBuffer);
-
-                // Generate filename
-                let filename = `filled_${i + 1}.pdf`;
-                if (filenameField && dataRows[i][filenameField]) {
-                    const safeName = String(dataRows[i][filenameField])
-                        .replace(/[^a-zA-Z0-9_-]/g, '_')
-                        .substring(0, 50);
-                    filename = `${safeName}.pdf`;
-                }
-                pdfNames.push(filename);
-
-                job.processed = i + 1;
-            } catch (err) {
-                job.errors.push({ row: i + 1, error: err.message });
-            }
-        }
-
-        // Create output
-        const outputPath = path.join(TEMP_DIR, `${jobId}_bulk`);
-
         if (merge) {
-            // Merge all PDFs into one
-            const mergedBuffer = await mergePDFs(pdfBuffers);
-            await fs.writeFile(`${outputPath}.pdf`, mergedBuffer);
-            job.outputFile = `${outputPath}.pdf`;
+            // ─── MERGED OUTPUT: build one big document, reuse fonts ───
+            const mergedPdf = await PDFDocument.create();
+            const helveticaFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
+            const helveticaBold = await mergedPdf.embedFont(StandardFonts.HelveticaBold);
+
+            for (let i = 0; i < dataRows.length; i++) {
+                try {
+                    const filledFields = applyDataToFields(templateFields, dataRows[i], fieldMapping);
+                    const copiedPages = await mergedPdf.copyPages(templatePdf, templatePageIndices);
+                    copiedPages.forEach(page => mergedPdf.addPage(page));
+                    await fillPdfPages(mergedPdf, copiedPages, filledFields, helveticaFont, helveticaBold);
+                    job.processed = i + 1;
+                } catch (err) {
+                    job.errors.push({ row: i + 1, error: err.message });
+                }
+            }
+
+            const outputPath = path.join(TEMP_DIR, `${jobId}_bulk.pdf`);
+            await fs.writeFile(outputPath, Buffer.from(await mergedPdf.save()));
+            job.outputFile = outputPath;
             job.outputType = 'pdf';
         } else {
-            // Create ZIP archive
-            await createZipArchive(pdfBuffers, pdfNames, `${outputPath}.zip`);
-            job.outputFile = `${outputPath}.zip`;
+            // ─── ZIP OUTPUT: generate each PDF individually but reuse template bytes ───
+            for (let i = 0; i < dataRows.length; i++) {
+                try {
+                    const filledFields = applyDataToFields(templateFields, dataRows[i], fieldMapping);
+
+                    // Each PDF needs its own document (separate file), but we reuse templateBytes
+                    const singlePdf = await PDFDocument.load(templateBytes, { ignoreEncryption: true });
+                    const helveticaFont = await singlePdf.embedFont(StandardFonts.Helvetica);
+                    const helveticaBold = await singlePdf.embedFont(StandardFonts.HelveticaBold);
+                    const pages = singlePdf.getPages();
+                    await fillPdfPages(singlePdf, pages, filledFields, helveticaFont, helveticaBold);
+
+                    // Flatten form fields
+                    try { singlePdf.getForm().flatten(); } catch (e) { /* no form */ }
+
+                    pdfBuffers.push(Buffer.from(await singlePdf.save()));
+
+                    let filename = `filled_${i + 1}.pdf`;
+                    if (filenameField && dataRows[i][filenameField]) {
+                        const safeName = String(dataRows[i][filenameField])
+                            .replace(/[^a-zA-Z0-9_-]/g, '_')
+                            .substring(0, 50);
+                        filename = `${safeName}.pdf`;
+                    }
+                    pdfNames.push(filename);
+
+                    job.processed = i + 1;
+                } catch (err) {
+                    job.errors.push({ row: i + 1, error: err.message });
+                }
+            }
+
+            const outputPath = `${path.join(TEMP_DIR, `${jobId}_bulk`)}.zip`;
+            await createZipArchive(pdfBuffers, pdfNames, outputPath);
+            job.outputFile = outputPath;
             job.outputType = 'zip';
         }
 
@@ -378,27 +396,14 @@ async function generateBulkPDFs(jobId, templateFilename, dataRows, fieldMapping,
 }
 
 /**
- * Merge multiple PDFs into one
- */
-async function mergePDFs(pdfBuffers) {
-    const mergedPdf = await PDFDocument.create();
-
-    for (const buffer of pdfBuffers) {
-        const pdfDoc = await PDFDocument.load(buffer);
-        const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
-        pages.forEach(page => mergedPdf.addPage(page));
-    }
-
-    return Buffer.from(await mergedPdf.save());
-}
-
-/**
  * Create ZIP archive from PDF buffers
+ * Uses compression level 1 (fast): PDFs are already binary-compressed,
+ * max compression adds CPU time with negligible size benefit.
  */
 function createZipArchive(pdfBuffers, pdfNames, outputPath) {
     return new Promise((resolve, reject) => {
         const output = fsSync.createWriteStream(outputPath);
-        const archive = archiver('zip', { zlib: { level: 9 } });
+        const archive = archiver('zip', { zlib: { level: 1 } });
 
         output.on('close', resolve);
         archive.on('error', reject);

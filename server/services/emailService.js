@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
@@ -16,7 +16,7 @@ function compressToZip(filePath, filename) {
     return new Promise((resolve, reject) => {
         const zipPath = filePath + '.zip';
         const output = fs.createWriteStream(zipPath);
-        const archive = archiver('zip', { zlib: { level: 9 } }); // Max compression
+        const archive = archiver('zip', { zlib: { level: 6 } });
 
         output.on('close', () => resolve(zipPath));
         archive.on('error', (err) => reject(err));
@@ -28,10 +28,9 @@ function compressToZip(filePath, filename) {
 }
 
 /**
- * Sends an email with the generated PDF attached.
- * If the file is over 20MB, it will be compressed into a ZIP first.
- * If the file (or ZIP) is over 25MB, the email is skipped.
- * 
+ * Sends an email with the generated PDF attached via Resend's HTTP API.
+ * Uses HTTP (not SMTP) so it works on Render and other platforms that block port 587.
+ *
  * @param {string} toEmail - The recipient's email address
  * @param {string} pdfPath - The absolute path to the generated PDF file
  * @param {string} filename - The name to give the attached file
@@ -46,6 +45,11 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
         throw new Error('PDF file not found');
     }
 
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        throw new Error('RESEND_API_KEY environment variable is not set');
+    }
+
     // Check file size
     const fileStats = fs.statSync(pdfPath);
     const fileSizeMB = (fileStats.size / (1024 * 1024)).toFixed(2);
@@ -54,7 +58,6 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
     let wasCompressed = false;
 
     if (fileStats.size > MAX_EMAIL_SIZE) {
-        // Try compressing first
         console.log(`[Email] File is ${fileSizeMB}MB, attempting ZIP compression...`);
         try {
             const zipPath = await compressToZip(pdfPath, filename);
@@ -62,24 +65,20 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
             const zipSizeMB = (zipStats.size / (1024 * 1024)).toFixed(2);
 
             if (zipStats.size > MAX_EMAIL_SIZE) {
-                // Still too large even after compression — clean up and skip
                 fs.unlinkSync(zipPath);
-                console.warn(`[Email] Skipped: file is ${fileSizeMB}MB (${zipSizeMB}MB zipped), exceeds 25MB Gmail limit.`);
+                console.warn(`[Email] Skipped: file is ${fileSizeMB}MB (${zipSizeMB}MB zipped), exceeds limit.`);
                 return { success: false, reason: 'File too large', sizeMB: fileSizeMB };
             }
 
-            // Use the compressed ZIP instead
             attachPath = zipPath;
             attachFilename = filename.replace(/\.[^.]+$/, '') + '.zip';
             wasCompressed = true;
             console.log(`[Email] Compressed ${fileSizeMB}MB → ${zipSizeMB}MB ZIP`);
         } catch (compErr) {
             console.error('[Email] Compression failed:', compErr.message);
-            console.warn(`[Email] Skipped: file is ${fileSizeMB}MB and compression failed.`);
             return { success: false, reason: 'Compression failed', sizeMB: fileSizeMB };
         }
     } else if (fileStats.size > COMPRESS_THRESHOLD) {
-        // Between 20-25 MB — compress to be safe (email overhead eats some space)
         console.log(`[Email] File is ${fileSizeMB}MB, compressing to stay under limit...`);
         try {
             const zipPath = await compressToZip(pdfPath, filename);
@@ -94,51 +93,51 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
         }
     }
 
-    // Create transporter (reads env vars at call time)
-    const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT || '587', 10),
-        secure: process.env.SMTP_SECURE === 'true',
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
+    // Read the file as base64 for Resend attachment
+    const fileBuffer = fs.readFileSync(attachPath);
+    const fileBase64 = fileBuffer.toString('base64');
 
-    const mailOptions = {
-        from: process.env.EMAIL_FROM || '"Intern Logbook" <noreply@internlogbook.com>',
-        to: toEmail,
-        subject: 'Your Completed PDF Document',
-        text: 'Hello,\n\nYour filled PDF document is attached to this email.\n\nThank you for using our service!',
-        html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #4a5568;">Your Document is Ready!</h2>
-                <p>Hello,</p>
-                <p>Your filled PDF document has been generated and is attached to this email.</p>
-                ${wasCompressed ? '<p><em>Note: The file was compressed into a ZIP archive to fit email size limits.</em></p>' : ''}
-                <p>If you have any questions or need further assistance, please let us know.</p>
-                <br/>
-                <p style="color: #718096; font-size: 14px;">Thank you for using our service!</p>
-            </div>
-        `,
-        attachments: [
-            {
-                filename: attachFilename,
-                path: attachPath,
-            }
-        ]
-    };
+    const resend = new Resend(apiKey);
+
+    const fromAddress = process.env.EMAIL_FROM || 'Intern Logbook <onboarding@resend.dev>';
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`Email sent successfully to ${toEmail}. Message ID: ${info.messageId}`);
+        const { data, error } = await resend.emails.send({
+            from: fromAddress,
+            to: [toEmail],
+            subject: 'Your Completed PDF Document',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #4a5568;">Your Document is Ready!</h2>
+                    <p>Hello,</p>
+                    <p>Your filled PDF document has been generated and is attached to this email.</p>
+                    ${wasCompressed ? '<p><em>Note: The file was compressed into a ZIP archive to fit email size limits.</em></p>' : ''}
+                    <p>If you have any questions or need further assistance, please let us know.</p>
+                    <br/>
+                    <p style="color: #718096; font-size: 14px;">Thank you for using our service!</p>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: attachFilename,
+                    content: fileBase64,
+                }
+            ]
+        });
 
         // Clean up temp ZIP if we created one
         if (wasCompressed && attachPath !== pdfPath) {
             fs.unlink(attachPath, () => { });
         }
 
-        return { success: true, messageId: info.messageId };
+        if (error) {
+            console.error('Error sending email:', error);
+            throw new Error(`Failed to send email: ${error.message}`);
+        }
+
+        console.log(`Email sent successfully to ${toEmail}. Message ID: ${data.id}`);
+        return { success: true, messageId: data.id };
+
     } catch (error) {
         // Clean up temp ZIP on error too
         if (wasCompressed && attachPath !== pdfPath) {
