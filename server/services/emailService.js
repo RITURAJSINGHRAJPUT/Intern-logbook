@@ -1,6 +1,5 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const fs = require('fs');
-const path = require('path');
 const archiver = require('archiver');
 
 const MAX_EMAIL_SIZE = 18 * 1024 * 1024;
@@ -20,42 +19,23 @@ function compressToZip(filePath, filename) {
 }
 
 /**
- * Creates a nodemailer transporter.
- * Tries port 465 (SSL) first; if SMTP_PORT env var overrides to 587, uses STARTTLS.
- */
-function createTransporter() {
-    const port = parseInt(process.env.SMTP_PORT || '465', 10);
-    const secure = port === 465; // 465 = implicit SSL, 587 = STARTTLS
-    return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port,
-        secure,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-        tls: {
-            // Accept self-signed certs and don't fail on certificate hostname mismatches
-            rejectUnauthorized: false,
-        },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 15000,
-    });
-}
-
-/**
- * Sends an email with the generated PDF attached.
+ * Sends a PDF email via SendGrid's HTTP API.
+ * Works on Render (no outbound SMTP required).
  *
- * @param {string} toEmail - The recipient's email address
- * @param {string} pdfPath - The absolute path to the generated PDF file
- * @param {string} filename - The name to give the attached file
- * @returns {Promise<Object>}
+ * @param {string} toEmail - Recipient email
+ * @param {string} pdfPath - Absolute path to the PDF
+ * @param {string} filename - Attachment filename
  */
 async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
     if (!toEmail) throw new Error('Recipient email address is required');
     if (!fs.existsSync(pdfPath)) throw new Error('PDF file not found');
 
+    const apiKey = process.env.SENDGRID_API_KEY;
+    if (!apiKey) throw new Error('SENDGRID_API_KEY environment variable is not set');
+
+    sgMail.setApiKey(apiKey);
+
+    // File size check / compression
     const fileStats = fs.statSync(pdfPath);
     const fileSizeMB = (fileStats.size / (1024 * 1024)).toFixed(2);
     let attachPath = pdfPath;
@@ -84,22 +64,24 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
     } else if (fileStats.size > COMPRESS_THRESHOLD) {
         try {
             const zipPath = await compressToZip(pdfPath, filename);
-            const zipStats = fs.statSync(zipPath);
-            const zipSizeMB = (zipStats.size / (1024 * 1024)).toFixed(2);
             attachPath = zipPath;
             attachFilename = filename.replace(/\.[^.]+$/, '') + '.zip';
             wasCompressed = true;
-            console.log(`[Email] Compressed ${fileSizeMB}MB → ${zipSizeMB}MB ZIP`);
         } catch (compErr) {
             console.log('[Email] Compression failed, sending uncompressed.');
         }
     }
 
-    const transporter = createTransporter();
+    // Read file as base64 for attachment
+    const fileBuffer = fs.readFileSync(attachPath);
+    const fileBase64 = fileBuffer.toString('base64');
+    const mimeType = attachFilename.endsWith('.zip') ? 'application/zip' : 'application/pdf';
 
-    const mailOptions = {
-        from: process.env.EMAIL_FROM || '"Intern Logbook" <noreply@internlogbook.com>',
+    const fromAddress = process.env.EMAIL_FROM || 'sparshnfc@gmail.com';
+
+    const msg = {
         to: toEmail,
+        from: fromAddress,
         subject: 'Your Completed PDF Document',
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -112,18 +94,26 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
                 <p style="color: #718096; font-size: 14px;">Thank you for using our service!</p>
             </div>
         `,
-        attachments: [{ filename: attachFilename, path: attachPath }]
+        attachments: [
+            {
+                content: fileBase64,
+                filename: attachFilename,
+                type: mimeType,
+                disposition: 'attachment',
+            },
+        ],
     };
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`Email sent successfully to ${toEmail}. Message ID: ${info.messageId}`);
+        await sgMail.send(msg);
+        console.log(`Email sent successfully to ${toEmail}`);
         if (wasCompressed && attachPath !== pdfPath) fs.unlink(attachPath, () => { });
-        return { success: true, messageId: info.messageId };
+        return { success: true };
     } catch (error) {
         if (wasCompressed && attachPath !== pdfPath) fs.unlink(attachPath, () => { });
-        console.error('Error sending email:', error);
-        throw new Error(`Failed to send email: ${error.message}`);
+        const detail = error.response ? JSON.stringify(error.response.body) : error.message;
+        console.error('Error sending email:', detail);
+        throw new Error(`Failed to send email: ${detail}`);
     }
 }
 
