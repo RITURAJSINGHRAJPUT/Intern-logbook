@@ -6,6 +6,7 @@ const path = require('path');
 const pdfRoutes = require('./routes/pdf');
 const templateRoutes = require('./routes/templates');
 const bulkFillRoutes = require('./routes/bulkFill');
+const paymentRoutes = require('./routes/payments');
 const { adminRouter, setupRouter } = require('./routes/admin');
 const { verifyToken } = require('./middleware/auth');
 const { verifyAdmin, verifyBulkAccess } = require('./middleware/adminAuth');
@@ -32,10 +33,14 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Serve PDF templates as static files
 app.use('/templates', express.static(path.join(__dirname, '../pdf-format')));
 
+// Serve Payment Uploads securely
+app.use('/uploads/payments', verifySessionCookie, verifyAdmin, express.static(path.join(__dirname, 'uploads/payments')));
+
 // API routes
 app.use('/api', pdfRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/bulk', bulkFillRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api', sessionRoutes);
 
 // Admin routes (setupRouter first — it only requires auth, not admin role)

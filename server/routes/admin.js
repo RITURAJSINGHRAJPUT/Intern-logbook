@@ -398,6 +398,112 @@ router.post('/templates/:filename/fields', (req, res) => {
 });
 
 /**
+ * GET /api/admin/payments
+ * Fetch all pending payment requests
+ */
+router.get('/payments', async (req, res) => {
+    try {
+        const snapshot = await db.collection('paymentRequests')
+            .where('status', '==', 'pending')
+            .get(); // Sorting in memory to avoid needing a Firestore composite index
+
+        let payments = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            payments.push({
+                id: doc.id,
+                uid: data.uid,
+                email: data.email,
+                displayName: data.displayName,
+                transactionId: data.transactionId,
+                screenshotFilename: data.screenshotFilename,
+                status: data.status,
+                createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+            });
+        });
+
+        // Sort in memory by descending createdAt
+        payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        res.json({ payments });
+    } catch (error) {
+        console.error('Error fetching payments:', error);
+        res.status(500).json({ error: 'Failed to fetch payment requests' });
+    }
+});
+
+/**
+ * POST /api/admin/payments/:id/approve
+ * Approve a payment and grant custom credits
+ */
+router.post('/payments/:id/approve', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const requestedCredits = parseInt(req.body.credits, 10);
+        const creditsToGrant = (!isNaN(requestedCredits) && requestedCredits > 0) ? requestedCredits : 150;
+
+        const paymentDoc = await db.collection('paymentRequests').doc(id).get();
+
+        if (!paymentDoc.exists) {
+            return res.status(404).json({ error: 'Payment request not found' });
+        }
+
+        const paymentData = paymentDoc.data();
+        if (paymentData.status !== 'pending') {
+            return res.status(400).json({ error: 'Payment is not pending' });
+        }
+
+        // Add custom bulkCredits to user
+        const userRef = db.collection('users').doc(paymentData.uid);
+        const userDoc = await userRef.get();
+        let currentCredits = 0;
+        if (userDoc.exists && userDoc.data().bulkCredits) {
+            currentCredits = userDoc.data().bulkCredits;
+        }
+
+        const newCredits = currentCredits + creditsToGrant;
+
+        await db.runTransaction(async (transaction) => {
+            transaction.update(userRef, { bulkCredits: newCredits });
+            transaction.update(paymentDoc.ref, {
+                status: 'approved',
+                approvedBy: req.user.uid,
+                approvedAt: new Date(),
+                creditsGranted: creditsToGrant
+            });
+        });
+
+        console.log(`✅ Payment ${id} approved by admin ${req.user.uid}. User ${paymentData.uid} received ${creditsToGrant} credits.`);
+        res.json({ success: true, message: 'Payment approved', newCredits });
+    } catch (error) {
+        console.error('Error approving payment:', error);
+        res.status(500).json({ error: 'Failed to approve payment' });
+    }
+});
+
+/**
+ * POST /api/admin/payments/:id/reject
+ * Reject a payment
+ */
+router.post('/payments/:id/reject', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await db.collection('paymentRequests').doc(id).update({
+            status: 'rejected',
+            rejectedBy: req.user.uid,
+            rejectedAt: new Date()
+        });
+
+        console.log(`❌ Payment ${id} rejected by admin ${req.user.uid}`);
+        res.json({ success: true, message: 'Payment rejected' });
+    } catch (error) {
+        console.error('Error rejecting payment:', error);
+        res.status(500).json({ error: 'Failed to reject payment' });
+    }
+});
+
+/**
  * POST /api/admin/setup-first-admin
  * One-time setup: creates admin doc for the authenticated user.
  * Only works if zero admins exist in the collection.

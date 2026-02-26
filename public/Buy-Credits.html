@@ -101,7 +101,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center p-4 md:p-8 relative mt-10 md:mt-2">
+    <main class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative mt-10 md:mt-2 gap-8 w-full">
         <!-- Main Card Container -->
         <div
             class="max-w-[1000px] w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col md:flex-row border-[8px] border-slate-100">
@@ -132,11 +132,11 @@
                                 <span class="material-symbols-outlined text-[26px]">diamond</span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="font-extrabold text-slate-800 text-lg leading-tight">500 Pro Credits</span>
+                                <span class="font-extrabold text-slate-800 text-lg leading-tight">150 Pro Credits</span>
                                 <span class="text-xs text-slate-400 font-bold mt-0.5">Perfect for heavy lifting</span>
                             </div>
                         </div>
-                        <span class="font-black text-2xl text-[#ff5722] tracking-tight">$49</span>
+                        <span class="font-black text-2xl text-[#ff5722] tracking-tight">₹150</span>
                     </div>
 
                     <!-- Feature 2 -->
@@ -220,13 +220,30 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
+                <!-- Payment Verification Form -->
                 <div class="w-full max-w-[280px]">
-                    <button
-                        class="w-full bg-[#FF4500] text-white py-[1.15rem] rounded-full font-black text-lg shadow-[0_8px_25px_rgba(255,69,0,0.35)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(255,69,0,0.45)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 mb-4">
-                        <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
-                        Complete Payment
-                    </button>
+                    <form id="paymentForm" class="flex flex-col gap-4 mb-4">
+                        <div class="flex flex-col items-start w-full gap-1 text-left">
+                            <label for="transactionId" class="text-xs font-bold text-slate-500 ml-1">Transaction
+                                ID</label>
+                            <input type="text" id="transactionId" name="transactionId" required
+                                placeholder="Enter Transaction ID"
+                                class="w-full bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 px-4 rounded-xl focus:border-vibrant-turquoise focus:outline-none transition-colors text-sm font-semibold placeholder:font-medium shadow-sm">
+                        </div>
+
+                        <div class="flex flex-col items-start w-full gap-1 text-left">
+                            <label for="paymentScreenshot" class="text-xs font-bold text-slate-500 ml-1">Payment
+                                Screenshot</label>
+                            <input type="file" id="paymentScreenshot" name="screenshot" accept="image/*" required
+                                class="w-full bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 px-4 rounded-xl focus:border-vibrant-turquoise focus:outline-none transition-colors text-sm font-semibold file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-vibrant-turquoise file:text-white hover:file:bg-cyan-500 shadow-sm">
+                        </div>
+
+                        <button type="submit" id="submitPaymentBtn"
+                            class="w-full bg-[#FF4500] text-white py-[1.15rem] rounded-full font-black text-lg shadow-[0_8px_25px_rgba(255,69,0,0.35)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(255,69,0,0.45)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 mt-2">
+                            <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+                            Verify Payment
+                        </button>
+                    </form>
 
                     <button
                         class="w-full bg-[#FAFAFA] hover:bg-[#F3F4F6] text-slate-500 tracking-tight py-3.5 rounded-full font-bold transition-all mb-8 border border-slate-100">
@@ -242,6 +259,53 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- History Section -->
+        <div
+            class="max-w-[1000px] w-full bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] p-8 md:p-10 border-[4px] border-slate-100">
+            <h3 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-vibrant-turquoise">history</span>
+                Payment History
+            </h3>
+            <div id="paymentHistoryContainer"
+                class="w-full relative min-h-[100px] flex flex-col items-center justify-center">
+                <!-- Loading State -->
+                <div id="historyLoading" class="flex flex-col items-center gap-3 py-8 text-slate-400">
+                    <span
+                        class="material-symbols-outlined animate-spin text-3xl text-vibrant-turquoise">progress_activity</span>
+                    <span class="font-bold text-sm">Loading history...</span>
+                </div>
+
+                <!-- History Table (Hidden initially) -->
+                <div id="historyTableContainer"
+                    class="w-full hidden overflow-x-auto rounded-xl border border-slate-100">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                                <th class="p-4 rounded-tl-xl whitespace-nowrap">Date</th>
+                                <th class="p-4 whitespace-nowrap">Transaction ID</th>
+                                <th class="p-4 whitespace-nowrap text-center">Credits Gained</th>
+                                <th class="p-4 rounded-tr-xl text-right whitespace-nowrap">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="text-sm font-semibold text-slate-600">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State (Hidden initially) -->
+                <div id="historyEmpty" class="hidden flex flex-col items-center gap-3 py-10 text-slate-400 text-center">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-2">
+                        <span class="material-symbols-outlined text-3xl">receipt_long</span>
+                    </div>
+                    <span class="font-bold text-slate-500">No payment history found.</span>
+                    <span class="text-xs max-w-xs">Your payment verification requests will appear here once
+                        submitted.</span>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -276,6 +340,163 @@
 
     <!-- App JS for Navigation Auth Logic -->
     <script src="js/app.js"></script>
+
+    <!-- Payment Submission Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paymentForm = document.getElementById('paymentForm');
+            const submitBtn = document.getElementById('submitPaymentBtn');
+
+            paymentForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const transactionId = document.getElementById('transactionId').value.trim();
+                const screenshotFile = document.getElementById('paymentScreenshot').files[0];
+
+                if (!transactionId || !screenshotFile) {
+                    showToast('Please provide both Transaction ID and Screenshot.', 'error');
+                    return;
+                }
+
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="material-symbols-outlined text-xl animate-spin">refresh</span> Submitting...';
+                submitBtn.disabled = true;
+
+                try {
+                    const token = await window.getFirebaseToken();
+                    const formData = new FormData();
+                    formData.append('transactionId', transactionId);
+                    formData.append('screenshot', screenshotFile);
+
+                    const res = await fetch('/api/payments/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        throw new Error(data.error || 'Failed to submit payment verification.');
+                    }
+
+                    showToast('Payment verification submitted successfully! Admin will review it soon.');
+                    paymentForm.reset();
+                    fetchPaymentHistory(); // Refresh the list
+                } catch (error) {
+                    console.error('Payment Error:', error);
+                    showToast(error.message, 'error');
+                } finally {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Re-use Toast utility from other pages if not globally available
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+
+                toast.style.cssText = `
+                    position: fixed; bottom: 24px; right: 24px; padding: 16px 24px;
+                    background: white; border-radius: 16px; border: 2px solid #e2e8f0;
+                    border-left: 6px solid ${borderColor}; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+                    z-index: 2000; color: #37474F; font-weight: 700; font-size: 0.9rem;
+                    animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                `;
+
+                if (!document.getElementById('toastStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'toastStyles';
+                    style.innerHTML = '@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }';
+                    document.head.appendChild(style);
+                }
+
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)';
+                    toast.style.transition = 'all 0.3s ease'; setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            // Fetch history function
+            async function fetchPaymentHistory() {
+                const container = document.getElementById('historyTableContainer');
+                const tbody = document.getElementById('historyTableBody');
+                const loading = document.getElementById('historyLoading');
+                const empty = document.getElementById('historyEmpty');
+
+                try {
+                    loading.classList.remove('hidden');
+                    container.classList.add('hidden');
+                    empty.classList.add('hidden');
+
+                    const token = await window.getFirebaseToken();
+                    const res = await fetch('/api/payments/history', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Failed to fetch history');
+
+                    const data = await res.json();
+
+                    loading.classList.add('hidden');
+
+                    if (!data.payments || data.payments.length === 0) {
+                        empty.classList.remove('hidden');
+                    } else {
+                        container.classList.remove('hidden');
+                        tbody.innerHTML = data.payments.map(payment => {
+                            const date = new Date(payment.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric', month: 'short', day: 'numeric',
+                                hour: '2-digit', minute: '2-digit'
+                            });
+
+                            let statusBadge = '';
+                            let creditsHtml = '<span class="text-slate-400 text-[11px] font-bold">-</span>';
+
+                            if (payment.status === 'pending') {
+                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-50 text-amber-500 border border-amber-200 uppercase">Pending</span>';
+                            } else if (payment.status === 'approved') {
+                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-emerald-50 text-emerald-500 border border-emerald-200 uppercase">Approved</span>';
+
+                                // Show +credits (default to 500 for legacy records before this property was added)
+                                const gained = payment.creditsGranted || 500;
+                                creditsHtml = `<span class="inline-flex items-center gap-1 font-black text-emerald-500 text-xs bg-emerald-50 px-2 py-0.5 rounded-md"><span class="material-symbols-outlined text-[14px]">diamond</span> +${gained}</span>`;
+
+                            } else if (payment.status === 'rejected') {
+                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-rose-50 text-rose-500 border border-rose-200 uppercase">Rejected</span>';
+                            }
+
+                            return `
+                                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                    <td class="p-4 whitespace-nowrap text-slate-500 text-xs">${date}</td>
+                                    <td class="p-4 font-bold text-slate-700 font-mono text-xs">${payment.transactionId}</td>
+                                    <td class="p-4 text-center">${creditsHtml}</td>
+                                    <td class="p-4 text-right">${statusBadge}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                } catch (error) {
+                    console.error('Error fetching history:', error);
+                    loading.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    empty.innerHTML = `
+                        <div class="text-rose-400 mb-2"><span class="material-symbols-outlined text-3xl">error</span></div>
+                        <span class="font-bold text-slate-500">Failed to load history</span>
+                        <button onclick="fetchPaymentHistory()" class="mt-4 text-xs font-bold text-vibrant-turquoise hover:text-cyan-600 underline">Try Again</button>
+                    `;
+                }
+            }
+
+            // Immediately fetch on load
+            fetchPaymentHistory();
+        });
+    </script>
 </body>
 
 </html>

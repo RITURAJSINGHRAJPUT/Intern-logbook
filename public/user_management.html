@@ -83,266 +83,259 @@
     </style>
 </head>
 
-<body class="antialiased overflow-x-hidden min-h-screen">
-    <!-- Main App Layout -->
-    <div class="flex min-h-screen">
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col min-h-screen w-full">
-            <!-- Top Header -->
-            <header
-                class="h-20 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
-
-                <!-- Left: Logo & Nav -->
-                <div class="flex items-center gap-8">
-                    <!-- Logo -->
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl rotate-3 shadow-md group-hover:rotate-0 transition-transform cursor-pointer">
-                            <span class="material-symbols-outlined text-white text-xl">face_6</span>
-                        </div>
-                        <span
-                            class="font-bold text-xl text-friendly-navy tracking-tight hidden sm:block">FormFiller</span>
+<body class="antialiased overflow-x-hidden min-h-screen bg-slate-50 flex flex-col">
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-h-screen w-full">
+        <!-- Top Header -->
+        <header
+            class="h-20 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
+            <!-- Left: Logo & Nav -->
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-xl rotate-3 shadow-md group-hover:rotate-0 transition-transform cursor-pointer">
+                        <span class="material-symbols-outlined text-white text-xl">face_6</span>
                     </div>
-
-                    <!-- Navigation Links -->
-                    <nav class="hidden lg:flex items-center gap-2">
-                        <a href="/admin-dashboard.html"
-                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
-                            <span class="material-symbols-outlined text-[18px]">dashboard</span>
-                            Dashboard
-                        </a>
-                        <a href="/user_management.html"
-                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
-                            <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
-                            User Management
-                        </a>
-                        <a href="/templates.html"
-                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
-                            <span class="material-symbols-outlined text-[18px]">file_copy</span>
-                            Templates
-                        </a>
-                        <a href="/bulkfill_credits.html"
-                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
-                            <span class="material-symbols-outlined text-[18px]">toll</span>
-                            Credits
-                        </a>
-                    </nav>
+                    <span class="font-bold text-xl text-friendly-navy tracking-tight hidden sm:block">FormFiller</span>
                 </div>
 
-                <!-- Right: Actions & Profile -->
-                <div class="flex items-center gap-5">
-                    <button
-                        class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-turquoise border-2 border-slate-100 hover:border-vibrant-turquoise flex items-center justify-center text-slate-400 hover:text-vibrant-turquoise transition-all cursor-pointer tactile-sm hidden sm:flex">
-                        <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    </button>
-                    <!-- Logout Button -->
-                    <a href="#"
-                        class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-coral hover:text-vibrant-coral border-2 border-slate-100 hover:border-vibrant-coral flex items-center justify-center text-slate-400 transition-all cursor-pointer tactile-sm"
-                        id="sidebarLogout" title="Logout">
-                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-2">
+                    <a href="/admin-dashboard.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                        Dashboard
                     </a>
-
-                    <div class="flex items-center gap-3 pl-4 border-l-2 border-slate-100">
-                        <div class="flex flex-col items-end hidden md:flex">
-                            <span class="text-[13px] font-extrabold text-friendly-navy">Admin Panel</span>
-                            <span class="text-[11px] font-bold text-slate-400">Super Admin</span>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white bg-slate-100">
-                            <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
-                                alt="Admin" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Loading State -->
-            <div class="flex-1 flex flex-col items-center justify-center min-h-[50vh]" id="adminLoading">
-                <div
-                    class="w-12 h-12 border-4 border-slate-200 border-t-vibrant-turquoise rounded-full animate-spin mb-4">
-                </div>
-                <p class="text-lg font-bold text-slate-400">Loading admin panel...</p>
-            </div>
-
-            <!-- Dashboard Content -->
-            <div class="p-8 md:p-10 max-w-7xl mx-auto w-full" id="adminPanel" style="display:none">
-
-                <div class="flex items-center justify-between mb-8">
-                    <h1 class="text-2xl font-extrabold text-friendly-navy flex items-center gap-2.5">
-                        <div class="bg-sunny-yellow/30 p-1.5 rounded-lg border border-warm-yellow/30">
-                            <span class="material-symbols-outlined text-warm-yellow text-2xl">group</span>
-                        </div>
+                    <a href="/user_management.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
+                        <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
                         User Management
-                    </h1>
+                    </a>
+                    <a href="/templates.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
+                        <span class="material-symbols-outlined text-[18px]">file_copy</span>
+                        Templates
+                    </a>
+                    <a href="/bulkfill_credits.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
+                        <span class="material-symbols-outlined text-[18px]">toll</span>
+                        Credits
+                    </a>
+                    <a href="/verify_payments.html"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
+                        <span class="material-symbols-outlined text-[18px]">payments</span>
+                        Verify Payments
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Right: Actions & Profile -->
+            <div class="flex items-center gap-5">
+                <a href="#"
+                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-coral hover:text-vibrant-coral border-2 border-slate-100 hover:border-vibrant-coral flex items-center justify-center text-slate-400 transition-all cursor-pointer tactile-sm"
+                    id="sidebarLogout" title="Logout">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </a>
+
+                <div class="flex items-center gap-3 pl-4 border-l-2 border-slate-100">
+                    <div class="flex flex-col items-end hidden md:flex">
+                        <span class="text-[13px] font-extrabold text-friendly-navy">Admin Panel</span>
+                        <span class="text-[11px] font-bold text-slate-400">Super Admin</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white bg-slate-100">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
+                            alt="Admin" class="w-full h-full object-cover">
+                    </div>
                 </div>
+            </div>
+        </header>
 
-                <!-- Data Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <!-- Loading State -->
+        <div class="flex-1 flex flex-col items-center justify-center min-h-[50vh]" id="adminLoading">
+            <div class="w-12 h-12 border-4 border-slate-200 border-t-vibrant-turquoise rounded-full animate-spin mb-4">
+            </div>
+            <p class="text-lg font-bold text-slate-400">Loading admin panel...</p>
+        </div>
 
-                    <!-- Total Users Card -->
-                    <div
-                        class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
-                        <div
-                            class="absolute -right-6 -top-6 w-28 h-28 bg-soft-turquoise/40 organic-blob group-hover:rotate-12 transition-transform">
-                        </div>
-                        <div class="flex justify-between items-start relative z-10 mb-6">
-                            <div>
-                                <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Total Users</h3>
-                                <div class="text-3xl font-extrabold text-friendly-navy" id="statTotal">-</div>
-                            </div>
-                            <div
-                                class="w-12 h-12 rounded-xl bg-vibrant-turquoise text-white flex items-center justify-center shadow-sm rotate-3 group-hover:rotate-0 transition-transform">
-                                <span class="material-symbols-outlined text-2xl">manage_search</span>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-500 bg-emerald-50 w-max px-2.5 py-1 rounded-lg border border-emerald-100 relative z-10">
-                            <span class="material-symbols-outlined text-[16px]">trending_up</span>
-                            12% increase
-                        </div>
+        <!-- Dashboard Content -->
+        <div class="p-8 md:p-10 max-w-7xl mx-auto w-full" id="adminPanel" style="display:none">
+
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-2xl font-extrabold text-friendly-navy flex items-center gap-2.5">
+                    <div class="bg-sunny-yellow/30 p-1.5 rounded-lg border border-warm-yellow/30">
+                        <span class="material-symbols-outlined text-warm-yellow text-2xl">group</span>
                     </div>
+                    User Management
+                </h1>
+            </div>
 
-                    <!-- Approved Users Card -->
-                    <div
-                        class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
-                        <div
-                            class="absolute -right-6 -top-6 w-28 h-28 bg-soft-coral/40 organic-blob group-hover:rotate-12 transition-transform">
-                        </div>
-                        <div class="flex justify-between items-start relative z-10 mb-6">
-                            <div>
-                                <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Approved Users</h3>
-                                <div class="text-3xl font-extrabold text-friendly-navy" id="statApproved">-</div>
-                            </div>
-                            <div
-                                class="w-12 h-12 rounded-xl bg-vibrant-coral text-white flex items-center justify-center shadow-sm -rotate-3 group-hover:rotate-0 transition-transform">
-                                <span class="material-symbols-outlined text-2xl">how_to_reg</span>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 bg-slate-50 w-max px-2.5 py-1 rounded-lg border border-slate-100 relative z-10">
-                            <span class="material-symbols-outlined text-[16px]">analytics</span>
-                            75% approval rate
-                        </div>
-                    </div>
+            <!-- Data Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
-                    <!-- Pending Requests Card -->
-                    <div
-                        class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
-                        <div
-                            class="absolute -right-6 -top-6 w-28 h-28 bg-sunny-yellow/60 organic-blob group-hover:rotate-12 transition-transform">
-                        </div>
-                        <div class="flex justify-between items-start relative z-10 mb-6">
-                            <div>
-                                <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Pending Requests</h3>
-                                <div class="text-3xl font-extrabold text-friendly-navy" id="statPending">-</div>
-                            </div>
-                            <div
-                                class="w-12 h-12 rounded-xl bg-warm-yellow text-white flex items-center justify-center shadow-sm rotate-6 group-hover:rotate-0 transition-transform">
-                                <span class="material-symbols-outlined text-2xl">pending_actions</span>
-                            </div>
-                        </div>
-                        <div
-                            class="flex items-center gap-1.5 text-[11px] font-bold text-rose-500 bg-rose-50 w-max px-2.5 py-1 rounded-lg border border-rose-100 relative z-10">
-                            <span class="material-symbols-outlined text-[16px]">error</span>
-                            Requires action
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Filters & Table Area -->
+                <!-- Total Users Card -->
                 <div
-                    class="bg-white rounded-[1.5rem] border border-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col mb-10">
-                    <div class="flex flex-col md:flex-row items-center justify-between p-5 gap-4">
-                        <div class="relative w-full md:w-80">
-                            <span
-                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
-                            <input type="text"
-                                class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-[0.8rem] focus:outline-none focus:border-vibrant-turquoise focus:ring-4 focus:ring-soft-turquoise/30 transition-all font-semibold text-friendly-navy placeholder-slate-400 text-[13px]"
-                                id="searchInput" placeholder="Search by email or name...">
-                        </div>
-                        <div class="flex items-center gap-3 w-full md:w-auto">
-                            <select
-                                class="w-full md:w-auto pl-4 pr-10 py-2 bg-white border border-slate-200 rounded-[0.8rem] focus:outline-none focus:border-vibrant-turquoise focus:ring-4 focus:ring-soft-turquoise/30 transition-all font-semibold text-slate-600 text-[13px] appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1em_1em]"
-                                id="filterSelect">
-                                <option value="all">All Users</option>
-                                <option value="approved">Approved</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                            <button
-                                class="w-9 h-9 flex-shrink-0 flex items-center justify-center bg-white border border-slate-200 rounded-[0.8rem] hover:border-vibrant-turquoise hover:text-vibrant-turquoise text-slate-400 transition-colors">
-                                <span class="material-symbols-outlined text-[18px]">filter_list</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto border-t border-slate-100">
-                        <table class="w-full text-left border-collapse min-w-[900px]">
-                            <thead>
-                                <tr
-                                    class="bg-white text-slate-400 text-[10px] uppercase tracking-[0.05em] font-extrabold border-b border-slate-100">
-                                    <th class="px-5 py-3 w-1/4">USER DETAILS</th>
-                                    <th class="px-5 py-3">STATUS</th>
-                                    <th class="px-5 py-3 hidden md:table-cell">TEMPLATES</th>
-                                    <th class="px-5 py-3 hidden lg:table-cell">BULK FILL</th>
-                                    <th class="px-5 py-3">LAST ACTIVITY</th>
-                                    <th class="px-5 py-3 text-right">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody" class="bg-white">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="flex items-center justify-between p-4 px-5 border-t border-slate-100 bg-white">
-                        <div class="text-[12px] font-semibold text-slate-500" id="paginationInfo">Showing 0 users</div>
-                        <div class="flex items-center gap-1.5" id="pagination"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Access Denied -->
-            <div id="accessDenied" class="flex-1 flex flex-col items-center justify-center min-h-[50vh]"
-                style="display:none">
-                <div
-                    class="bg-rose-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 border-4 border-rose-100 shadow-sm rotate-6 hover:rotate-0 transition-transform cursor-pointer">
-                    <span class="material-symbols-outlined text-rose-500 text-5xl">lock</span>
-                </div>
-                <h2 class="text-3xl font-extrabold text-friendly-navy mb-2">Access Denied</h2>
-                <p class="text-lg font-bold text-slate-500">You don't have admin privileges to view this page.</p>
-            </div>
-        </main>
-
-        <!-- Global App Footer -->
-        <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-2 group cursor-pointer">
+                    class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
                     <div
-                        class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
-                        <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                        class="absolute -right-6 -top-6 w-28 h-28 bg-soft-turquoise/40 organic-blob group-hover:rotate-12 transition-transform">
                     </div>
-                    <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
-                </div>
-
-                <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
-                    <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
-                    <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
-                    <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
-                    <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
-                </div>
-
-                <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
-                    <p>© 2026. Sparsh Digital Solutions.</p>
-                    <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
-                        <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    <div class="flex justify-between items-start relative z-10 mb-6">
+                        <div>
+                            <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Total Users</h3>
+                            <div class="text-3xl font-extrabold text-friendly-navy" id="statTotal">-</div>
                         </div>
-                        <span>Servers Happy</span>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-vibrant-turquoise text-white flex items-center justify-center shadow-sm rotate-3 group-hover:rotate-0 transition-transform">
+                            <span class="material-symbols-outlined text-2xl">manage_search</span>
+                        </div>
                     </div>
+                    <div
+                        class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-500 bg-emerald-50 w-max px-2.5 py-1 rounded-lg border border-emerald-100 relative z-10">
+                        <span class="material-symbols-outlined text-[16px]">trending_up</span>
+                        12% increase
+                    </div>
+                </div>
+
+                <!-- Approved Users Card -->
+                <div
+                    class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div
+                        class="absolute -right-6 -top-6 w-28 h-28 bg-soft-coral/40 organic-blob group-hover:rotate-12 transition-transform">
+                    </div>
+                    <div class="flex justify-between items-start relative z-10 mb-6">
+                        <div>
+                            <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Approved Users</h3>
+                            <div class="text-3xl font-extrabold text-friendly-navy" id="statApproved">-</div>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-vibrant-coral text-white flex items-center justify-center shadow-sm -rotate-3 group-hover:rotate-0 transition-transform">
+                            <span class="material-symbols-outlined text-2xl">how_to_reg</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 bg-slate-50 w-max px-2.5 py-1 rounded-lg border border-slate-100 relative z-10">
+                        <span class="material-symbols-outlined text-[16px]">analytics</span>
+                        75% approval rate
+                    </div>
+                </div>
+
+                <!-- Pending Requests Card -->
+                <div
+                    class="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div
+                        class="absolute -right-6 -top-6 w-28 h-28 bg-sunny-yellow/60 organic-blob group-hover:rotate-12 transition-transform">
+                    </div>
+                    <div class="flex justify-between items-start relative z-10 mb-6">
+                        <div>
+                            <h3 class="text-slate-500 font-bold mb-0.5 text-sm">Pending Requests</h3>
+                            <div class="text-3xl font-extrabold text-friendly-navy" id="statPending">-</div>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-warm-yellow text-white flex items-center justify-center shadow-sm rotate-6 group-hover:rotate-0 transition-transform">
+                            <span class="material-symbols-outlined text-2xl">pending_actions</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center gap-1.5 text-[11px] font-bold text-rose-500 bg-rose-50 w-max px-2.5 py-1 rounded-lg border border-rose-100 relative z-10">
+                        <span class="material-symbols-outlined text-[16px]">error</span>
+                        Requires action
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Filters & Table Area -->
+            <div
+                class="bg-white rounded-[1.5rem] border border-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col mb-10">
+                <div class="flex flex-col md:flex-row items-center justify-between p-5 gap-4">
+                    <div class="relative w-full md:w-80">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+                        <input type="text"
+                            class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-[0.8rem] focus:outline-none focus:border-vibrant-turquoise focus:ring-4 focus:ring-soft-turquoise/30 transition-all font-semibold text-friendly-navy placeholder-slate-400 text-[13px]"
+                            id="searchInput" placeholder="Search by email or name...">
+                    </div>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <select
+                            class="w-full md:w-auto pl-4 pr-10 py-2 bg-white border border-slate-200 rounded-[0.8rem] focus:outline-none focus:border-vibrant-turquoise focus:ring-4 focus:ring-soft-turquoise/30 transition-all font-semibold text-slate-600 text-[13px] appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1em_1em]"
+                            id="filterSelect">
+                            <option value="all">All Users</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                        <button
+                            class="w-9 h-9 flex-shrink-0 flex items-center justify-center bg-white border border-slate-200 rounded-[0.8rem] hover:border-vibrant-turquoise hover:text-vibrant-turquoise text-slate-400 transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border-t border-slate-100">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr
+                                class="bg-white text-slate-400 text-[10px] uppercase tracking-[0.05em] font-extrabold border-b border-slate-100">
+                                <th class="px-5 py-3 w-1/4">USER DETAILS</th>
+                                <th class="px-5 py-3">STATUS</th>
+                                <th class="px-5 py-3 hidden md:table-cell">TEMPLATES</th>
+                                <th class="px-5 py-3 hidden lg:table-cell">BULK FILL</th>
+                                <th class="px-5 py-3">LAST ACTIVITY</th>
+                                <th class="px-5 py-3 text-right">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="bg-white">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between p-4 px-5 border-t border-slate-100 bg-white">
+                    <div class="text-[12px] font-semibold text-slate-500" id="paginationInfo">Showing 0 users</div>
+                    <div class="flex items-center gap-1.5" id="pagination"></div>
                 </div>
             </div>
-        </footer>
-    </div>
+        </div>
+
+        <!-- Access Denied -->
+        <div id="accessDenied" class="flex-1 flex flex-col items-center justify-center min-h-[50vh]"
+            style="display:none">
+            <div
+                class="bg-rose-50 w-24 h-24 rounded-full flex items-center justify-center mb-6 border-4 border-rose-100 shadow-sm rotate-6 hover:rotate-0 transition-transform cursor-pointer">
+                <span class="material-symbols-outlined text-rose-500 text-5xl">lock</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-friendly-navy mb-2">Access Denied</h2>
+            <p class="text-lg font-bold text-slate-500">You don't have admin privileges to view this page.</p>
+        </div>
+    </main>
+
+    <!-- Global App Footer -->
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    </div>
+                    <span>Servers Happy</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Template Assignment Modal -->
     <!-- Template Assignment Modal -->

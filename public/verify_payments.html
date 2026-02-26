@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Bulk Fill Credits - Admin Panel</title>
+    <title>Verify Payments - Admin Panel</title>
 
     <!-- Design System (Tailwind + Fonts) -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -105,12 +105,12 @@
                     Templates
                 </a>
                 <a href="/bulkfill_credits.html"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
                     <span class="material-symbols-outlined text-[18px]">toll</span>
                     Credits
                 </a>
                 <a href="/verify_payments.html"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
                     <span class="material-symbols-outlined text-[18px]">payments</span>
                     Verify Payments
                 </a>
@@ -143,102 +143,63 @@
         <div class="mb-8 flex justify-between items-end">
             <div>
                 <h1 class="text-3xl font-bold text-friendly-navy flex items-center gap-3">
-                    <span class="material-symbols-outlined text-warm-yellow text-4xl">toll</span>
-                    Bulk Fill Credits
+                    <span class="material-symbols-outlined text-vibrant-coral text-4xl">payments</span>
+                    Verify Payments
                 </h1>
-                <p class="text-slate-500 mt-2 font-medium">Manage how many bulk PDF generation credits each user has. 1
-                    Credit = 1 PDF page.</p>
+                <p class="text-slate-500 mt-2 font-medium">Review and approve pending payment requests from users.
+                    Approved payments will add 500 bulk credits to their account.</p>
             </div>
+            <!-- Refresh Button -->
+            <button id="refreshBtn"
+                class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-all shadow-sm">
+                <span class="material-symbols-outlined text-sm">refresh</span>
+                Refresh List
+            </button>
         </div>
 
         <!-- Filters & Table Area -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col mb-10">
-            <div class="flex flex-col md:flex-row items-center justify-between p-6 gap-4 border-b border-slate-100">
-                <div class="relative w-full md:w-96">
-                    <span
-                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
-                    <input type="text"
-                        class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-none rounded-xl focus:outline-none focus:ring-2 focus:ring-vibrant-turquoise transition-all font-semibold text-friendly-navy placeholder-slate-400 text-sm"
-                        id="searchInput" placeholder="Search users by email or name...">
-                </div>
-            </div>
-
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
                         <tr
                             class="bg-slate-50/50 text-slate-400 text-xs uppercase tracking-wider font-bold border-b border-slate-100">
-                            <th class="px-6 py-4 w-2/5">User Details</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4">Current Credits</th>
+                            <th class="px-6 py-4">User Details</th>
+                            <th class="px-6 py-4">Transaction ID</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4 text-center">Screenshot</th>
                             <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="usersTableBody" class="bg-white divide-y divide-slate-100">
+                    <tbody id="paymentsTableBody" class="bg-white divide-y divide-slate-100">
                         <!-- Populated dynamically -->
+                    </tbody>
+                    <!-- Empty State (Inside Tbody) -->
+                    <tbody id="emptyState" class="hidden">
+                        <tr>
+                            <td colspan="5" class="p-12 text-center border-t border-slate-100">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4 border-4 border-white shadow-sm ring-1 ring-slate-100/50">
+                                        <span class="material-symbols-outlined text-4xl">check_circle</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-friendly-navy mb-2">All caught up!</h3>
+                                    <p class="text-slate-500 font-medium">There are no pending payment requests to
+                                        verify.</p>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <!-- Loader -->
-            <div id="usersLoading" class="py-16 flex flex-col items-center justify-center text-slate-400">
+            <div id="paymentsLoading" class="py-16 flex flex-col items-center justify-center text-slate-400">
                 <div class="spinner !w-10 !h-10 mb-4"></div>
-                <p class="font-bold">Loading users...</p>
-            </div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden py-16 flex-col items-center justify-center text-center">
-                <div
-                    class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4 border-4 border-white shadow-sm">
-                    <span class="material-symbols-outlined text-4xl">person_off</span>
-                </div>
-                <h3 class="text-xl font-bold text-friendly-navy mb-2">No users found</h3>
-                <p class="text-slate-500 font-medium">Try a different search term.</p>
+                <p class="font-bold">Loading payment requests...</p>
             </div>
         </div>
     </main>
-
-    <!-- Credit Assignment Modal -->
-    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none"
-        id="creditModal">
-        <div
-            class="bg-white rounded-[2rem] w-full max-w-sm shadow-2xl border-2 border-slate-200 overflow-hidden transform scale-95 transition-transform duration-300">
-            <div class="p-6 border-b-2 border-slate-100 flex items-center justify-between bg-slate-50">
-                <h3 class="text-xl font-extrabold text-friendly-navy flex items-center gap-2">
-                    <span class="material-symbols-outlined text-warm-yellow">add_circle</span>
-                    Assign Credits
-                </h3>
-                <button
-                    class="w-8 h-8 rounded-full bg-white border border-slate-200 hover:border-vibrant-coral text-slate-400 hover:text-vibrant-coral flex items-center justify-center transition-all shadow-sm"
-                    id="modalClose">
-                    <span class="material-symbols-outlined text-xl">close</span>
-                </button>
-            </div>
-            <div class="p-6">
-                <p class="text-sm font-bold text-slate-500 mb-4">Set standard bulk fill credits for <span
-                        id="modalUserEmail" class="text-vibrant-turquoise font-extrabold"></span></p>
-                <div class="relative">
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Number of
-                        Credits</label>
-                    <input type="number" id="creditInput" min="0" step="1"
-                        class="w-full text-2xl font-bold text-friendly-navy px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-vibrant-turquoise focus:ring-4 focus:ring-soft-turquoise/30 transition-all text-center"
-                        placeholder="e.g. 100">
-                </div>
-            </div>
-            <div class="p-6 border-t-2 border-slate-100 bg-slate-50 flex items-center justify-end gap-3">
-                <button
-                    class="px-5 py-2 rounded-xl font-bold text-slate-500 border border-slate-200 bg-white hover:bg-slate-100 transition-colors shadow-sm"
-                    id="modalCancel">Cancel</button>
-                <button
-                    class="px-5 py-2 rounded-xl font-bold bg-vibrant-turquoise text-white hover:bg-[#00acc1] shadow-md transition-all flex items-center gap-2"
-                    id="modalSave">
-                    <span class="material-symbols-outlined text-sm">save</span> Set Credits
-                </button>
-            </div>
-        </div>
-    </div>
-    </div>
-    </div>
 
     <!-- Global App Footer -->
     <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
@@ -269,183 +230,210 @@
         </div>
     </footer>
 
+    <!-- Image Preview Modal -->
+    <div id="imageModal"
+        class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="relative max-w-4xl w-full flex flex-col items-center">
+            <button id="closeImageModal"
+                class="absolute -top-12 right-0 md:-right-12 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="modalPreviewImage" src="" alt="Payment Screenshot"
+                class="max-w-full max-h-[80vh] rounded-lg shadow-2xl object-contain bg-white">
+        </div>
+    </div>
+
     <!-- Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const tableBody = document.getElementById('usersTableBody');
-            const searchInput = document.getElementById('searchInput');
-            const loading = document.getElementById('usersLoading');
+            const tableBody = document.getElementById('paymentsTableBody');
+            const loading = document.getElementById('paymentsLoading');
             const emptyState = document.getElementById('emptyState');
-
-            // Modal elements
-            const modal = document.getElementById('creditModal');
-            const modalClose = document.getElementById('modalClose');
-            const modalCancel = document.getElementById('modalCancel');
-            const modalSave = document.getElementById('modalSave');
-            const creditInput = document.getElementById('creditInput');
-            const modalUserEmail = document.getElementById('modalUserEmail');
-
-            let allUsers = [];
-            let currentUserEditing = null;
+            const refreshBtn = document.getElementById('refreshBtn');
+            const imageModal = document.getElementById('imageModal');
+            const modalPreviewImage = document.getElementById('modalPreviewImage');
+            const closeImageModal = document.getElementById('closeImageModal');
 
             // --- Init ---
-            setTimeout(fetchUsers, 500);
+            fetchPayments();
 
-            async function fetchUsers() {
+            refreshBtn.addEventListener('click', fetchPayments);
+
+            async function fetchPayments() {
                 try {
                     loading.classList.remove('hidden');
                     tableBody.innerHTML = '';
                     emptyState.classList.add('hidden');
 
                     const token = await window.getFirebaseToken();
-                    const res = await fetch('/api/admin/users?limit=100', {
+                    const res = await fetch('/api/admin/payments', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
 
-                    if (!res.ok) throw new Error('Failed to fetch users');
+                    if (!res.ok) throw new Error('Failed to fetch payments');
 
                     const data = await res.json();
-                    allUsers = data.users || [];
-
-                    renderTable();
+                    renderTable(data.payments || []);
                 } catch (error) {
-                    console.error(error);
-                    showToast('Failed to load users', 'error');
+                    console.error('Error fetching payments:', error);
+                    showToast('Failed to load pending payments', 'error');
                 } finally {
                     loading.classList.add('hidden');
                 }
             }
 
-            function renderTable() {
-                const query = searchInput.value.toLowerCase();
-                const filtered = allUsers.filter(u =>
-                    u.email.toLowerCase().includes(query) ||
-                    (u.displayName && u.displayName.toLowerCase().includes(query))
-                );
-
-                if (filtered.length === 0) {
+            function renderTable(payments) {
+                if (payments.length === 0) {
                     emptyState.classList.remove('hidden');
-                    tableBody.innerHTML = '';
                     return;
                 }
 
-                emptyState.classList.add('hidden');
+                tableBody.innerHTML = payments.map(payment => {
+                    const dateObj = new Date(payment.createdAt);
+                    const formattedDate = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                    const formattedTime = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
-                tableBody.innerHTML = filtered.map(user => {
-                    const statusClass = user.approved ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-warm-yellow/20 text-warm-yellow border-warm-yellow/30';
-                    const statusText = user.approved ? 'Approved' : 'Pending';
-                    const credits = user.bulkCredits || 0;
-                    const creditsClass = credits > 0 ? 'text-vibrant-turquoise bg-soft-turquoise/20 border-vibrant-turquoise/20' : 'text-slate-400 bg-slate-100 border-slate-200';
+                    const initial = (payment.displayName || payment.email || 'U').charAt(0).toUpperCase();
 
                     return `
                         <tr class="hover:bg-slate-50 transition-colors group">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-sm">
-                                        ${user.email.substring(0, 2).toUpperCase()}
+                                        ${initial}
                                     </div>
-                                    <div>
-                                        <div class="font-bold text-friendly-navy text-sm">${user.displayName || 'No Name Provided'}</div>
-                                        <div class="text-xs font-semibold text-slate-400">${user.email}</div>
+                                    <div class="flex flex-col gap-0.5">
+                                        <div class="font-bold text-friendly-navy text-sm">${payment.displayName || 'Unnamed User'}</div>
+                                        <div class="text-[11px] font-semibold text-slate-400">${payment.email}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg border ${statusClass}">${statusText}</span>
+                                <span class="font-mono text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded block w-max">${payment.transactionId}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-3 py-1 text-[13px] font-extrabold rounded-xl border flex items-center gap-1.5 w-max ${creditsClass}">
-                                    <span class="material-symbols-outlined text-[16px]">toll</span>
-                                    ${credits}
-                                </span>
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="font-bold text-slate-600 text-[12px]">${formattedDate}</span>
+                                    <span class="text-[10px] font-bold text-slate-400">${formattedTime}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="window.viewImage('/uploads/payments/${payment.screenshotFilename}')" class="px-3 py-1.5 bg-soft-turquoise/30 text-vibrant-turquoise hover:bg-vibrant-turquoise hover:text-white rounded-lg text-xs font-bold transition-colors shadow-sm inline-flex items-center gap-1.5 focus:outline-none">
+                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    View
+                                </button>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button onclick="window.openCreditModal('${user.uid}', '${user.email}', ${credits})" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-all shadow-sm flex items-center gap-1.5 ml-auto opacity-0 group-hover:opacity-100 focus:opacity-100">
-                                    <span class="material-symbols-outlined text-[16px]">edit</span>
-                                    Set Credits
-                                </button>
+                                <div class="flex items-center justify-end gap-2">
+                                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-500 bg-emerald-50 hover:bg-emerald-500 hover:text-white transition-all shadow-sm" title="Approve Payment" onclick="window.approvePayment('${payment.id}')">
+                                        <span class="material-symbols-outlined text-[20px]">check</span>
+                                    </button>
+                                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Reject Payment" onclick="window.rejectPayment('${payment.id}')">
+                                        <span class="material-symbols-outlined text-[20px]">close</span>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `;
                 }).join('');
             }
 
-            searchInput.addEventListener('input', renderTable);
-
-            // --- Modal Logic ---
-            window.openCreditModal = (uid, email, currentCredits) => {
-                currentUserEditing = uid;
-                modalUserEmail.textContent = email;
-                creditInput.value = currentCredits;
-
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.firstElementChild.classList.remove('scale-95');
-                modal.firstElementChild.classList.add('scale-100');
-            };
-
-            const closeModal = () => {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.firstElementChild.classList.remove('scale-100');
-                modal.firstElementChild.classList.add('scale-95');
-                currentUserEditing = null;
-            };
-
-            modalClose.addEventListener('click', closeModal);
-            modalCancel.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-
-            // Save Credits
-            modalSave.addEventListener('click', async () => {
-                if (!currentUserEditing) return;
-
-                const newCredits = parseInt(creditInput.value, 10);
-                if (isNaN(newCredits) || newCredits < 0) {
-                    showToast('Please enter a valid positive number', 'error');
-                    return;
-                }
-
-                const originalText = modalSave.innerHTML;
-                modalSave.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">refresh</span> Saving...`;
-                modalSave.disabled = true;
+            // --- Handlers ---
+            window.viewImage = async (imgUrl) => {
+                // To fetch image securely, you might need to fetch it as a blob with the Authorization header.
+                // However, our Express route is simple check on the Cookie. So let's try just setting src first.
+                // Since `verifySessionCookie` works with cookies, image tags might work out of the box if cookies are sent.
+                // If not, we'll fetch as blob. Let's try blob approach to be safe since it uses Bearer token usually.
 
                 try {
                     const token = await window.getFirebaseToken();
-                    const res = await fetch(`/api/admin/users/${currentUserEditing}/credits`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ bulkCredits: newCredits })
+                    const response = await fetch(imgUrl, {
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
 
-                    const responseText = await res.text();
-                    let data;
-                    try {
-                        data = JSON.parse(responseText);
-                    } catch (e) {
-                        throw new Error(`Server returned non-JSON response: ${responseText.substring(0, 50)}...`);
-                    }
+                    if (!response.ok) throw new Error('Network error viewing image');
 
-                    if (!res.ok) throw new Error(data.error || 'Failed to update credits');
+                    const blob = await response.blob();
+                    const objectUrl = URL.createObjectURL(blob);
 
-                    // Update local state
-                    const user = allUsers.find(u => u.uid === currentUserEditing);
-                    if (user) user.bulkCredits = newCredits;
+                    modalPreviewImage.src = objectUrl;
+                    imageModal.classList.remove('hidden');
+                    imageModal.classList.add('flex');
+                } catch (e) {
+                    console.error(e);
+                    // Fallback to setting src directly, relying on cookie
+                    modalPreviewImage.src = imgUrl;
+                    imageModal.classList.remove('hidden');
+                    imageModal.classList.add('flex');
+                }
+            };
 
-                    renderTable();
-                    closeModal();
-                    showToast('Credits updated successfully!');
-                } catch (error) {
-                    console.error('Credits error:', error);
-                    showToast(error.message || 'Failed to save credits', 'error');
-                } finally {
-                    modalSave.innerHTML = originalText;
-                    modalSave.disabled = false;
+            closeImageModal.addEventListener('click', () => {
+                imageModal.classList.add('hidden');
+                imageModal.classList.remove('flex');
+                if (modalPreviewImage.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(modalPreviewImage.src);
+                }
+                modalPreviewImage.src = '';
+            });
+
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    closeImageModal.click();
                 }
             });
+
+            window.approvePayment = async (id) => {
+                const creditsInput = prompt("How many credits should be granted?", "150");
+                if (creditsInput === null) return; // User cancelled
+
+                const creditsToGrant = parseInt(creditsInput, 10);
+                if (isNaN(creditsToGrant) || creditsToGrant <= 0) {
+                    showToast('Invalid credit amount.', 'error');
+                    return;
+                }
+
+                if (!confirm(`Approve this payment and add ${creditsToGrant} Credits to the user's account?`)) return;
+
+                try {
+                    const token = await window.getFirebaseToken();
+                    const res = await fetch(`/api/admin/payments/${id}/approve`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ credits: creditsToGrant })
+                    });
+
+                    if (!res.ok) throw new Error('Failed to approve payment');
+
+                    showToast(`Payment approved. ${creditsToGrant} Credits added.`);
+                    fetchPayments(); // Refresh list
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to approve payment', 'error');
+                }
+            };
+
+            window.rejectPayment = async (id) => {
+                if (!confirm("Are you sure you want to reject this payment request?")) return;
+                try {
+                    const token = await window.getFirebaseToken();
+                    const res = await fetch(`/api/admin/payments/${id}/reject`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Failed to reject payment');
+
+                    showToast('Payment request rejected.', 'error');
+                    fetchPayments(); // Refresh list
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to reject payment', 'error');
+                }
+            };
 
             // --- Toast Util ---
             function showToast(message, type = 'success') {
@@ -464,7 +452,7 @@
                 if (!document.getElementById('toastStyles')) {
                     const style = document.createElement('style');
                     style.id = 'toastStyles';
-                    style.innerHTML = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+                    style.innerHTML = '@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }';
                     document.head.appendChild(style);
                 }
 
