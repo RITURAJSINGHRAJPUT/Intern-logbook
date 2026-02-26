@@ -32,12 +32,24 @@ A 100% free, secure, and privacy-focused online PDF form filler. No login requir
    npm install
    ```
 
-3. **Start the server**
+3. **Environment Configuration**
+   Create a `.env` file in the root directory for email functionality:
+   ```env
+   # Brevo API configuration for sending payment verifications
+   BREVO_API_KEY=your_brevo_api_key_here
+   EMAIL_FROM=noreply@yourdomain.com
+   EMAIL_FROM_NAME=Your App Name
+
+   # Admin receiving the payment notification emails
+   ADMIN_EMAIL=your_admin_email@example.com
+   ```
+
+4. **Start the server**
    ```bash
    npm start
    ```
 
-4. **Open in Browser**
+5. **Open in Browser**
    Go to `http://localhost:3000`
 
 ## 📝 Usage
