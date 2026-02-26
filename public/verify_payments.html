@@ -157,6 +157,16 @@
             </button>
         </div>
 
+        <!-- Tabs -->
+        <div class="flex gap-4 mb-6 border-b border-slate-200">
+            <button id="tabPending"
+                class="pb-4 px-2 text-sm font-bold text-vibrant-turquoise border-b-2 border-vibrant-turquoise transition-all">Pending
+                Requests</button>
+            <button id="tabHistory"
+                class="pb-4 px-2 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-all">Payment
+                History</button>
+        </div>
+
         <!-- Filters & Table Area -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col mb-10">
             <div class="overflow-x-auto">
@@ -168,7 +178,7 @@
                             <th class="px-6 py-4">Transaction ID</th>
                             <th class="px-6 py-4">Date</th>
                             <th class="px-6 py-4 text-center">Screenshot</th>
-                            <th class="px-6 py-4 text-right">Actions</th>
+                            <th class="px-6 py-4 text-right" id="actionsHeader">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="paymentsTableBody" class="bg-white divide-y divide-slate-100">
@@ -184,7 +194,8 @@
                                         <span class="material-symbols-outlined text-4xl">check_circle</span>
                                     </div>
                                     <h3 class="text-xl font-bold text-friendly-navy mb-2">All caught up!</h3>
-                                    <p class="text-slate-500 font-medium">There are no pending payment requests to
+                                    <p id="emptyStateMsg" class="text-slate-500 font-medium">There are no pending
+                                        payment requests to
                                         verify.</p>
                                 </div>
                             </td>
@@ -254,10 +265,35 @@
             const modalPreviewImage = document.getElementById('modalPreviewImage');
             const closeImageModal = document.getElementById('closeImageModal');
 
+            let currentTab = 'pending';
+            const tabPending = document.getElementById('tabPending');
+            const tabHistory = document.getElementById('tabHistory');
+            const actionsHeader = document.getElementById('actionsHeader');
+
             // --- Init ---
             fetchPayments();
 
             refreshBtn.addEventListener('click', fetchPayments);
+
+            tabPending.addEventListener('click', () => {
+                currentTab = 'pending';
+                tabPending.classList.replace('text-slate-500', 'text-vibrant-turquoise');
+                tabPending.classList.replace('border-transparent', 'border-vibrant-turquoise');
+                tabHistory.classList.replace('text-vibrant-turquoise', 'text-slate-500');
+                tabHistory.classList.replace('border-vibrant-turquoise', 'border-transparent');
+                actionsHeader.textContent = 'Actions';
+                fetchPayments();
+            });
+
+            tabHistory.addEventListener('click', () => {
+                currentTab = 'history';
+                tabHistory.classList.replace('text-slate-500', 'text-vibrant-turquoise');
+                tabHistory.classList.replace('border-transparent', 'border-vibrant-turquoise');
+                tabPending.classList.replace('text-vibrant-turquoise', 'text-slate-500');
+                tabPending.classList.replace('border-vibrant-turquoise', 'border-transparent');
+                actionsHeader.textContent = 'Status';
+                fetchPayments();
+            });
 
             async function fetchPayments() {
                 try {
@@ -266,7 +302,8 @@
                     emptyState.classList.add('hidden');
 
                     const token = await window.getFirebaseToken();
-                    const res = await fetch('/api/admin/payments', {
+                    const endpoint = currentTab === 'pending' ? '/api/admin/payments' : '/api/admin/payments/history';
+                    const res = await fetch(endpoint, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
 
@@ -285,6 +322,10 @@
             function renderTable(payments) {
                 if (payments.length === 0) {
                     emptyState.classList.remove('hidden');
+                    const emptyStateMsg = document.getElementById('emptyStateMsg');
+                    if (emptyStateMsg) {
+                        emptyStateMsg.textContent = currentTab === 'pending' ? 'There are no pending payment requests to verify.' : 'No payment history found.';
+                    }
                     return;
                 }
 
@@ -324,14 +365,23 @@
                                 </button>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-500 bg-emerald-50 hover:bg-emerald-500 hover:text-white transition-all shadow-sm" title="Approve Payment" onclick="window.approvePayment('${payment.id}')">
-                                        <span class="material-symbols-outlined text-[20px]">check</span>
-                                    </button>
-                                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Reject Payment" onclick="window.rejectPayment('${payment.id}')">
-                                        <span class="material-symbols-outlined text-[20px]">close</span>
-                                    </button>
-                                </div>
+                                ${currentTab === 'pending' ? `
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-500 bg-emerald-50 hover:bg-emerald-500 hover:text-white transition-all shadow-sm" title="Approve Payment" onclick="window.approvePayment('${payment.id}')">
+                                            <span class="material-symbols-outlined text-[20px]">check</span>
+                                        </button>
+                                        <button class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Reject Payment" onclick="window.rejectPayment('${payment.id}')">
+                                            <span class="material-symbols-outlined text-[20px]">close</span>
+                                        </button>
+                                    </div>
+                                ` : `
+                                    <div class="flex items-center justify-end">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${payment.status === 'approved' ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200'}">
+                                            <span class="material-symbols-outlined text-[14px]">${payment.status === 'approved' ? 'check_circle' : 'cancel'}</span>
+                                            ${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                                        </span>
+                                    </div>
+                                `}
                             </td>
                         </tr>
                     `;

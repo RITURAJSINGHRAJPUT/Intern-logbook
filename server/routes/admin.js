@@ -433,6 +433,47 @@ router.get('/payments', async (req, res) => {
 });
 
 /**
+ * GET /api/admin/payments/history
+ * Fetch all resolved payment requests (approved/rejected)
+ */
+router.get('/payments/history', async (req, res) => {
+    try {
+        const snapshotApproved = await db.collection('paymentRequests').where('status', '==', 'approved').get();
+        const snapshotRejected = await db.collection('paymentRequests').where('status', '==', 'rejected').get();
+
+        let payments = [];
+        const processDoc = (doc) => {
+            const data = doc.data();
+            payments.push({
+                id: doc.id,
+                uid: data.uid,
+                email: data.email,
+                displayName: data.displayName,
+                transactionId: data.transactionId,
+                screenshotFilename: data.screenshotFilename,
+                status: data.status,
+                creditsGranted: data.creditsGranted || 0,
+                createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+                resolvedAt: data.approvedAt ? data.approvedAt.toDate().toISOString() :
+                    (data.rejectedAt ? data.rejectedAt.toDate().toISOString() : null),
+                resolvedBy: data.approvedBy || data.rejectedBy || null
+            });
+        };
+
+        snapshotApproved.forEach(processDoc);
+        snapshotRejected.forEach(processDoc);
+
+        // Sort in memory by descending createdAt
+        payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        res.json({ payments });
+    } catch (error) {
+        console.error('Error fetching payment history:', error);
+        res.status(500).json({ error: 'Failed to fetch payment history' });
+    }
+});
+
+/**
  * POST /api/admin/payments/:id/approve
  * Approve a payment and grant custom credits
  */
