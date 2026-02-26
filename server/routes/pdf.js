@@ -124,14 +124,34 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
         // Check if we have multiple instances
         if (instances && instances.length > 1) {
             // Generate a PDF for each instance and merge them
-            const { PDFDocument } = require('pdf-lib');
+            const { PDFDocument, StandardFonts } = require('pdf-lib');
+            const { fillPdfPages } = require('../services/pdfGenerator');
+
             const mergedPdf = await PDFDocument.create();
 
+            // Read template once
+            const templateBytes = await fs.promises.readFile(session.pdfPath);
+            const templatePdf = await PDFDocument.load(templateBytes, { ignoreEncryption: true });
+            const templatePageIndices = templatePdf.getPageIndices();
+
+            // Embed fonts once
+            const helveticaFont = await mergedPdf.embedFont(StandardFonts.Helvetica);
+            const helveticaBold = await mergedPdf.embedFont(StandardFonts.HelveticaBold);
+
             for (const instance of instances) {
-                const instanceBuffer = await generateFilledPDF(session.pdfPath, instance.fields, flatten);
-                const instancePdf = await PDFDocument.load(instanceBuffer);
-                const pages = await mergedPdf.copyPages(instancePdf, instancePdf.getPageIndices());
-                pages.forEach(page => mergedPdf.addPage(page));
+                const copiedPages = await mergedPdf.copyPages(templatePdf, templatePageIndices);
+                copiedPages.forEach(page => mergedPdf.addPage(page));
+                await fillPdfPages(mergedPdf, copiedPages, instance.fields, helveticaFont, helveticaBold);
+            }
+
+            // Flatten if requested (removes form interactivity)
+            if (flatten) {
+                try {
+                    const form = mergedPdf.getForm();
+                    form.flatten();
+                } catch (e) {
+                    // No form to flatten
+                }
             }
 
             pdfBuffer = Buffer.from(await mergedPdf.save());

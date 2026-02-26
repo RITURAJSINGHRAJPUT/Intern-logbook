@@ -17,6 +17,26 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
     const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const pages = pdfDoc.getPages();
 
+    await fillPdfPages(pdfDoc, pages, fields, helveticaFont, helveticaBold);
+
+    // Flatten if requested (removes form interactivity)
+    if (flatten) {
+        try {
+            const form = pdfDoc.getForm();
+            form.flatten();
+        } catch (e) {
+            // No form to flatten
+        }
+    }
+
+    const filledPdfBytes = await pdfDoc.save();
+    return Buffer.from(filledPdfBytes);
+}
+
+/**
+ * Fill specific pages with field data
+ */
+async function fillPdfPages(pdfDoc, pages, fields, helveticaFont, helveticaBold) {
     for (const field of fields) {
         if (!field.value && field.type !== 'checkbox') continue;
 
@@ -34,7 +54,6 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
         if (pageIndex < 0 || pageIndex >= pages.length) continue;
 
         const page = pages[pageIndex];
-        const { height: pageHeight } = page.getSize();
 
         // Convert coordinates (PDF origin is bottom-left)
         const x = field.x;
@@ -71,19 +90,6 @@ async function generateFilledPDF(pdfPath, fields, flatten = false) {
                 break;
         }
     }
-
-    // Flatten if requested (removes form interactivity)
-    if (flatten) {
-        try {
-            const form = pdfDoc.getForm();
-            form.flatten();
-        } catch (e) {
-            // No form to flatten
-        }
-    }
-
-    const filledPdfBytes = await pdfDoc.save();
-    return Buffer.from(filledPdfBytes);
 }
 
 /**
@@ -381,4 +387,4 @@ async function saveGeneratedPDF(sessionId, pdfBuffer) {
     return filledPath;
 }
 
-module.exports = { generateFilledPDF, saveGeneratedPDF };
+module.exports = { generateFilledPDF, saveGeneratedPDF, fillPdfPages };
