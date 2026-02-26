@@ -440,6 +440,21 @@ async function cleanupJob(jobId) {
     jobs.delete(jobId);
 }
 
+/**
+ * Merge multiple PDFs into one
+ */
+async function mergePDFs(pdfBuffers) {
+    const mergedPdf = await PDFDocument.create();
+
+    for (const buffer of pdfBuffers) {
+        const pdfDoc = await PDFDocument.load(buffer);
+        const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    return Buffer.from(await mergedPdf.save());
+}
+
 module.exports = {
     parseDataFile,
     autoMapFields,
