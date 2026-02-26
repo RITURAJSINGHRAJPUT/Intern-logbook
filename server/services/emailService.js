@@ -1,4 +1,4 @@
-const sgMail = require('@sendgrid/mail');
+const https = require('https');
 const fs = require('fs');
 const archiver = require('archiver');
 
@@ -11,7 +11,7 @@ function compressToZip(filePath, filename) {
         const output = fs.createWriteStream(zipPath);
         const archive = archiver('zip', { zlib: { level: 6 } });
         output.on('close', () => resolve(zipPath));
-        archive.on('error', (err) => reject(err));
+        archive.on('error', reject);
         archive.pipe(output);
         archive.file(filePath, { name: filename });
         archive.finalize();
@@ -19,8 +19,50 @@ function compressToZip(filePath, filename) {
 }
 
 /**
- * Sends a PDF email via SendGrid's HTTP API.
+ * Calls the Brevo (Sendinblue) REST API to send an email.
+ * Uses Node's built-in https module — no extra package needed.
+ */
+function brevoRequest(payload, apiKey) {
+    return new Promise((resolve, reject) => {
+        const body = JSON.stringify(payload);
+        const options = {
+            hostname: 'api.brevo.com',
+            path: '/v3/smtp/email',
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'application/json',
+                'api-key': apiKey,
+                'content-length': Buffer.byteLength(body),
+            },
+        };
+
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    resolve(JSON.parse(data || '{}'));
+                } else {
+                    reject(new Error(`Brevo API error ${res.statusCode}: ${data}`));
+                }
+            });
+        });
+
+        req.on('error', reject);
+        req.setTimeout(15000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+        });
+        req.write(body);
+        req.end();
+    });
+}
+
+/**
+ * Sends a PDF email via Brevo's HTTP API.
  * Works on Render (no outbound SMTP required).
+ * Free plan: 300 emails/day, send to any recipient once sender is verified.
  *
  * @param {string} toEmail - Recipient email
  * @param {string} pdfPath - Absolute path to the PDF
@@ -30,12 +72,13 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
     if (!toEmail) throw new Error('Recipient email address is required');
     if (!fs.existsSync(pdfPath)) throw new Error('PDF file not found');
 
-    const apiKey = process.env.SENDGRID_API_KEY;
-    if (!apiKey) throw new Error('SENDGRID_API_KEY environment variable is not set');
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) throw new Error('BREVO_API_KEY environment variable is not set');
 
-    sgMail.setApiKey(apiKey);
+    const fromEmail = process.env.EMAIL_FROM || 'sparshnfc@gmail.com';
+    const fromName = process.env.EMAIL_FROM_NAME || 'Intern Logbook';
 
-    // File size check / compression
+    // File size / compression
     const fileStats = fs.statSync(pdfPath);
     const fileSizeMB = (fileStats.size / (1024 * 1024)).toFixed(2);
     let attachPath = pdfPath;
@@ -47,19 +90,17 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
         try {
             const zipPath = await compressToZip(pdfPath, filename);
             const zipStats = fs.statSync(zipPath);
-            const zipSizeMB = (zipStats.size / (1024 * 1024)).toFixed(2);
             if (zipStats.size > MAX_EMAIL_SIZE) {
                 fs.unlinkSync(zipPath);
-                console.warn(`[Email] Skipped: ${fileSizeMB}MB (${zipSizeMB}MB zipped), too large.`);
-                return { success: false, reason: 'File too large', sizeMB: fileSizeMB };
+                console.warn(`[Email] Skipped: file too large after compression.`);
+                return { success: false, reason: 'File too large' };
             }
             attachPath = zipPath;
             attachFilename = filename.replace(/\.[^.]+$/, '') + '.zip';
             wasCompressed = true;
-            console.log(`[Email] Compressed ${fileSizeMB}MB → ${zipSizeMB}MB ZIP`);
         } catch (compErr) {
             console.error('[Email] Compression failed:', compErr.message);
-            return { success: false, reason: 'Compression failed', sizeMB: fileSizeMB };
+            return { success: false, reason: 'Compression failed' };
         }
     } else if (fileStats.size > COMPRESS_THRESHOLD) {
         try {
@@ -72,18 +113,15 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
         }
     }
 
-    // Read file as base64 for attachment
     const fileBuffer = fs.readFileSync(attachPath);
     const fileBase64 = fileBuffer.toString('base64');
     const mimeType = attachFilename.endsWith('.zip') ? 'application/zip' : 'application/pdf';
 
-    const fromAddress = process.env.EMAIL_FROM || 'sparshnfc@gmail.com';
-
-    const msg = {
-        to: toEmail,
-        from: fromAddress,
+    const payload = {
+        sender: { name: fromName, email: fromEmail },
+        to: [{ email: toEmail }],
         subject: 'Your Completed PDF Document',
-        html: `
+        htmlContent: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #4a5568;">Your Document is Ready!</h2>
                 <p>Hello,</p>
@@ -94,26 +132,23 @@ async function sendPdfEmail(toEmail, pdfPath, filename = 'filled-form.pdf') {
                 <p style="color: #718096; font-size: 14px;">Thank you for using our service!</p>
             </div>
         `,
-        attachments: [
+        attachment: [
             {
+                name: attachFilename,
                 content: fileBase64,
-                filename: attachFilename,
-                type: mimeType,
-                disposition: 'attachment',
             },
         ],
     };
 
     try {
-        await sgMail.send(msg);
-        console.log(`Email sent successfully to ${toEmail}`);
+        const result = await brevoRequest(payload, apiKey);
+        console.log(`Email sent successfully to ${toEmail}. Message ID: ${result.messageId}`);
         if (wasCompressed && attachPath !== pdfPath) fs.unlink(attachPath, () => { });
-        return { success: true };
+        return { success: true, messageId: result.messageId };
     } catch (error) {
         if (wasCompressed && attachPath !== pdfPath) fs.unlink(attachPath, () => { });
-        const detail = error.response ? JSON.stringify(error.response.body) : error.message;
-        console.error('Error sending email:', detail);
-        throw new Error(`Failed to send email: ${detail}`);
+        console.error('Error sending email:', error.message);
+        throw new Error(`Failed to send email: ${error.message}`);
     }
 }
 
