@@ -6,6 +6,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { db } = require('../config/firebase');
 const { verifyToken } = require('../middleware/auth');
+const { sendPaymentNotificationToAdmin } = require('../services/emailService');
 
 // Make sure upload directory exists
 const UPLOADS_DIR = path.join(__dirname, '../uploads/payments');
@@ -76,6 +77,11 @@ router.post('/submit', upload.single('screenshot'), async (req, res) => {
         const docRef = await db.collection('paymentRequests').add(requestData);
 
         console.log(`💳 Payment request ${docRef.id} submitted for user ${req.user.uid}`);
+
+        // Send Email Notification to Admin asynchronously
+        // We don't await this so it doesn't block the response to the user
+        sendPaymentNotificationToAdmin(requestData, req.file)
+            .catch(err => console.error('Failed to send admin payment notification:', err.message));
 
         res.status(200).json({
             success: true,
