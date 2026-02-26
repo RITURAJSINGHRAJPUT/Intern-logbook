@@ -142,7 +142,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateFieldsList(window.fieldManager.fields, 1);
 
         // Initial status update
-        setTimeout(updateStatusDisplay, 100);
+        setTimeout(() => {
+            updateStatusDisplay();
+            if (window.fieldManager) {
+                window.fieldManager.deselectAll();
+            }
+        }, 100);
 
         hideLoading();
         if (!fieldsLoaded) {

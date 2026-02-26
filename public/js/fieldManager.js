@@ -60,6 +60,8 @@ class FieldManager {
             id: f.id || `field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         }));
         this.renderFields();
+        // Ensure no field is auto-selected when fields are initially loaded
+        this.deselectAll();
     }
 
     /**
@@ -94,6 +96,9 @@ class FieldManager {
      * Render all fields on current page
      */
     renderFields() {
+        // Suppress focus-selection side-effects while rerendering DOM items
+        this._suppressFocusSelection = true;
+
         this.overlay.innerHTML = '';
 
         const pageInfo = this.pdfViewer.getCurrentPageInfo();
@@ -109,6 +114,20 @@ class FieldManager {
                 this.createFieldElement(field, pageData.height, scale);
             }
         });
+
+        // Explicitly clear focus if browser tries to autofocus newly created elements
+        if (document.activeElement && this.overlay.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
+        // Lift suppression after a delay to allow regular tabbing and interacting
+        // Using 1000ms to ensure all browser autofill/autofocus events settle
+        if (this._focusTimeout) {
+            clearTimeout(this._focusTimeout);
+        }
+        this._focusTimeout = setTimeout(() => {
+            this._suppressFocusSelection = false;
+        }, 1000);
     }
 
     /**
@@ -133,7 +152,7 @@ class FieldManager {
         wrapper.style.height = `${screenHeight}px`;
 
         if (field.fontSize) {
-            wrapper.style.fontSize = `${field.fontSize}px`;
+            wrapper.style.fontSize = `${field.fontSize * scale}px`;
         }
 
         // Create input element based on type
@@ -197,7 +216,7 @@ class FieldManager {
                 editor.className = 'rich-editor-content';
                 editor.contentEditable = 'true';
                 if (field.fontSize) {
-                    editor.style.fontSize = `${field.fontSize}px`;
+                    editor.style.fontSize = `${field.fontSize * scale}px`;
                 }
                 editor.innerHTML = field.value || '<p>Enter notes...</p>';
 
@@ -224,7 +243,9 @@ class FieldManager {
                 wrapper.appendChild(editorContainer);
 
                 // Special handling - no standard input
-                editor.addEventListener('focus', () => this.selectField(field.id));
+                editor.addEventListener('focus', () => {
+                    if (!this._suppressFocusSelection) this.selectField(field.id);
+                });
                 editor.addEventListener('input', () => {
                     field.value = editor.innerHTML;
                 });
@@ -268,9 +289,11 @@ class FieldManager {
 
         if (input) {
             if (field.fontSize) {
-                input.style.fontSize = `${field.fontSize}px`;
+                input.style.fontSize = `${field.fontSize * scale}px`;
             }
-            input.addEventListener('focus', () => this.selectField(field.id));
+            input.addEventListener('focus', () => {
+                if (!this._suppressFocusSelection) this.selectField(field.id);
+            });
             input.addEventListener('change', () => this.updateFieldValue(field.id, input));
             wrapper.appendChild(input);
         }

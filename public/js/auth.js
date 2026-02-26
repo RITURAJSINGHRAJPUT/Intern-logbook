@@ -351,7 +351,12 @@ function showWaitingScreen(email, needsVerification = false) {
 function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData = null) {
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
-        loginBtn.textContent = 'Logout';
+        const textSpan = loginBtn.querySelector('.login-text');
+        if (textSpan) {
+            textSpan.textContent = 'Logout';
+        } else {
+            loginBtn.textContent = 'Logout';
+        }
         loginBtn.href = '#';
         loginBtn.onclick = (e) => {
             e.preventDefault();
@@ -372,6 +377,17 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
             }
             nameSpan.textContent = displayName;
         }
+    }
+
+    // Update the credit counter if it exists
+    const creditCounter = document.getElementById('creditCounter');
+    if (creditCounter) {
+        let credits = 0;
+        if (userData && typeof userData.bulkCredits !== 'undefined') {
+            credits = userData.bulkCredits;
+        }
+        creditCounter.textContent = `${credits} left`;
+        creditCounter.classList.remove('hidden');
     }
 
     // Add Admin Panel link and show restricted features if user is admin

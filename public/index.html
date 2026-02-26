@@ -75,6 +75,23 @@
             transform: translateY(4px);
         }
 
+        .pricing-bg {
+            background: radial-gradient(circle at top right, #FFF9C4 0%, transparent 40%),
+                radial-gradient(circle at bottom left, #B2EBF2 0%, transparent 40%);
+        }
+
+        .pro-glow {
+            box-shadow: 0 0 40px rgba(255, 87, 34, 0.15);
+        }
+
+        .toggle-switch:checked+.toggle-label {
+            background-color: #00BCD4;
+        }
+
+        .toggle-switch:checked+.toggle-label .toggle-dot {
+            transform: translateX(2rem);
+        }
+
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
             display: inline-block;
@@ -91,7 +108,8 @@
         checkAuth(false, true); // Redirect to app is handled in auth logic
     </script>
 
-    <nav class="py-6 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50">
+    <nav
+        class="py-4 md:py-5 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50 border-b border-friendly-navy/10">
         <a href="/" class="flex items-center gap-2 group cursor-pointer">
             <div
                 class="bg-vibrant-turquoise w-8 h-8 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform">
@@ -100,8 +118,8 @@
             <span class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
         </a>
         <div class="hidden md:flex items-center gap-6">
-            <a class="font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors"
-                href="/Pricing.html">Pricing</a>
+            <button onclick="document.getElementById('pricing-modal').classList.remove('hidden')"
+                class="font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors">Pricing</button>
             <a class="bg-vibrant-coral text-white px-5 py-2 rounded-full font-extrabold text-sm button-tactile"
                 href="/login.html">
                 Get Started
@@ -109,62 +127,71 @@
         </div>
     </nav>
     <main>
-        <section class="hero-gradient pt-2 pb-32 px-6 relative">
-            <div class="max-w-6xl mx-auto text-center relative">
+        <section class="hero-gradient pt-16 pb-20 px-4 md:px-6 relative">
+            <div class="max-w-5xl mx-auto text-center relative flex flex-col items-center">
                 <div
-                    class="absolute -top-10 -left-10 w-24 h-24 bg-soft-turquoise organic-blob opacity-40 blur-xl animate-pulse">
+                    class="absolute top-0 -left-10 w-20 h-20 bg-soft-turquoise organic-blob opacity-40 blur-xl animate-pulse">
                 </div>
-                <div class="absolute top-40 -right-20 w-40 h-40 bg-soft-coral organic-blob opacity-30 blur-2xl"></div>
-                <h1 class="text-5xl md:text-[4.25rem] font-extrabold text-friendly-navy mb-4 leading-[1.1]">
-                    PDFs Made <br />
-                    <span class="text-vibrant-coral relative inline-block">
+                <div class="absolute top-20 -right-10 w-32 h-32 bg-soft-coral organic-blob opacity-30 blur-2xl"></div>
+
+                <h1 class="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-friendly-navy mb-4 leading-tight">
+                    PDFs Made <br class="md:hidden" />
+                    <span class="text-vibrant-coral relative inline-block whitespace-nowrap">
                         Fun &amp; Easy!
-                        <svg class="absolute -bottom-3 left-0 w-full" fill="none" height="12" viewBox="0 0 300 15"
+                        <svg class="absolute -bottom-2 left-0 w-full" fill="none" height="10" viewBox="0 0 300 15"
                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 10C50 2 250 2 295 10" stroke="#FF5722" stroke-linecap="round" stroke-width="8">
+                            <path d="M5 10C50 2 250 2 295 10" stroke="#FF5722" stroke-linecap="round" stroke-width="6">
                             </path>
                         </svg>
                     </span>
                 </h1>
-                <p class="text-lg md:text-xl text-friendly-navy/80 mb-6 max-w-2xl mx-auto font-medium">
+
+                <p class="text-base md:text-lg text-friendly-navy/80 mb-8 max-w-xl mx-auto font-medium px-4">
                     The friendliest way to fill, sign, and giggle your way through paperwork. ✨
                 </p>
-                <div class="relative max-w-xl mx-auto cartoon-character-hover mt-16">
+
+                <div class="relative w-full max-w-lg mx-auto cartoon-character-hover mt-8">
                     <a href="/login.html"
-                        class="block relative bg-white border-[6px] border-dashed border-soft-turquoise p-8 md:p-12 rounded-[3rem] shadow-xl hover:scale-[1.02] transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10 z-0">
+                        class="block relative bg-white border-4 border-dashed border-soft-turquoise p-6 md:p-8 rounded-[2rem] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10 z-0">
                         <div
-                            class="bg-sunny-yellow w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 border-[3px] border-white shadow-inner group-hover:rotate-12 transition-transform">
-                            <span class="material-symbols-outlined text-4xl text-warm-yellow">rocket_launch</span>
+                            class="bg-sunny-yellow w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 border-2 border-white shadow-inner group-hover:rotate-12 transition-transform">
+                            <span class="material-symbols-outlined text-2xl text-warm-yellow">rocket_launch</span>
                         </div>
-                        <h3 class="text-2xl font-extrabold text-friendly-navy mb-2">Drop your file here!</h3>
-                        <p class="text-base text-friendly-navy/60 font-bold">Or click to find it on your computer</p>
-                        <div class="mt-6 flex justify-center gap-3">
+                        <h3 class="text-xl md:text-2xl font-extrabold text-friendly-navy mb-1">Drop your file here!</h3>
+                        <p class="text-sm text-friendly-navy/60 font-bold mb-4">Or click to find it on your computer</p>
+
+                        <div class="flex justify-center gap-2 flex-wrap">
                             <div
-                                class="flex items-center gap-1.5 bg-soft-turquoise/30 px-3 py-1.5 rounded-full border border-soft-turquoise">
+                                class="flex items-center gap-1 bg-soft-turquoise/30 px-3 py-1 rounded-full border border-soft-turquoise">
                                 <span
-                                    class="material-symbols-outlined text-vibrant-turquoise text-xs">check_circle</span>
-                                <span class="text-xs font-bold text-vibrant-turquoise">Secure &amp; Fast</span>
+                                    class="material-symbols-outlined text-vibrant-turquoise text-[1rem]">check_circle</span>
+                                <span
+                                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-turquoise uppercase tracking-wider">Secure
+                                    &amp; Fast</span>
                             </div>
                             <div
-                                class="flex items-center gap-1.5 bg-soft-coral/30 px-3 py-1.5 rounded-full border border-soft-coral">
-                                <span class="material-symbols-outlined text-vibrant-coral text-xs">star</span>
-                                <span class="text-xs font-bold text-vibrant-coral">Super Easy</span>
+                                class="flex items-center gap-1 bg-soft-coral/30 px-3 py-1 rounded-full border border-soft-coral">
+                                <span class="material-symbols-outlined text-vibrant-coral text-[1rem]">star</span>
+                                <span
+                                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-coral uppercase tracking-wider">Super
+                                    Easy</span>
                             </div>
                         </div>
                     </a>
+
                     <div
-                        class="character-head absolute -top-10 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none z-50">
+                        class="character-head absolute -top-8 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none z-10 w-12 h-12">
                         <div
-                            class="bg-bright-yellow w-16 h-16 rounded-full border-[3px] border-friendly-navy flex items-center justify-center shadow-lg">
-                            <div class="flex flex-col items-center">
-                                <div class="flex gap-2 mb-1">
-                                    <div class="w-1.5 h-1.5 bg-friendly-navy rounded-full"></div>
-                                    <div class="w-1.5 h-1.5 bg-friendly-navy rounded-full"></div>
+                            class="bg-bright-yellow w-full h-full rounded-full border-2 border-friendly-navy flex items-center justify-center shadow">
+                            <div class="flex flex-col items-center mt-1">
+                                <div class="flex gap-1.5 mb-1">
+                                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
+                                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
                                 </div>
-                                <div class="w-5 h-2 border-b-[3px] border-friendly-navy rounded-full"></div>
+                                <div class="w-3 h-1.5 border-b-2 border-friendly-navy rounded-full"></div>
                             </div>
                             <div
-                                class="absolute -right-8 top-1 bg-white px-2 py-1 rounded-xl border-2 border-friendly-navy font-bold text-xs -rotate-12">
+                                class="absolute -right-10 top-0 bg-white px-2 py-0.5 rounded-lg border-2 border-friendly-navy font-bold text-[0.6rem] -rotate-12 shadow-sm">
                                 Hello! 👋
                             </div>
                         </div>
@@ -172,127 +199,312 @@
                 </div>
             </div>
         </section>
-        <section class="py-20 px-6 max-w-7xl mx-auto">
-            <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-16">3 Simple Steps to Joy 🌈</h2>
-            <div class="flex flex-col md:flex-row items-center justify-between gap-12 relative">
-                <div class="flex-1 text-center group">
-                    <div
-                        class="w-40 h-40 bg-soft-turquoise organic-blob mx-auto mb-6 flex items-center justify-center shadow-xl rotate-3 group-hover:rotate-0 transition-all border-4 border-white">
-                        <span class="material-symbols-outlined text-7xl text-vibrant-turquoise">add_to_photos</span>
-                    </div>
-                    <h4 class="text-3xl font-extrabold mb-4">1. Pick it</h4>
-                    <p class="text-lg font-bold text-friendly-navy/70 px-4">Drag in that dusty PDF and watch it come to
-                        life!</p>
-                </div>
-                <div class="hidden lg:block absolute left-[28%] top-20 w-32">
-                    <svg class="w-full text-warm-yellow" viewBox="0 0 100 50">
-                        <path class="hand-drawn-path" d="M5 45 C 20 5, 80 5, 95 45" fill="none" stroke="currentColor"
-                            stroke-width="3"></path>
-                        <path d="M85 35 L 95 45 L 80 48" fill="none" stroke="currentColor" stroke-linecap="round"
-                            stroke-width="3"></path>
+
+        <section class="py-12 px-4 md:px-6 max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-12">3 Simple Steps to Joy 🌈</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
+                <!-- SVG Connectors (Hidden on mobile) -->
+                <div class="hidden md:block absolute left-[25%] top-16 w-1/4 translate-x-4">
+                    <svg class="w-full text-warm-yellow/50" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path class="hand-drawn-path" d="M0 15 Q 50 -10, 100 15" fill="none" stroke="currentColor"
+                            stroke-width="2"></path>
                     </svg>
                 </div>
-                <div class="flex-1 text-center group md:translate-y-12">
-                    <div
-                        class="w-40 h-40 bg-soft-coral organic-blob mx-auto mb-6 flex items-center justify-center shadow-xl -rotate-6 group-hover:rotate-0 transition-all border-4 border-white">
-                        <span class="material-symbols-outlined text-6xl text-vibrant-coral">draw</span>
-                    </div>
-                    <h4 class="text-3xl font-extrabold mb-4">2. Fill it</h4>
-                    <p class="text-lg font-bold text-friendly-navy/70 px-4">Our editor is so easy, even your goldfish
-                        could use it.</p>
-                </div>
-                <div class="hidden lg:block absolute right-[28%] top-40 w-32">
-                    <svg class="w-full text-warm-yellow" viewBox="0 0 100 50">
-                        <path class="hand-drawn-path" d="M5 5 C 20 45, 80 45, 95 5" fill="none" stroke="currentColor"
-                            stroke-width="3"></path>
-                        <path d="M85 15 L 95 5 L 80 2" fill="none" stroke="currentColor" stroke-linecap="round"
-                            stroke-width="3"></path>
+                <div class="hidden md:block absolute right-[25%] top-16 w-1/4 -translate-x-4">
+                    <svg class="w-full text-warm-yellow/50" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        <path class="hand-drawn-path" d="M0 15 Q 50 40, 100 15" fill="none" stroke="currentColor"
+                            stroke-width="2"></path>
                     </svg>
                 </div>
-                <div class="flex-1 text-center group">
+
+                <!-- Step 1 -->
+                <div class="text-center group flex flex-col items-center">
                     <div
-                        class="w-40 h-40 bg-sunny-yellow organic-blob mx-auto mb-6 flex items-center justify-center shadow-xl rotate-12 group-hover:rotate-0 transition-all border-4 border-white">
-                        <span class="material-symbols-outlined text-6xl text-warm-yellow">celebration</span>
+                        class="w-24 h-24 md:w-28 md:h-28 bg-soft-turquoise organic-blob mb-4 flex items-center justify-center shadow-md rotate-3 group-hover:rotate-0 transition-transform border-2 border-white">
+                        <span class="material-symbols-outlined text-4xl text-vibrant-turquoise">add_to_photos</span>
                     </div>
-                    <h4 class="text-3xl font-extrabold mb-4">3. Celebrate</h4>
-                    <p class="text-lg font-bold text-friendly-navy/70 px-4">Download your masterpiece and take the rest
-                        of the day off!</p>
+                    <h4 class="text-xl font-extrabold mb-2">1. Pick it</h4>
+                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Drag in that dusty PDF and watch it
+                        come to life!</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center group flex flex-col items-center md:translate-y-6">
+                    <div
+                        class="w-24 h-24 md:w-28 md:h-28 bg-soft-coral organic-blob mb-4 flex items-center justify-center shadow-md -rotate-3 group-hover:rotate-0 transition-transform border-2 border-white">
+                        <span class="material-symbols-outlined text-4xl text-vibrant-coral">draw</span>
+                    </div>
+                    <h4 class="text-xl font-extrabold mb-2">2. Fill it</h4>
+                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Our editor is so easy, even your
+                        goldfish could use it.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center group flex flex-col items-center">
+                    <div
+                        class="w-24 h-24 md:w-28 md:h-28 bg-sunny-yellow organic-blob mb-4 flex items-center justify-center shadow-md rotate-6 group-hover:rotate-0 transition-transform border-2 border-white">
+                        <span class="material-symbols-outlined text-4xl text-warm-yellow">celebration</span>
+                    </div>
+                    <h4 class="text-xl font-extrabold mb-2">3. Celebrate</h4>
+                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Download your masterpiece and take
+                        the rest of the day off!</p>
                 </div>
             </div>
         </section>
-        <section class="max-w-6xl mx-auto px-6 py-10">
+
+        <!-- Fixed Security Section Layout -->
+        <section class="max-w-4xl mx-auto px-4 md:px-6 py-8">
             <div
-                class="bg-soft-turquoise rounded-[3rem] p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 border-4 border-vibrant-turquoise/20">
+                class="bg-soft-turquoise/40 rounded-[2rem] p-6 md:p-8 flex flex-col sm:flex-row items-center sm:items-start md:items-center gap-6 md:gap-8 border-2 border-vibrant-turquoise/20">
+
                 <div class="shrink-0 relative">
-                    <div class="w-36 h-36 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                        <div class="relative">
+                    <div
+                        class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center shadow-lg mx-auto sm:mx-0">
+                        <div class="relative flex items-center justify-center">
                             <span
-                                class="material-symbols-outlined text-[7rem] text-vibrant-turquoise opacity-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">shield</span>
+                                class="material-symbols-outlined text-[4rem] md:text-[5.5rem] text-vibrant-turquoise opacity-10 absolute">shield</span>
                             <span
-                                class="material-symbols-outlined text-6xl text-vibrant-turquoise relative z-10">lock_open_right</span>
+                                class="material-symbols-outlined text-[2.5rem] md:text-[3.5rem] text-vibrant-turquoise relative z-10">lock_open_right</span>
                         </div>
                     </div>
                     <div
-                        class="absolute -bottom-4 -right-4 bg-vibrant-coral text-white p-3 rounded-2xl rotate-12 font-bold shadow-lg">
+                        class="absolute -bottom-2 -right-2 md:-right-4 bg-vibrant-coral text-white px-3 py-1 md:py-1.5 rounded-xl rotate-6 font-bold text-xs md:text-sm shadow-md whitespace-nowrap">
                         100% Safe!
                     </div>
                 </div>
-                <div class="text-center md:text-left">
-                    <h3 class="text-4xl font-extrabold text-friendly-navy mb-6">Your Privacy is Our Superpower! 🛡️</h3>
-                    <p class="text-xl text-friendly-navy/70 font-bold leading-relaxed mb-8">
+
+                <div class="text-center sm:text-left flex-1">
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-friendly-navy mb-3 md:mb-4">Your Privacy is Our
+                        Superpower! 🛡️</h3>
+                    <p class="text-sm md:text-base text-friendly-navy/80 font-medium leading-relaxed mb-5 md:mb-6">
                         Think of us like a digital whiteboard. You do your work, and when you're done, we wipe
                         everything clean. No storage, no snooping, just pure productivity.
                     </p>
-                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+
+                    <div class="flex flex-row justify-start gap-3 w-full">
                         <div
-                            class="bg-white/50 backdrop-blur px-6 py-3 rounded-2xl border-2 border-vibrant-turquoise font-bold flex items-center gap-2">
-                            <span class="material-symbols-outlined text-vibrant-turquoise">timer_off</span>
-                            Auto-delete after 30m
+                            class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md">
+                            <span
+                                class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]">timer_off</span>
+                            <span class="block text-friendly-navy">Auto-delete after 30m</span>
                         </div>
                         <div
-                            class="bg-white/50 backdrop-blur px-6 py-3 rounded-2xl border-2 border-vibrant-turquoise font-bold flex items-center gap-2">
-                            <span class="material-symbols-outlined text-vibrant-turquoise">encrypted</span>
-                            End-to-end encryption
+                            class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md">
+                            <span
+                                class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]">encrypted</span>
+                            <span class="block text-friendly-navy">End-to-end encryption</span>
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
-        <section class="py-8 text-center">
+
+        <section class="py-12 md:py-16 px-4 text-center">
             <div
-                class="max-w-4xl mx-auto px-6 bg-warm-yellow/10 rounded-[3rem] py-10 border-4 border-dashed border-warm-yellow/30">
-                <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Ready to make PDFs happy?</h2>
+                class="max-w-3xl mx-auto bg-warm-yellow/10 rounded-[2rem] p-8 md:p-10 border-2 border-dashed border-warm-yellow/30">
+                <h2 class="text-2xl md:text-4xl font-extrabold mb-5 text-friendly-navy">Ready to make PDFs happy?</h2>
                 <a href="/login.html"
-                    class="inline-block bg-vibrant-turquoise text-white px-10 py-4 md:py-5 rounded-super-rounded font-black text-xl md:text-2xl button-tactile hover:scale-105 transition-transform flex items-center gap-4 mx-auto w-max">
-                    <span class="material-symbols-outlined text-3xl">magic_button</span>
+                    class="inline-flex bg-vibrant-turquoise text-white px-6 md:px-8 py-3 rounded-full font-black text-lg md:text-xl button-tactile hover:-translate-y-1 transition-transform items-center gap-2 mx-auto shadow-md hover:shadow-lg">
+                    <span class="material-symbols-outlined text-2xl">magic_button</span>
                     Start Your PDF Journey
                 </a>
-                <p class="mt-8 font-bold text-friendly-navy/50">No credit card. No boring stuff. Just fun.</p>
+                <p class="mt-4 font-bold text-sm text-friendly-navy/50">No credit card. No boring stuff. Just fun.</p>
             </div>
         </section>
-    </main>
-    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8">
-        <div class="max-w-7xl mx-auto">
-            <div
-                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
-                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
+
+        <!-- Pricing Modal -->
+        <div id="pricing-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
+            role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0">
+                <div class="fixed inset-0 bg-friendly-navy/60 backdrop-blur-sm transition-opacity"
+                    onclick="document.getElementById('pricing-modal').classList.add('hidden')" aria-hidden="true"></div>
+                <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+                <div
+                    class="pricing-bg relative inline-block transform overflow-hidden rounded-[2.5rem] bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle border-4 border-white">
+                    <button onclick="document.getElementById('pricing-modal').classList.add('hidden')"
+                        class="absolute top-4 right-4 md:top-6 md:right-6 bg-white hover:bg-soft-coral hover:text-vibrant-coral text-friendly-navy/50 p-2 rounded-full shadow-md z-10 transition-colors">
+                        <span class="material-symbols-outlined font-bold">close</span>
+                    </button>
+
+                    <div class="px-5 py-8 md:px-10 md:py-10 max-h-[90vh] overflow-y-auto">
+                        <div class="text-center mb-8">
+                            <h2 class="text-3xl md:text-4xl font-extrabold text-friendly-navy mb-3" id="modal-title">
+                                Choose Your Plan!</h2>
+                            <p class="text-base md:text-lg text-friendly-navy/70 font-bold mb-6">Pick the perfect
+                                sidekick
+                                for your PDF adventures.</p>
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="font-bold text-sm text-friendly-navy/60">Monthly</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input class="sr-only toggle-switch" type="checkbox" />
+                                    <div
+                                        class="toggle-label w-12 h-6 bg-soft-turquoise rounded-full p-1 transition-colors duration-300">
+                                        <div
+                                            class="toggle-dot w-4 h-4 bg-white rounded-full shadow transition-transform duration-300">
+                                        </div>
+                                    </div>
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-sm text-friendly-navy">Yearly</span>
+                                    <span
+                                        class="bg-sunny-yellow text-vibrant-coral text-[9px] font-black px-1.5 py-0.5 rounded-lg border border-warm-yellow rotate-3">SAVE
+                                        20%!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-4 md:gap-5 mb-10">
+                            <div
+                                class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-soft-turquoise transition-all flex flex-col">
+                                <div
+                                    class="bg-soft-turquoise/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-2xl text-vibrant-turquoise">send</span>
+                                </div>
+                                <h3 class="text-xl font-black mb-1">Casual Plan</h3>
+                                <div class="flex items-baseline gap-1 mb-3">
+                                    <span class="text-3xl font-black">$0</span>
+                                    <span class="text-friendly-navy/50 font-bold text-xs">/forever</span>
+                                </div>
+                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">For
+                                    the occasional traveler in the land of forms.</p>
+                                <button onclick="window.location.href='/login.html'"
+                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-soft-turquoise/20 text-vibrant-turquoise border-2 border-vibrant-turquoise/30 hover:bg-vibrant-turquoise hover:text-white transition-all">Start
+                                    Free</button>
+                            </div>
+
+                            <div
+                                class="bg-white p-6 rounded-[1.5rem] shadow-xl border-4 border-vibrant-coral relative pro-glow md:scale-105 z-10 flex flex-col">
+                                <div
+                                    class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-4 py-1 rounded-full font-black text-[10px] tracking-widest shadow-md">
+                                    MOST POPULAR</div>
+                                <div
+                                    class="bg-soft-coral/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                                    <span
+                                        class="material-symbols-outlined text-2xl text-vibrant-coral">rocket_launch</span>
+                                </div>
+                                <h3 class="text-xl font-black mb-1">Power Plan</h3>
+                                <div class="flex items-baseline gap-1 mb-3">
+                                    <span class="text-3xl font-black">$12</span>
+                                    <span class="text-friendly-navy/50 font-bold text-xs">/month</span>
+                                </div>
+                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">For
+                                    the PDF wizards who need the magic touch every day.</p>
+                                <button onclick="window.location.href='/login.html'"
+                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-vibrant-coral text-white button-tactile">Go
+                                    Power</button>
+                            </div>
+
+                            <div
+                                class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-sunny-yellow transition-all flex flex-col">
+                                <div
+                                    class="bg-sunny-yellow/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-2xl text-warm-yellow">groups</span>
+                                </div>
+                                <h3 class="text-xl font-black mb-1">Business Plan</h3>
+                                <div class="flex items-baseline gap-1 mb-3">
+                                    <span class="text-3xl font-black">$49</span>
+                                    <span class="text-friendly-navy/50 font-bold text-xs">/month</span>
+                                </div>
+                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">
+                                    Perfect for teams who want to play and work together.</p>
+                                <button onclick="window.location.href='/login.html'"
+                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-vibrant-turquoise text-white button-tactile">Team
+                                    Up</button>
+                            </div>
+                        </div>
+
+                        <div class="max-w-3xl mx-auto">
+                            <h3 class="text-2xl font-extrabold text-center mb-6">What's included? 🍭</h3>
+                            <div
+                                class="bg-white/90 rounded-3xl shadow-md overflow-x-auto border-2 border-soft-turquoise/20">
+                                <table class="w-full text-left border-collapse min-w-[500px]">
+                                    <thead>
+                                        <tr class="bg-soft-turquoise/10 border-b border-soft-turquoise/20">
+                                            <th class="p-3 text-sm font-black text-friendly-navy/90">Feature</th>
+                                            <th class="p-3 text-center text-vibrant-turquoise font-black text-sm">Casual
+                                            </th>
+                                            <th class="p-3 text-center text-vibrant-coral font-black text-sm">Power</th>
+                                            <th class="p-3 text-center text-warm-yellow font-black text-sm">Business
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="font-bold text-friendly-navy/70 text-xs">
+                                        <tr class="border-b border-soft-turquoise/10">
+                                            <td class="p-4 pl-6">Daily PDF Fills</td>
+                                            <td class="p-4 text-center">3</td>
+                                            <td class="p-4 text-center">Unlimited</td>
+                                            <td class="p-4 text-center">Unlimited</td>
+                                        </tr>
+                                        <tr class="border-b border-soft-turquoise/10">
+                                            <td class="p-4 pl-6">Maximum File Size</td>
+                                            <td class="p-4 text-center">10 MB</td>
+                                            <td class="p-4 text-center">2 GB</td>
+                                            <td class="p-4 text-center">10 GB</td>
+                                        </tr>
+                                        <tr class="border-b border-soft-turquoise/10">
+                                            <td class="p-4 pl-6">Custom Stickers &amp; Emojis</td>
+                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b border-soft-turquoise/10">
+                                            <td class="p-4 pl-6">Hand-drawn Signatures</td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-4 pl-6">Shared Team Folder</td>
+                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
+                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
+                                            <td class="p-4 text-center"><span
+                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <span class="font-bold text-xl">PDF Form Filler</span>
-                </div>
-                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
-                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
-                    Server Status: Having a Great Day
+        </div>
+    </main>
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    </div>
+                    <span>Servers Happy</span>
                 </div>
             </div>
         </div>

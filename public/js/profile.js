@@ -56,8 +56,8 @@ async function loadUserProfile(user) {
             const data = userDoc.data();
 
             // Set Static/Display Data
-            const initial = (data.fullName || user.email || '?').charAt(0).toUpperCase();
-            elements.profileInitials.textContent = initial;
+            const seedName = encodeURIComponent(data.fullName || user.email || 'user');
+            elements.profileInitials.innerHTML = `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=${seedName}&backgroundColor=b2ebf2" alt="Profile" class="w-full h-full object-cover">`;
 
             elements.displayEmail.textContent = data.fullName || user.email.split('@')[0];
 
@@ -75,10 +75,11 @@ async function loadUserProfile(user) {
             // Role Badge
             elements.roleBadge.classList.remove('hidden');
             if (data.isAdmin) {
-                elements.roleBadge.textContent = 'Admin 👑';
-                elements.roleBadge.className = "absolute -bottom-2 -right-2 bg-vibrant-coral text-white border-2 border-white px-3 py-1 text-xs font-bold transform -rotate-6 shadow-sm rounded-lg";
+                elements.roleBadge.textContent = 'ADMIN 👑';
+            } else if (data.bulkCredits && data.bulkCredits > 1) {
+                elements.roleBadge.textContent = 'PREMIUM USER';
             } else {
-                elements.roleBadge.textContent = 'Standard User';
+                elements.roleBadge.textContent = 'STANDARD USER';
             }
 
             // Populate Form Inputs
@@ -88,8 +89,8 @@ async function loadUserProfile(user) {
         } else {
             // Fallback if doc doesn't exist yet but user is logged in
             elements.displayEmail.textContent = user.email;
-            elements.inputEmail.value = user.email;
-            elements.profileInitials.textContent = user.email.charAt(0).toUpperCase();
+            const fallbackSeed = encodeURIComponent(user.email || 'user');
+            elements.profileInitials.innerHTML = `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=${fallbackSeed}&backgroundColor=b2ebf2" alt="Profile" class="w-full h-full object-cover">`;
             console.warn("User document not found in Firestore.");
         }
     } catch (error) {
@@ -120,7 +121,8 @@ async function handleProfileUpdate(e) {
 
         // Update display UI to reflect immediately
         elements.displayEmail.textContent = newName || elements.inputEmail.value.split('@')[0];
-        elements.profileInitials.textContent = (newName || elements.inputEmail.value).charAt(0).toUpperCase();
+        const newSeed = encodeURIComponent(newName || elements.inputEmail.value || 'user');
+        elements.profileInitials.innerHTML = `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=${newSeed}&backgroundColor=b2ebf2" alt="Profile" class="w-full h-full object-cover">`;
 
         showToast("Profile completely updated!", "success");
     } catch (error) {
@@ -158,8 +160,8 @@ function showToast(message, type = 'success') {
     const isError = type === 'error';
 
     toast.className = `p-4 rounded-xl shadow-lg border-2 flex items-center gap-3 transform translate-x-full transition-transform duration-300 animate-slide-in ${isError
-            ? 'bg-red-50 border-red-200 text-red-700'
-            : 'bg-soft-turquoise border-vibrant-turquoise text-slate-700'
+        ? 'bg-red-50 border-red-200 text-red-700'
+        : 'bg-soft-turquoise border-vibrant-turquoise text-slate-700'
         }`;
 
     toast.innerHTML = `

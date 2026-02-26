@@ -129,8 +129,8 @@
 
         .editor-main {
             flex-direction: row;
-            height: calc(100vh - 72px);
-            /* Header height */
+            height: calc(100vh - 120px);
+            /* Adjusted for header (64px) and footer (~56px) */
             background-color: #F1F5F9;
             padding: 0;
             overflow: hidden;
@@ -148,7 +148,8 @@
         </script>
 
         <!-- New UI Header -->
-        <header class="bg-white border-b-2 border-slate-100 px-6 py-3 flex items-center justify-between z-20 shrink-0">
+        <header
+            class="h-16 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-4 sm:px-8 z-40 relative shrink-0">
             <div class="flex items-center gap-8">
                 <a href="/app.html" class="flex items-center gap-3 group cursor-pointer hover:opacity-90">
                     <div
@@ -160,24 +161,26 @@
 
                 <!-- Zoom & Nav Controls -->
                 <div
-                    class="hidden lg:flex items-center bg-slate-50 rounded-full px-4 py-1.5 gap-4 border border-slate-200">
+                    class="flex items-center justify-center bg-slate-50 rounded-full px-2 sm:px-4 py-1.5 gap-2 sm:gap-4 border border-slate-200 shrink-0 mx-2 sm:mx-0">
                     <button id="zoomOut"
-                        class="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
-                        <span class="material-symbols-outlined text-lg">zoom_out</span>
+                        class="p-1 sm:p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
+                        <span class="material-symbols-outlined text-base sm:text-lg">zoom_out</span>
                     </button>
-                    <span id="zoomLevel" class="text-xs font-bold text-slate-600">100%</span>
+                    <span id="zoomLevel"
+                        class="text-[10px] sm:text-xs font-bold text-slate-600 w-8 sm:w-10 text-center">100%</span>
                     <button id="zoomIn"
-                        class="p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
-                        <span class="material-symbols-outlined text-lg">zoom_in</span>
+                        class="p-1 sm:p-1.5 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-500 hover:text-vibrant-turquoise">
+                        <span class="material-symbols-outlined text-base sm:text-lg">zoom_in</span>
                     </button>
                     <div class="h-4 w-px bg-slate-300"></div>
-                    <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-bold text-slate-600">
                         <button id="prevPage"
-                            class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white"><span
+                            class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-md hover:bg-white"><span
                                 class="material-symbols-outlined text-sm">chevron_left</span></button>
-                        <span><span id="currentPage">1</span> / <span id="totalPages">1</span></span>
+                        <span class="whitespace-nowrap"><span id="currentPage">1</span> / <span
+                                id="totalPages">1</span></span>
                         <button id="nextPage"
-                            class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white"><span
+                            class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-md hover:bg-white"><span
                                 class="material-symbols-outlined text-sm">chevron_right</span></button>
                     </div>
                     <!-- Hidden original add page logic target (can be exposed later) -->
@@ -187,14 +190,14 @@
 
             <div class="flex items-center gap-3 md:gap-4">
                 <button id="saveTemplateBtn"
-                    class="bg-white border-2 border-slate-200 text-slate-600 px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-all flex items-center gap-2 text-sm md:text-base">
-                    <span class="material-symbols-outlined hidden md:block">save</span> Save <span
+                    class="bg-white border-2 border-slate-200 text-slate-600 px-4 py-1.5 md:py-2 rounded-full font-bold hover:border-vibrant-turquoise hover:text-vibrant-turquoise transition-all flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined hidden md:block text-lg">save</span> Save <span
                         class="hidden md:inline">Template</span>
                 </button>
 
                 <button id="downloadBtn"
-                    class="bg-vibrant-turquoise text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2 text-sm md:text-base">
-                    <span class="material-symbols-outlined hidden md:block">download</span> Download <span
+                    class="bg-vibrant-turquoise text-white px-4 py-1.5 md:py-2 rounded-full font-bold shadow-[0_4px_0_0_#00ACC1] hover:translate-y-0.5 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined hidden md:block text-lg">download</span> Download <span
                         class="hidden md:inline">PDF</span>
                 </button>
                 <button id="downloadCsvBtn" style="display: none;"
@@ -209,10 +212,12 @@
         <main class="editor-main flex-1 flex flex-row overflow-hidden bg-editor-bg w-full">
 
             <!-- Left Sidebar (Tools) -->
-            <aside class="w-20 md:w-72 bg-white border-r-2 border-slate-100 flex flex-col z-10 shrink-0">
-                <div class="p-3 md:p-6 overflow-y-auto custom-scrollbar flex-1">
-                    <div class="mb-8">
-                        <h2 class="hidden md:block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Add
+            <aside class="w-16 md:w-56 bg-white border-r-2 border-slate-100 flex flex-col z-10 shrink-0">
+                <div class="p-2 md:p-4 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="mb-6">
+                        <h2
+                            class="hidden md:block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                            Add
                             Field</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="fieldButtonsContainer">
                             <!-- Binding original data-type attributes to the new UI buttons -->
@@ -312,36 +317,30 @@
 
             <!-- Right Sidebar (Properties) -->
             <aside
-                class="w-64 md:w-80 bg-white border-l-2 border-slate-100 flex flex-col z-10 shrink-0 transform transition-transform duration-300 translate-x-full absolute right-0 h-full md:relative md:translate-x-0"
+                class="w-56 md:w-64 bg-white border-l-2 border-slate-100 flex flex-col z-10 shrink-0 transform transition-transform duration-300 translate-x-full absolute right-0 h-auto self-start mt-4 rounded-l-2xl shadow-sm md:relative md:translate-x-0 md:mt-0 md:rounded-none md:shadow-none"
                 id="propertiesSidebar">
-                <div class="p-6 overflow-y-auto w-full custom-scrollbar flex-1">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest">Field Settings</h2>
+                <div class="p-4 w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Field Settings</h2>
                         <button class="md:hidden p-1 text-slate-400 hover:text-slate-700" id="closePropertiesBtn">
-                            <span class="material-symbols-outlined">close</span>
+                            <span class="material-symbols-outlined text-sm">close</span>
                         </button>
                     </div>
 
                     <!-- Original Field Properties Container Wrapper -->
-                    <div class="field-properties" id="fieldProperties">
+                    <div class="field-properties max-h-[40vh] overflow-y-auto custom-scrollbar pr-2"
+                        id="fieldProperties">
                         <p class="no-selection text-sm font-bold text-slate-400 text-center py-10">Click a field to edit
                             its properties</p>
                     </div>
 
                     <!-- Detected Fields (Moved from left to bottom of right sidebar for spacing) -->
-                    <div class="mt-12 pt-8 border-t-2 border-slate-100">
+                    <div class="mt-8 pt-6 border-t-2 border-slate-100">
                         <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Detected Fields
                         </h3>
-                        <div class="fields-list" id="fieldsList">
+                        <div class="fields-list max-h-[30vh] overflow-y-auto custom-scrollbar pr-2" id="fieldsList">
                             <!-- Fields will be populated here -->
                         </div>
-                    </div>
-                </div>
-
-                <div class="mt-auto p-6 bg-slate-50/50 border-t-2 border-slate-100 text-center">
-                    <p class="text-xs font-bold text-slate-400 mb-2">Everything looks great! 🌈</p>
-                    <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                        <div class="h-full bg-vibrant-turquoise w-[85%]"></div>
                     </div>
                 </div>
             </aside>
@@ -406,6 +405,34 @@
         </div>
 
 
+        <!-- Global App Footer -->
+        <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2 group cursor-pointer">
+                    <div
+                        class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                        <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                    </div>
+                    <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+                </div>
+
+                <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                    <p>© 2026. Sparsh Digital Solutions.</p>
+                    <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                        <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                        </div>
+                        <span>Servers Happy</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         <!-- Toast Container -->
         <div class="toast-container fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer"></div>

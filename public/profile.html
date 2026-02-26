@@ -94,7 +94,8 @@
     </script>
 
     <!-- Navigation -->
-    <nav class="py-6 px-4 sm:px-8 max-w-7xl mx-auto w-full flex justify-between items-center relative z-20">
+    <nav
+        class="py-6 px-4 sm:px-8 max-w-7xl mx-auto w-full flex justify-between items-center relative z-20 border-b border-friendly-navy/10">
         <a href="/app.html" class="flex items-center gap-3 group transition-transform hover:-translate-x-1">
             <div
                 class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-sm group-hover:-rotate-3 transition-all">
@@ -119,83 +120,114 @@
         </div>
         <div class="absolute bottom-10 left-10 w-48 h-48 bg-soft-coral rounded-full opacity-20 -z-10 blur-3xl"></div>
 
-        <div class="w-full max-w-2xl relative z-10">
-            <div class="profile-card p-6 sm:p-10 relative overflow-hidden">
-                <!-- Header Decorative Element -->
-                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-soft-turquoise to-white -z-0"></div>
+        <div class="w-full max-w-md relative z-10">
+            <div class="bg-white rounded-[2.5rem] p-0 relative shadow-2xl border border-white overflow-hidden pb-2">
+                <!-- Header Gradient -->
+                <div class="h-32 bg-gradient-to-r from-warm-yellow via-soft-turquoise to-vibrant-turquoise relative">
+                </div>
 
                 <!-- Profile Content -->
-                <div class="relative z-10">
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
-                        <!-- Avatar -->
-                        <div class="relative">
-                            <div class="w-24 h-24 sm:w-32 sm:h-32 bg-vibrant-turquoise text-white rounded-[2rem] flex items-center justify-center text-4xl sm:text-5xl font-bold shadow-lg border-4 border-white rotate-3"
-                                id="profileInitials">
-                                --
-                            </div>
-                            <div class="absolute -bottom-2 -right-2 bg-sunny-yellow text-warm-yellow hand-drawn-border px-3 py-1 text-xs font-bold transform -rotate-6 shadow-sm hidden"
-                                id="roleBadge">
-                                User
-                            </div>
+                <div class="px-6 pb-6 -mt-16 relative z-10 w-full flex flex-col items-center">
+                    <!-- Avatar & Badge -->
+                    <div class="mb-3 relative inline-block">
+                        <div class="w-24 h-24 bg-soft-turquoise text-white rounded-full flex items-center justify-center border-[5px] border-white shadow-sm overflow-hidden p-0"
+                            id="profileInitials">
+                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=user&backgroundColor=b2ebf2"
+                                alt="Profile" class="w-full h-full object-cover">
                         </div>
-
-                        <!-- Main Info -->
-                        <div class="text-center sm:text-left mt-4 sm:mt-8 flex-1">
-                            <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-1" id="displayEmail">Loading...
-                            </h1>
-                            <p class="text-slate-500 font-medium" id="displayJoinDate">Member since...</p>
+                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-3 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full shadow-md whitespace-nowrap z-10"
+                            id="roleBadge">
+                            POWER FILL
                         </div>
                     </div>
 
-                    <!-- Profile Form -->
-                    <form id="profileForm" class="space-y-6">
-                        <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
-                            <h2 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-vibrant-turquoise">manage_accounts</span>
-                                Personal Details
-                            </h2>
+                    <!-- Main Info -->
+                    <h1 class="text-[22px] font-extrabold text-friendly-navy mt-1 text-center" id="displayEmail">
+                        Loading...</h1>
+                    <p class="text-slate-500 font-semibold text-[11px] mb-6 text-center" id="displayJoinDate">Member
+                        since...</p>
 
+                    <!-- Profile Form -->
+                    <form id="profileForm" class="w-full space-y-4">
+                        <div class="flex items-center gap-2 px-1 mb-1">
+                            <span class="material-symbols-outlined text-[#5C6BC0] text-[18px]">person</span>
+                            <h3 class="text-[13px] font-extrabold text-[#5C6BC0]">Personal Details</h3>
+                        </div>
+
+                        <div class="bg-[#F4F7FA] p-5 rounded-[1.5rem] border border-slate-100">
                             <div class="space-y-4">
                                 <div>
                                     <label
-                                        class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Full
+                                        class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Full
                                         Name</label>
                                     <input type="text" id="inputName" placeholder="E.g. Jane Doe"
-                                        class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-2xl focus:border-vibrant-turquoise focus:bg-white transition-all shadow-sm">
+                                        class="w-full bg-white border border-slate-200 outline-none text-[#5C6BC0] font-bold px-4 py-2.5 rounded-xl focus:border-[#5C6BC0] focus:ring-2 focus:ring-[#5C6BC0]/20 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.02)] text-sm placeholder-[#9EADCE]">
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label
-                                            class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Email</label>
+                                            class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Email</label>
                                         <input type="email" id="inputEmail" disabled
-                                            class="w-full bg-slate-100 border-2 border-slate-200 outline-none text-slate-500 font-bold px-4 py-3 rounded-2xl cursor-not-allowed opacity-80">
-                                        <p class="text-xs text-slate-400 mt-1 ml-2">Email cannot be changed directly.
+                                            class="w-full bg-slate-50/80 border border-slate-200 outline-none text-slate-400 font-bold px-3 py-2.5 rounded-xl cursor-not-allowed shadow-inner text-[11px]">
+                                        <p class="text-[8px] text-slate-400 mt-1 ml-1">Email cannot be changed directly.
                                         </p>
                                     </div>
-                                    <div>
+                                    <div class="flex flex-col">
                                         <label
-                                            class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-wide ml-1">Company
-                                            / Organization</label>
+                                            class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Company</label>
                                         <input type="text" id="inputCompany" placeholder="Optional"
-                                            class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-3 rounded-2xl focus:border-vibrant-turquoise focus:bg-white transition-all shadow-sm">
+                                            class="w-full bg-white border border-slate-200 outline-none text-[#5C6BC0] font-bold px-3 py-2.5 rounded-xl focus:border-[#5C6BC0] focus:ring-2 focus:ring-[#5C6BC0]/20 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.02)] text-[11px] placeholder-[#9EADCE]">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-end pt-4">
+                        <div class="mt-4 pt-2">
                             <button type="submit" id="saveProfileBtn"
-                                class="relative overflow-hidden bg-vibrant-turquoise hover:bg-[#00ACC1] text-white font-bold py-3 px-8 rounded-full shadow-[0px_8px_0px_0px_#0097A7] transform transition-all hover:translate-y-[4px] hover:shadow-[0px_4px_0px_0px_#0097A7] active:translate-y-[8px] active:shadow-none flex items-center gap-2">
-                                <span class="material-symbols-outlined" id="saveIcon">save</span>
+                                class="w-full bg-vibrant-coral hover:bg-[#F4511E] text-white font-extrabold py-3.5 px-6 rounded-full shadow-[0_8px_20px_rgba(255,87,34,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(255,87,34,0.4)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]" id="saveIcon">save</span>
                                 <span id="saveText">Save Profile</span>
                                 <div id="saveSpinner" class="spinner w-5 h-5 border-2 hidden"></div>
                             </button>
                         </div>
                     </form>
                 </div>
+
+                <!-- Bottom decorative line -->
+                <div
+                    class="h-1.5 bg-gradient-to-r from-warm-yellow via-soft-turquoise to-vibrant-turquoise w-full absolute bottom-0 left-0">
+                </div>
             </div>
         </div>
     </main>
+    <!-- Global App Footer -->
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    </div>
+                    <span>Servers Happy</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Toast Container -->
     <div class="toast-container fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer"></div>

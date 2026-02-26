@@ -184,77 +184,79 @@
     </script>
 </head>
 
-<body class="antialiased">
+<body class="antialiased min-h-screen flex flex-col bg-slate-50">
     <!-- Auth Check -->
     <script type="module">
         import { checkAuth } from './js/auth.js';
         checkAuth(true); // Redirect to login if not authenticated
     </script>
 
-    <nav class="py-6 px-4 sm:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-20">
-        <a href="/app.html" class="flex items-center gap-3">
-            <div class="bg-vibrant-turquoise w-10 h-10 flex items-center justify-center rounded-2xl rotate-3 shadow-lg">
-                <span class="material-symbols-outlined text-white text-2xl">description</span>
+    <nav
+        class="py-4 px-4 sm:px-8 max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4 relative z-20 border-b border-friendly-navy/10 shrink-0 w-full">
+        <a href="/app.html" class="flex items-center gap-3 shrink-0">
+            <div class="bg-vibrant-turquoise w-8 h-8 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
+                <span class="material-symbols-outlined text-white text-xl">description</span>
             </div>
-            <span class="font-bold text-2xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
+            <span class="font-bold text-xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
         </a>
-        <div class="flex items-center gap-4 sm:gap-6">
+        <div class="flex items-center gap-2 sm:gap-4 flex-wrap justify-end">
             <a href="/Buy-Credits.html"
-                class="flex font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-4 py-2 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50">
-                <span class="material-symbols-outlined text-[20px]">generating_tokens</span>
+                class="flex font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-3 py-1.5 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50 text-sm">
+                <span class="material-symbols-outlined text-[18px]">generating_tokens</span>
                 <span class="whitespace-nowrap">Buy Credits</span>
+                <span id="creditCounter" class="bg-white/50 px-1.5 py-0.5 rounded-md text-xs ml-1 hidden">...</span>
             </a>
             <button id="profileBtn"
                 onclick="document.getElementById('profileModal').classList.remove('opacity-0','pointer-events-none');document.getElementById('profileModal').firstElementChild.classList.remove('scale-95');document.getElementById('profileModal').firstElementChild.classList.add('scale-100');"
-                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all">
-                <span class="material-symbols-outlined text-[20px]">account_circle</span>
+                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-3 py-1.5 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-sm">
+                <span class="material-symbols-outlined text-[18px]">account_circle</span>
                 <span class="whitespace-nowrap">Profile</span>
             </button>
             <a href="#" id="loginBtn"
-                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-4 py-2 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all">
-                Loading...
+                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-3 py-1.5 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all text-sm">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+                <span class="whitespace-nowrap login-text">Loading...</span>
             </a>
             <a href="/admin"
-                class="bg-sunny-yellow text-warm-yellow border-2 border-warm-yellow px-6 py-2 rounded-full font-bold shadow-[4px_4px_0px_0px_#FBC02D] hover:translate-y-1 hover:shadow-none transition-all hidden"
+                class="bg-sunny-yellow text-warm-yellow border-2 border-warm-yellow px-4 py-1.5 rounded-full font-bold shadow-[4px_4px_0px_0px_#FBC02D] hover:translate-y-1 hover:shadow-none transition-all hidden text-sm shrink-0"
                 id="adminBtn">
                 Admin
             </a>
         </div>
     </nav>
 
-    <main>
-        <section class="relative px-4 pt-16 pb-24 overflow-hidden">
-            <div class="absolute top-0 left-10 w-64 h-64 bg-soft-turquoise/40 blob-1 -z-10 animate-pulse"></div>
-            <div class="absolute bottom-0 right-10 w-80 h-80 bg-soft-coral/20 blob-2 -z-10"></div>
+    <main class="flex-1">
+        <section class="relative px-4 pt-10 pb-12 overflow-hidden">
+            <div class="absolute top-0 left-10 w-40 h-40 bg-soft-turquoise/40 blob-1 -z-10 animate-pulse"></div>
+            <div class="absolute bottom-0 right-10 w-48 h-48 bg-soft-coral/20 blob-2 -z-10"></div>
 
             <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-5xl md:text-7xl font-bold text-slate-800 mb-6 leading-tight">
-                    PDFs Made <br />
-                    <span class="text-vibrant-turquoise relative inline-block">
-                        Fun &amp; Easy!
-                        <svg class="absolute -bottom-2 left-0 w-full" fill="none" height="10" viewBox="0 0 200 10"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 9C30 3 170 3 199 9" stroke="#4DD0E1" stroke-linecap="round" stroke-width="4">
-                            </path>
-                        </svg>
+                <h1 class="text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-slate-800 mb-4 leading-tight">
+                    Lets Get Started !! <br />
+
+                    <svg class="absolute -bottom-1 left-0 w-full" fill="none" height="10" viewBox="0 0 200 10"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 9C30 3 170 3 199 9" stroke="#4DD0E1" stroke-linecap="round" stroke-width="4">
+                        </path>
+                    </svg>
                     </span>
                 </h1>
-                <p class="text-xl md:text-2xl text-slate-600 mb-12 max-w-2xl mx-auto">
+                <p class="text-lg md:text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
                     Say goodbye to boring forms. Fill, sign, and send documents in seconds with a smile!
                 </p>
 
-                <div class="relative max-w-xl mx-auto mb-16">
+                <div class="relative max-w-lg mx-auto mb-10">
                     <!-- Upload Dropzone -->
                     <div id="uploadZone"
-                        class="relative bg-white border-4 border-dashed border-vibrant-turquoise p-10 md:p-16 rounded-[3rem] shadow-xl rotate-1 hover:rotate-0 transition-all cursor-pointer group">
+                        class="relative bg-white border-4 border-dashed border-vibrant-turquoise p-6 md:p-10 rounded-[2rem] shadow-xl rotate-1 hover:rotate-0 transition-all cursor-pointer group">
                         <div
-                            class="bg-soft-turquoise w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined text-5xl text-vibrant-turquoise">cloud_upload</span>
+                            class="bg-soft-turquoise w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-4xl text-vibrant-turquoise">cloud_upload</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-700 mb-2">Pop your PDF here!</h3>
-                        <p class="text-slate-500 mb-4">Click to browse or just drag it in</p>
+                        <h3 class="text-xl font-bold text-slate-700 mb-1">Pop your PDF here!</h3>
+                        <p class="text-sm text-slate-500 mb-4">Click to browse or just drag it in</p>
                         <div
-                            class="inline-block px-4 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            class="inline-block px-3 py-1 bg-slate-100 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                             Up to 10MB • Stay Awesome
                         </div>
                     </div>
@@ -262,141 +264,101 @@
 
                     <!-- Loading State -->
                     <div id="uploadLoading"
-                        class="hidden relative bg-white border-4 border-dashed border-vibrant-turquoise p-10 rounded-[3rem] shadow-xl text-center">
-                        <div class="spinner mx-auto mb-6"></div>
-                        <h3 class="text-2xl font-bold text-slate-700">Working magic...</h3>
-                        <p class="text-slate-500">Getting your PDF ready for you!</p>
+                        class="hidden relative bg-white border-4 border-dashed border-vibrant-turquoise p-6 rounded-[2rem] shadow-xl text-center">
+                        <div class="spinner mx-auto mb-4"></div>
+                        <h3 class="text-xl font-bold text-slate-700">Working magic...</h3>
+                        <p class="text-slate-500 text-sm">Getting your PDF ready for you!</p>
                     </div>
 
                     <div
-                        class="absolute -top-6 -right-6 w-20 h-20 bg-sunny-yellow rounded-full flex items-center justify-center border-4 border-white shadow-lg rotate-12 hidden md:flex z-10">
-                        <span class="material-symbols-outlined text-warm-yellow text-4xl">celebration</span>
+                        class="absolute -top-4 -right-4 w-12 h-12 bg-sunny-yellow rounded-full flex items-center justify-center border-4 border-white shadow-lg rotate-12 hidden md:flex z-10">
+                        <span class="material-symbols-outlined text-warm-yellow text-2xl">celebration</span>
                     </div>
                 </div>
 
                 <!-- Templates Section -->
                 <div id="templatesSection" class="flex flex-col items-center">
-                    <p class="font-bold text-vibrant-coral mb-6 flex items-center gap-2">
-                        <span class="material-symbols-outlined">auto_awesome</span>
+                    <p class="font-bold text-sm text-vibrant-coral mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
                         Need a quick start? Try a template:
                     </p>
-                    <div id="templatesGrid" class="flex flex-wrap justify-center gap-4">
+                    <div id="templatesGrid" class="flex flex-wrap justify-center gap-3">
                         <!-- Loading templates state -->
-                        <div class="flex items-center gap-3 text-slate-500">
-                            <div class="spinner !border-[3px] !w-6 !h-6"></div>
+                        <div class="flex items-center gap-2 text-slate-500 text-sm">
+                            <div class="spinner !border-[2px] !w-4 !h-4"></div>
                             <span>Fetching secure templates...</span>
                         </div>
                     </div>
 
                     <!-- My Saved Templates Section -->
-                    <div id="myTemplatesSection" class="mt-10 w-full max-w-2xl hidden">
-                        <p class="font-bold text-vibrant-turquoise mb-4 flex items-center gap-2">
-                            <span class="material-symbols-outlined">folder_special</span>
+                    <div id="myTemplatesSection" class="mt-8 w-full max-w-2xl hidden">
+                        <p class="font-bold text-sm text-vibrant-turquoise mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">folder_special</span>
                             My Saved Templates:
                         </p>
-                        <div id="myTemplatesGrid" class="flex flex-wrap justify-center gap-4"></div>
+                        <div id="myTemplatesGrid" class="flex flex-wrap justify-center gap-3"></div>
                     </div>
 
                     <!-- Bulk Fill Container -->
-                    <div id="bulkFillContainer" class="mt-16 hidden">
+                    <div id="bulkFillContainer" class="mt-10 hidden">
                         <a href="/bulk-fill.html"
-                            class="bg-vibrant-turquoise text-white px-10 py-5 rounded-full font-bold text-xl shadow-[0_10px_0_0_#00ACC1] hover:shadow-[0_5px_0_0_#00ACC1] hover:translate-y-1 active:translate-y-2 transition-all flex items-center gap-3 mx-auto max-w-max">
+                            class="bg-vibrant-turquoise text-white px-6 py-3 rounded-full font-bold text-lg shadow-[0_6px_0_0_#00ACC1] hover:shadow-[0_3px_0_0_#00ACC1] hover:translate-y-[3px] active:translate-y-[6px] transition-all flex items-center gap-2 mx-auto max-w-max">
                             <span class="material-symbols-outlined">dynamic_feed</span>
                             Bulk Fill Magic!
                         </a>
-                        <p class="mt-4 text-sm font-medium text-slate-400">Fill hundreds of forms from one spreadsheet
+                        <p class="mt-3 text-xs font-medium text-slate-400">Fill hundreds of forms from one spreadsheet
                             🪄</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- How it works -->
-        <section class="py-24 bg-soft-turquoise/30 rounded-[5rem] mx-4 my-8 relative z-10">
-            <div class="max-w-6xl mx-auto px-4">
-                <h2 class="text-4xl font-bold text-center text-slate-800 mb-16 relative">
-                    How the Magic Happens
-                    <span class="block h-1 w-24 bg-vibrant-coral mx-auto mt-4 rounded-full"></span>
-                </h2>
-                <div class="grid md:grid-cols-3 gap-12">
-                    <div class="relative group text-center">
-                        <div
-                            class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:rotate-12 transition-transform border-4 border-vibrant-turquoise">
-                            <span class="material-symbols-outlined text-5xl text-vibrant-turquoise">upload_file</span>
-                        </div>
-                        <h4 class="text-2xl font-bold mb-4 text-slate-800">1. Toss it in</h4>
-                        <p class="text-slate-600 leading-relaxed font-medium">
-                            Upload any PDF from your computer or cloud. We don't mind the format!
-                        </p>
-                    </div>
-                    <div class="relative group text-center translate-y-8">
-                        <div
-                            class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:-rotate-12 transition-transform border-4 border-vibrant-coral">
-                            <span class="material-symbols-outlined text-5xl text-vibrant-coral">draw</span>
-                        </div>
-                        <h4 class="text-2xl font-bold mb-4 text-slate-800">2. Get Creative</h4>
-                        <p class="text-slate-600 leading-relaxed font-medium">
-                            Our super-simple editor lets you add text, ticks, and signatures without breaking a sweat.
-                        </p>
-                    </div>
-                    <div class="relative group text-center">
-                        <div
-                            class="w-32 h-32 bg-white organic-shape mx-auto mb-8 flex items-center justify-center shadow-xl group-hover:rotate-12 transition-transform border-4 border-warm-yellow">
-                            <span class="material-symbols-outlined text-5xl text-warm-yellow">handyman</span>
-                        </div>
-                        <h4 class="text-2xl font-bold mb-4 text-slate-800">3. Done &amp; Dusted!</h4>
-                        <p class="text-slate-600 leading-relaxed font-medium">
-                            Download your shiny new PDF. We'll delete our copy so your data stays yours.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Privacy Section -->
-        <section class="max-w-5xl mx-auto px-4 py-20">
+        <section class="max-w-4xl mx-auto px-4 py-12">
             <div
-                class="bg-soft-coral/10 rounded-[3rem] p-8 md:p-12 border-4 border-soft-coral/30 relative overflow-hidden">
-                <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                class="bg-soft-coral/10 rounded-[2rem] p-6 md:p-8 border-4 border-soft-coral/30 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
                     <div
-                        class="w-24 h-24 bg-vibrant-coral text-white rounded-[2rem] flex items-center justify-center shadow-lg rotate-6 shrink-0">
-                        <span class="material-symbols-outlined text-5xl">lock</span>
+                        class="w-16 h-16 bg-vibrant-coral text-white rounded-xl flex items-center justify-center shadow-md rotate-6 shrink-0">
+                        <span class="material-symbols-outlined text-3xl">lock</span>
                     </div>
                     <div class="text-center md:text-left">
-                        <h3 class="text-3xl font-bold text-slate-800 mb-4">Your Secret is Safe! 🔒</h3>
-                        <p class="text-lg text-slate-600 font-medium leading-relaxed">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Your Secret is Safe! 🔒</h3>
+                        <p class="text-base text-slate-600 font-medium leading-relaxed">
                             We're like a digital shredder! All files are automatically deleted after 30 minutes.
                             We never store your personal details—your privacy is our biggest priority.
                         </p>
                     </div>
                 </div>
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-vibrant-coral opacity-10 rounded-full"></div>
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-vibrant-coral opacity-10 rounded-full"></div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-friendly-navy text-white py-6 px-6 mt-8">
-        <div class="max-w-7xl mx-auto">
-            <div
-                class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
-                        <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
-                    </div>
-                    <span class="font-bold text-xl">PDF Form Filler</span>
+    <!-- Global App Footer -->
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <span class="material-symbols-outlined text-white text-sm">face_6</span>
                 </div>
-                <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
-                    <a class="hover:text-sunny-yellow transition-colors" href="#">(X)</a>
-                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
             </div>
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
-                <p>© 2026 PDF Form Filler. Sparsh Digital Solutions.</p>
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
-                    Server Status: Having a Great Day
+
+            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    </div>
+                    <span>Servers Happy</span>
                 </div>
             </div>
         </div>
@@ -404,73 +366,75 @@
 
     <!-- Profile Modal -->
     <div id="profileModal"
-        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div
-            class="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl border-2 border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto no-scrollbar">
+            class="bg-white rounded-[2.5rem] w-full max-w-[400px] shadow-2xl border border-white overflow-hidden transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto no-scrollbar pb-2">
+
             <!-- Close Button -->
             <button id="closeProfileModal"
-                class="absolute top-5 right-5 z-20 w-10 h-10 bg-slate-100 hover:bg-vibrant-coral hover:text-white rounded-full flex items-center justify-center text-slate-400 transition-all shadow-sm">
-                <span class="material-symbols-outlined">close</span>
+                class="absolute top-4 right-4 z-20 w-8 h-8 bg-white/30 backdrop-blur-sm hover:bg-white hover:text-vibrant-coral rounded-full flex items-center justify-center text-white/90 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">close</span>
             </button>
 
             <!-- Header Gradient -->
-            <div class="h-28 bg-gradient-to-r from-soft-turquoise to-white relative"></div>
+            <div class="h-32 bg-gradient-to-r from-warm-yellow via-soft-turquoise to-vibrant-turquoise relative"></div>
 
             <!-- Profile Content -->
-            <div class="px-8 pb-8 -mt-16 relative z-10">
-                <div class="flex flex-col items-center mb-6">
-                    <!-- Avatar -->
-                    <div class="mb-2">
-                        <div class="w-24 h-24 bg-vibrant-turquoise text-white rounded-[2rem] flex items-center justify-center text-4xl font-bold shadow-lg border-4 border-white rotate-3"
-                            id="modalProfileInitials">
-                            --
-                        </div>
+            <div class="px-6 pb-6 -mt-16 relative z-10 w-full flex flex-col items-center">
+                <!-- Avatar & Badge -->
+                <div class="mb-3 relative inline-block">
+                    <div class="w-24 h-24 bg-soft-turquoise text-white rounded-full flex items-center justify-center border-[5px] border-white shadow-sm overflow-hidden p-0"
+                        id="modalProfileInitials">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=user&backgroundColor=b2ebf2"
+                            alt="Profile" class="w-full h-full object-cover">
                     </div>
-                    <div class="bg-sunny-yellow text-warm-yellow px-3 py-1 text-xs font-bold shadow-sm rounded-lg mb-2 hidden"
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-3 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full shadow-md whitespace-nowrap z-10"
                         id="modalRoleBadge">
-                        User
+                        POWER FILL
                     </div>
-                    <h2 class="text-2xl font-bold text-slate-800" id="modalDisplayName">Loading...</h2>
-                    <p class="text-slate-400 font-medium text-sm" id="modalJoinDate">Member since...</p>
                 </div>
 
+                <h2 class="text-[22px] font-extrabold text-friendly-navy mt-1" id="modalDisplayName">Loading...</h2>
+                <p class="text-slate-500 font-semibold text-[11px] mb-6" id="modalJoinDate">Member since...</p>
+
                 <!-- Profile Form -->
-                <form id="modalProfileForm" class="space-y-5">
-                    <div class="bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
-                        <h3 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-vibrant-turquoise">manage_accounts</span>
-                            Personal Details
-                        </h3>
+                <form id="modalProfileForm" class="w-full space-y-4">
+                    <div class="flex items-center gap-2 px-1 mb-1">
+                        <span class="material-symbols-outlined text-[#5C6BC0] text-[18px]">person</span>
+                        <h3 class="text-[13px] font-extrabold text-[#5C6BC0]">Personal Details</h3>
+                    </div>
+
+                    <div class="bg-[#F4F7FA] p-5 rounded-[1.5rem] border border-slate-100">
                         <div class="space-y-4">
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Full
+                                    class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Full
                                     Name</label>
                                 <input type="text" id="modalInputName" placeholder="E.g. Jane Doe"
-                                    class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-2.5 rounded-xl focus:border-vibrant-turquoise transition-all shadow-sm">
+                                    class="w-full bg-white border border-slate-200 outline-none text-[#5C6BC0] font-bold px-4 py-2.5 rounded-xl focus:border-[#5C6BC0] focus:ring-2 focus:ring-[#5C6BC0]/20 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.02)] text-sm placeholder-[#9EADCE]">
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label
-                                        class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Email</label>
+                                        class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Email</label>
                                     <input type="email" id="modalInputEmail" disabled
-                                        class="w-full bg-slate-100 border-2 border-slate-200 outline-none text-slate-500 font-bold px-4 py-2.5 rounded-xl cursor-not-allowed opacity-80">
-                                    <p class="text-[10px] text-slate-400 mt-1 ml-1">Email cannot be changed.</p>
+                                        class="w-full bg-slate-50/80 border border-slate-200 outline-none text-slate-400 font-bold px-3 py-2.5 rounded-xl cursor-not-allowed shadow-inner text-[11px]">
+                                    <p class="text-[8px] text-slate-400 mt-1 ml-1">Email cannot be changed.</p>
                                 </div>
-                                <div>
+                                <div class="flex flex-col">
                                     <label
-                                        class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide ml-1">Company</label>
+                                        class="block text-[9px] font-black text-[#6B7AE1] mb-1.5 uppercase tracking-widest ml-1">Company</label>
                                     <input type="text" id="modalInputCompany" placeholder="Optional"
-                                        class="w-full bg-white border-2 border-slate-200 outline-none text-slate-700 font-bold px-4 py-2.5 rounded-xl focus:border-vibrant-turquoise transition-all shadow-sm">
+                                        class="w-full bg-white border border-slate-200 outline-none text-[#5C6BC0] font-bold px-3 py-2.5 rounded-xl focus:border-[#5C6BC0] focus:ring-2 focus:ring-[#5C6BC0]/20 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.02)] text-[11px] placeholder-[#9EADCE]">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex justify-end">
+                    <div class="mt-4 pt-2">
                         <button type="submit" id="modalSaveProfileBtn"
-                            class="bg-vibrant-turquoise hover:bg-[#00ACC1] text-white font-bold py-2.5 px-6 rounded-full shadow-[0px_6px_0px_0px_#0097A7] hover:translate-y-[3px] hover:shadow-[0px_3px_0px_0px_#0097A7] active:translate-y-[6px] active:shadow-none transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined" id="modalSaveIcon">save</span>
+                            class="w-full bg-vibrant-coral hover:bg-[#F4511E] text-white font-extrabold py-3.5 px-6 rounded-full shadow-[0_8px_20px_rgba(255,87,34,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(255,87,34,0.4)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]" id="modalSaveIcon">save</span>
                             <span id="modalSaveText">Save Profile</span>
                             <div id="modalSaveSpinner"
                                 class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin hidden">
@@ -478,6 +442,11 @@
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <!-- Bottom decorative line -->
+            <div
+                class="h-1.5 bg-gradient-to-r from-warm-yellow via-soft-turquoise to-vibrant-turquoise w-full absolute bottom-0 left-0">
             </div>
         </div>
     </div>
@@ -543,8 +512,8 @@
                     const snap = await getDoc(userDocRef);
                     if (snap.exists()) {
                         const d = snap.data();
-                        const initial = (d.fullName || user.email || '?').charAt(0).toUpperCase();
-                        els.initials.textContent = initial;
+                        const seedName = encodeURIComponent(d.fullName || user.email || 'user');
+                        els.initials.innerHTML = `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=${seedName}&backgroundColor=b2ebf2" alt="Profile" class="w-full h-full object-cover">`;
                         els.displayName.textContent = d.fullName || user.email.split('@')[0];
 
                         let joinText = 'Member since recently';
@@ -556,10 +525,11 @@
 
                         els.roleBadge.classList.remove('hidden');
                         if (d.isAdmin) {
-                            els.roleBadge.textContent = 'Admin 👑';
-                            els.roleBadge.className = 'absolute -bottom-2 -right-2 bg-vibrant-coral text-white border-2 border-white px-3 py-1 text-xs font-bold transform -rotate-6 shadow-sm rounded-lg';
+                            els.roleBadge.textContent = 'ADMIN 👑';
+                        } else if (d.bulkCredits && d.bulkCredits > 1) {
+                            els.roleBadge.textContent = 'PREMIUM USER';
                         } else {
-                            els.roleBadge.textContent = 'Standard User';
+                            els.roleBadge.textContent = 'STANDARD USER';
                         }
 
                         els.inputName.value = d.fullName || '';
@@ -568,7 +538,8 @@
                     } else {
                         els.displayName.textContent = user.email;
                         els.inputEmail.value = user.email;
-                        els.initials.textContent = user.email.charAt(0).toUpperCase();
+                        const fallbackSeed = encodeURIComponent(user.email || 'user');
+                        els.initials.innerHTML = `<img src="https://api.dicebear.com/7.x/notionists/svg?seed=${fallbackSeed}&backgroundColor=b2ebf2" alt="Profile" class="w-full h-full object-cover">`;
                     }
                     profileLoaded = true;
                 } catch (err) {

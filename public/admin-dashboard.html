@@ -187,7 +187,7 @@
     <main class="flex flex-col min-h-screen w-full">
         <!-- Top Header -->
         <header
-            class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
+            class="h-20 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
             <!-- Left: Logo & Nav -->
             <div class="flex items-center gap-8">
                 <!-- Logo -->
@@ -400,32 +400,34 @@
             </section>
         </div>
 
-        <footer class="bg-friendly-navy text-white py-6 px-6 mt-auto w-full z-10 relative">
-            <div class="max-w-7xl mx-auto">
-                <div
-                    class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-white/10 pb-6 mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white w-8 h-8 flex items-center justify-center rounded-xl rotate-3">
-                            <span class="material-symbols-outlined text-friendly-navy text-xl">face_6</span>
-                        </div>
-                        <span class="font-bold text-xl">PDF Form Filler</span>
+        <!-- Global App Footer -->
+        <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2 group cursor-pointer">
+                    <div
+                        class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                        <span class="material-symbols-outlined text-white text-sm">face_6</span>
                     </div>
-                    <div class="flex flex-wrap justify-center gap-8 font-bold text-sm">
-                        <a class="hover:text-sunny-yellow transition-colors" href="#">Privacy Bits</a>
-                        <a class="hover:text-sunny-yellow transition-colors" href="#">House Rules</a>
-                        <a class="hover:text-sunny-yellow transition-colors" href="#">Say Hello!</a>
-                        <a class="hover:text-sunny-yellow transition-colors" href="#">Twitter (X)</a>
-                    </div>
+                    <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
                 </div>
-                <div
-                    class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 font-bold text-sm">
-                    <p>© 2026 Admin Dashboard Extension</p>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 bg-vibrant-coral rounded-full animate-pulse"></div>
-                        System All Go
+
+                <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Privacy Bits</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">House Rules</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Say Hello!</a>
+                    <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+                </div>
+
+                <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                    <p>© 2026. Sparsh Digital Solutions.</p>
+                    <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                        <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                        </div>
+                        <span>Servers Happy</span>
                     </div>
                 </div>
             </div>
+        </footer>
     </main>
 
     <!-- App JS -->
