@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon_io/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon_io/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon_io/apple-touch-icon.png">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Buy Credits | PDF Form Filler</title>
+    <title>Buy Credits | Click2PDF</title>
 
     <!-- External Scripts and Fonts -->
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -68,12 +72,13 @@
 
     <!-- Header matching global app styling -->
     <nav
-        class="w-full py-4 px-4 sm:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-20 border-b border-friendly-navy/10">
+        class="w-full py-2 px-4 sm:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-20 border-b border-friendly-navy/10">
         <a href="/app.html" class="flex items-center gap-3">
-            <div class="bg-vibrant-turquoise w-8 h-8 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
-                <span class="material-symbols-outlined text-white text-xl">description</span>
+            <div class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
+                <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                    class="w-full h-full object-cover rounded-lg">
             </div>
-            <span class="font-bold text-xl tracking-tight text-vibrant-turquoise">PDF Form Filler</span>
+            <span class="font-bold text-xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
         </a>
         <div class="flex items-center gap-4 sm:gap-6">
             <a href="/Buy-Credits.html"
@@ -104,159 +109,174 @@
     <main class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative mt-10 md:mt-2 gap-8 w-full">
         <!-- Main Card Container -->
         <div
-            class="max-w-[1000px] w-full bg-white rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col md:flex-row border-[8px] border-slate-100">
+            class="max-w-[850px] w-full bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col lg:flex-row border border-slate-100 min-h-[500px]">
 
-            <!-- Left Side: Package Details -->
-            <div class="md:w-1/2 p-10 md:p-14 bg-card-teal-bg flex flex-col relative rounded-l-[2rem]">
-                <div>
-                    <!-- Badge -->
-                    <div
-                        class="inline-flex items-center gap-1 bg-card-teal-pill text-card-teal-text px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest mb-8 uppercase shadow-sm">
-                        <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
-                        SELECTED PACKAGE
+            <!-- Left Pane: Teal Portal -->
+            <div
+                class="w-full lg:w-[420px] shrink-0 p-6 md:p-8 flex flex-col relative bg-gradient-to-br from-[#1E5D65] to-[#124248] text-white justify-between text-sm">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between w-full mb-6">
+                    <div class="flex flex-col">
+                        <span class="text-[8px] font-black tracking-widest text-teal-200/80 uppercase">Payment
+                            Portal</span>
+                        <span class="text-lg font-bold tracking-tight text-white leading-none mt-1">Scan to Pay</span>
                     </div>
-
-                    <h1 class="text-4xl md:text-[2.75rem] font-black text-slate-800 mb-4 tracking-tight leading-none">
-                        Magic Credit Pack
-                    </h1>
-                    <p class="text-slate-500 text-[17px] font-semibold leading-relaxed max-w-sm mb-12">
-                        Fuel your PDF Form Filler adventures with lightning-fast processing and AI magic.
-                    </p>
-
-                    <!-- Feature 1 -->
                     <div
-                        class="bg-white rounded-3xl p-5 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.03)] mb-4 hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-vibrant-coral/20">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-[3.25rem] h-[3.25rem] bg-[#ffebee] rounded-full flex items-center justify-center text-[#ff5722]">
-                                <span class="material-symbols-outlined text-[26px]">diamond</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-extrabold text-slate-800 text-lg leading-tight">150 Pro Credits</span>
-                                <span class="text-xs text-slate-400 font-bold mt-0.5">Perfect for heavy lifting</span>
-                            </div>
+                        class="flex items-center gap-1.5 text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full text-[9px] font-black tracking-widest uppercase border border-emerald-400/20">
+                        <span class="material-symbols-outlined text-[12px]">verified_user</span>
+                        SECURE UPI
+                    </div>
+                </div>
+
+                <!-- Hero QR Code with Corner Brackets -->
+                <div class="flex-grow flex items-center justify-center relative py-4">
+                    <!-- Brackets Wrapper -->
+                    <div class="relative p-5">
+                        <!-- Top Left Bracket -->
+                        <div
+                            class="absolute top-0 left-0 w-6 h-6 border-t-[3px] border-l-[3px] border-[#80cbc4]/40 rounded-tl-xl">
                         </div>
-                        <span class="font-black text-2xl text-[#ff5722] tracking-tight">₹150</span>
-                    </div>
+                        <!-- Top Right Bracket -->
+                        <div
+                            class="absolute top-0 right-0 w-6 h-6 border-t-[3px] border-r-[3px] border-[#80cbc4]/40 rounded-tr-xl">
+                        </div>
+                        <!-- Bottom Left Bracket -->
+                        <div
+                            class="absolute bottom-0 left-0 w-6 h-6 border-b-[3px] border-l-[3px] border-[#80cbc4]/40 rounded-bl-xl">
+                        </div>
+                        <!-- Bottom Right Bracket -->
+                        <div
+                            class="absolute bottom-0 right-0 w-6 h-6 border-b-[3px] border-r-[3px] border-[#80cbc4]/40 rounded-br-xl">
+                        </div>
 
-                    <!-- Feature 2 -->
-                    <div
-                        class="bg-white rounded-3xl p-5 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-vibrant-turquoise/20">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-[3.25rem] h-[3.25rem] bg-[#e0f2f1] rounded-full flex items-center justify-center text-vibrant-turquoise">
-                                <span class="material-symbols-outlined text-[26px]">bolt</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-extrabold text-slate-800 text-lg leading-tight">Instant
-                                    Activation</span>
-                                <span class="text-xs text-slate-400 font-bold mt-0.5">Ready to use in seconds</span>
-                            </div>
+                        <!-- Actual QR Container -->
+                        <div
+                            class="bg-white rounded-[1.25rem] p-3 shadow-2xl relative z-10 w-[200px] h-[200px] md:w-[260px] md:h-[260px] transform hover:scale-[1.02] transition-transform duration-500">
+                            <img src="/Assets/QR%20Code.jpeg" alt="Payment QR Code"
+                                class="w-full h-full object-contain rounded-xl pointer-events-none" />
                         </div>
                     </div>
                 </div>
 
-                <!-- Spacer -->
-                <div class="flex-grow min-h-[4rem]"></div>
-
-                <!-- Mini Mascot Quote -->
-                <div class="flex items-start gap-4 mt-8 ml-2">
-                    <div class="relative">
-                        <div
-                            class="absolute -top-1 -right-3 bg-[#ff3b30] text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm z-10">
-                            TIP!
-                        </div>
-                        <div
-                            class="w-[4.5rem] h-[4.5rem] bg-[#ffb74d] rounded-full shadow-[0_6px_15px_rgba(255,183,77,0.4)] flex items-center justify-center overflow-hidden border-4 border-white">
-                            <!-- Using a cute cat emoji as a placeholder for the illustration -->
-                            <span class="text-[2.5rem]">🐱</span>
-                        </div>
-                    </div>
+                <!-- Footer Summary Cards -->
+                <div class="mt-6 flex items-center gap-2.5 w-full">
+                    <!-- Product Box -->
                     <div
-                        class="bg-white px-5 py-3.5 mt-2 rounded-tl-[1.25rem] rounded-tr-[1.25rem] rounded-br-[1.25rem] rounded-bl-sm shadow-sm text-slate-500 text-sm font-bold w-48 relative">
-                        "Scan the code, let's start the magic!"
+                        class="flex-1 bg-white hover:bg-slate-50 transition-colors rounded-xl p-3 flex flex-col text-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.1)] cursor-pointer">
+                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Product</span>
+                        <span class="font-extrabold text-xs md:text-sm leading-none">150 Pro Credits</span>
+                    </div>
+
+                    <!-- Amount Box -->
+                    <div
+                        class="flex-1 bg-white hover:bg-slate-50 transition-colors rounded-xl p-3 flex flex-col text-slate-800 text-right shadow-[0_4px_20px_rgba(0,0,0,0.1)] cursor-pointer">
+                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Amount</span>
+                        <span class="font-black text-xs md:text-sm leading-none">₹150.00</span>
                     </div>
                 </div>
+
+                <!-- Footer Status Text -->
+                <div
+                    class="flex items-center justify-center gap-1.5 mt-5 text-[9px] text-teal-200/80 font-bold tracking-widest pb-1">
+                    <div
+                        class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]">
+                    </div>
+                    <span>ACTIVE <span class="mx-1 text-teal-400/50">|</span> INSTANT DELIVERY VIA API</span>
+                </div>
+
             </div>
 
-            <!-- Right Side: Payment QR -->
-            <div class="md:w-1/2 p-8 md:p-14 bg-white flex flex-col items-center justify-center text-center">
-                <h2 class="text-3xl font-black text-slate-800 mb-1">Magic Pay QR</h2>
-                <p class="text-[15px] text-slate-400 font-bold mb-10">Fast, secure, and purely magical</p>
+            <!-- Right Pane: Verification Form -->
+            <div class="flex-1 p-6 md:p-8 lg:p-10 bg-white flex flex-col relative pt-8 md:pt-14 lg:pt-16">
 
-                <!-- QR Code Block -->
-                <!-- Gradient wrapper for that subtle multi-color border radius -->
-                <div
-                    class="p-1.5 rounded-[2.8rem] bg-gradient-to-br from-[#80cbc4] via-[#e0f2f1] to-[#b2dfdb] mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] inline-block">
-                    <div
-                        class="bg-qr-dark rounded-[2.5rem] w-[17rem] h-[17rem] p-8 flex items-center justify-center relative">
-                        <!-- Actual QR Code Image (Placeholder) -->
-                        <div
-                            class="bg-[#F5F5F5] w-full h-full p-2 rounded-xl flex items-center justify-center hover:scale-105 transition-transform duration-500 shadow-inner">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://scholarsync.com/checkout/credits"
-                                alt="Payment QR Code"
-                                class="w-full h-full object-contain mix-blend-multiply opacity-90 rounded-lg pointer-events-none" />
-                        </div>
-                    </div>
-                </div>
+                <!-- Main Form Area -->
+                <div class="w-full max-w-[340px] mx-auto flex flex-col">
 
-                <!-- Timer Section -->
-                <div class="mb-10 w-full flex flex-col items-center">
-                    <p class="text-[10px] tracking-widest text-slate-300 font-black mb-3">EXPIRES IN</p>
-                    <div
-                        class="flex items-center justify-center gap-4 text-[#FF5722] font-black text-[2.5rem] leading-none mb-1">
-                        <div class="flex flex-col items-center">
-                            <span>04</span>
-                        </div>
-                        <span class="text-slate-200 -mt-1">:</span>
-                        <div class="flex flex-col items-center">
-                            <span>59</span>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-center justify-center gap-[3.25rem] text-slate-300 font-black text-[9px] tracking-widest">
-                        <span>MIN</span>
-                        <span>SEC</span>
-                    </div>
-                </div>
+                    <h2
+                        class="text-2xl font-black text-slate-800 mb-1.5 font-mono tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">
+                        Complete Verification</h2>
+                    <p class="text-[11px] text-slate-500 font-bold mb-8 leading-relaxed font-mono">Provide the
+                        transaction hash or UTR to authorize your credit allocation.</p>
 
-                <!-- Payment Verification Form -->
-                <div class="w-full max-w-[280px]">
-                    <form id="paymentForm" class="flex flex-col gap-4 mb-4">
-                        <div class="flex flex-col items-start w-full gap-1 text-left">
-                            <label for="transactionId" class="text-xs font-bold text-slate-500 ml-1">Transaction
-                                ID</label>
-                            <input type="text" id="transactionId" name="transactionId" required
-                                placeholder="Enter Transaction ID"
-                                class="w-full bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 px-4 rounded-xl focus:border-vibrant-turquoise focus:outline-none transition-colors text-sm font-semibold placeholder:font-medium shadow-sm">
+                    <form id="paymentForm" class="flex flex-col gap-4 w-full mb-6 font-mono">
+
+                        <!-- UTR Input -->
+                        <div class="flex flex-col items-start w-full gap-1.5 text-left">
+                            <label for="transactionId"
+                                class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">TRANSACTION
+                                ID / UTR</label>
+                            <div class="relative w-full h-[46px]">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">tag</span>
+                                <input type="text" id="transactionId" name="transactionId" required
+                                    placeholder="0x... or 12-digit UTR"
+                                    class="w-full h-full bg-[#f8fafc] border-2 border-slate-300 text-slate-700 pl-9 pr-4 rounded-xl focus:border-vibrant-turquoise focus:ring-4 focus:ring-vibrant-turquoise/10 focus:bg-white outline-none transition-all text-xs font-bold placeholder:font-medium placeholder:text-slate-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                            </div>
                         </div>
 
-                        <div class="flex flex-col items-start w-full gap-1 text-left">
-                            <label for="paymentScreenshot" class="text-xs font-bold text-slate-500 ml-1">Payment
-                                Screenshot</label>
-                            <input type="file" id="paymentScreenshot" name="screenshot" accept="image/*" required
-                                class="w-full bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 px-4 rounded-xl focus:border-vibrant-turquoise focus:outline-none transition-colors text-sm font-semibold file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-vibrant-turquoise file:text-white hover:file:bg-cyan-500 shadow-sm">
+                        <!-- Date & Time Input -->
+                        <div class="flex flex-col items-start w-full gap-1.5 text-left">
+                            <label for="transactionDate"
+                                class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">DATE &
+                                TIME</label>
+                            <div class="relative w-full h-[46px]">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">calendar_month</span>
+                                <input type="datetime-local" id="transactionDate" name="transactionDate" required
+                                    class="w-full h-full bg-[#f8fafc] border-2 border-slate-300 text-slate-700 pl-9 pr-4 rounded-xl focus:border-vibrant-turquoise focus:ring-4 focus:ring-vibrant-turquoise/10 focus:bg-white outline-none transition-all text-xs font-bold shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                            </div>
                         </div>
 
-                        <button type="submit" id="submitPaymentBtn"
-                            class="w-full bg-[#FF4500] text-white py-[1.15rem] rounded-full font-black text-lg shadow-[0_8px_25px_rgba(255,69,0,0.35)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(255,69,0,0.45)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 mt-2">
-                            <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
-                            Verify Payment
-                        </button>
+                        <!-- Screenshot Input -->
+                        <div class="flex flex-col items-start w-full gap-1.5 text-left">
+                            <label for="paymentScreenshot"
+                                class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">ATTACHMENT
+                                (REQUIRED)</label>
+                            <div class="relative w-full h-[46px]">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">image</span>
+                                <input type="file" id="paymentScreenshot" name="screenshot" accept="image/*" required
+                                    class="w-full h-full bg-[#f8fafc] border-2 border-slate-300 text-slate-500 py-2.5 pl-9 pr-2 rounded-xl focus:border-vibrant-turquoise focus:ring-4 focus:ring-vibrant-turquoise/10 focus:bg-white outline-none transition-all text-[10px] font-semibold file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:font-black file:bg-white file:text-vibrant-turquoise hover:file:bg-vibrant-turquoise hover:file:text-white file:shadow-sm file:transition-colors file:cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-3 mt-2">
+                            <!-- Using vibrant coral gradient to stick to design system -->
+                            <button type="submit" id="submitPaymentBtn"
+                                class="w-full h-[46px] bg-gradient-to-r from-[#FF5722] to-[#FF7043] text-white rounded-xl font-black text-[11px] shadow-[0_8px_15px_rgba(255,87,34,0.3)] hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(255,87,34,0.4)] active:translate-y-0 active:shadow-none transition-all flex items-center justify-center gap-1.5 relative overflow-hidden group uppercase tracking-wider">
+                                <div
+                                    class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+                                </div>
+                                <span
+                                    class="material-symbols-outlined text-[16px] relative z-10 font-bold">verified</span>
+                                <span class="relative z-10 text-center">Execute Verification</span>
+                            </button>
+
+                            <button type="button"
+                                class="w-full h-[46px] bg-white text-slate-500 rounded-xl font-bold transition-all border-2 border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 group">
+                                <span
+                                    class="material-symbols-outlined text-[14px] group-hover:-rotate-90 transition-transform duration-300">sync</span>
+                                Switch Payment Method
+                            </button>
+                        </div>
                     </form>
 
-                    <button
-                        class="w-full bg-[#FAFAFA] hover:bg-[#F3F4F6] text-slate-500 tracking-tight py-3.5 rounded-full font-bold transition-all mb-8 border border-slate-100">
-                        Use another payment method
-                    </button>
                 </div>
 
-                <!-- Security Footer -->
+                <!-- Footer Identification (Absolute) -->
                 <div
-                    class="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-extrabold tracking-widest mt-auto">
-                    <span class="material-symbols-outlined text-[14px]">security</span>
-                    SECURE SSL ENCRYPTED
+                    class="absolute bottom-5 left-8 md:left-10 right-8 md:right-10 flex justify-between items-center text-[9px] font-black text-slate-300 tracking-widest font-mono uppercase">
+                    <div class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[12px]">lock</span>
+                        AES-256
+                    </div>
+                    <div>
+                        ID: SYS-CHECK-4421
+                    </div>
                 </div>
+
             </div>
 
         </div>
@@ -296,16 +316,33 @@
                     </table>
                 </div>
 
-                <!-- Empty State (Hidden initially) -->
-                <div id="historyEmpty" class="hidden flex flex-col items-center gap-3 py-10 text-slate-400 text-center">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-2">
-                        <span class="material-symbols-outlined text-3xl">receipt_long</span>
+                <div id="paginationControls"
+                    class="hidden w-full flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50 rounded-b-xl border-x">
+                    <span id="pageInfo" class="text-xs font-bold text-slate-500">Showing -- to -- of -- entries</span>
+                    <div class="flex items-center gap-2">
+                        <button id="prevPageBtn"
+                            class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-vibrant-turquoise hover:border-vibrant-turquoise transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                        </button>
+                        <div id="pageNumbers" class="flex items-center gap-1"></div>
+                        <button id="nextPageBtn"
+                            class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-vibrant-turquoise hover:border-vibrant-turquoise transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </button>
                     </div>
-                    <span class="font-bold text-slate-500">No payment history found.</span>
-                    <span class="text-xs max-w-xs">Your payment verification requests will appear here once
-                        submitted.</span>
                 </div>
             </div>
+
+            <!-- Empty State (Hidden initially) -->
+            <div id="historyEmpty" class="hidden flex flex-col items-center gap-3 py-10 text-slate-400 text-center">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-2">
+                    <span class="material-symbols-outlined text-3xl">receipt_long</span>
+                </div>
+                <span class="font-bold text-slate-500">No payment history found.</span>
+                <span class="text-xs max-w-xs">Your payment verification requests will appear here once
+                    submitted.</span>
+            </div>
+        </div>
         </div>
     </main>
 
@@ -314,10 +351,11 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2 group cursor-pointer">
                 <div
-                    class="bg-vibrant-turquoise w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
-                    <span class="material-symbols-outlined text-white text-sm">face_6</span>
+                    class="w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                        class="w-full h-full object-cover rounded-lg">
                 </div>
-                <span class="font-bold text-sm tracking-tight text-friendly-navy">PDF Form Filler</span>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">Click2PDF</span>
             </div>
 
             <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
@@ -422,10 +460,98 @@
                 }, 4000);
             }
 
+            // Pagination State
+            let allPayments = [];
+            let currentPage = 1;
+            const itemsPerPage = 5;
+
+            // Render function for table
+            function renderTable() {
+                const tbody = document.getElementById('historyTableBody');
+                const controls = document.getElementById('paginationControls');
+                const pageInfo = document.getElementById('pageInfo');
+                const pageNumbers = document.getElementById('pageNumbers');
+                const prevBtn = document.getElementById('prevPageBtn');
+                const nextBtn = document.getElementById('nextPageBtn');
+
+                if (allPayments.length <= itemsPerPage) {
+                    controls.classList.add('hidden');
+                } else {
+                    controls.classList.remove('hidden');
+                }
+
+                const totalPages = Math.ceil(allPayments.length / itemsPerPage);
+                const startIdx = (currentPage - 1) * itemsPerPage;
+                const endIdx = startIdx + itemsPerPage;
+                const currentData = allPayments.slice(startIdx, endIdx);
+
+                tbody.innerHTML = currentData.map(payment => {
+                    const date = new Date(payment.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    });
+
+                    let statusBadge = '';
+                    let creditsHtml = '<span class="text-slate-400 text-[11px] font-bold">-</span>';
+
+                    if (payment.status === 'pending') {
+                        statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-50 text-amber-500 border border-amber-200 uppercase">Pending</span>';
+                    } else if (payment.status === 'approved') {
+                        statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-emerald-50 text-emerald-500 border border-emerald-200 uppercase">Approved</span>';
+
+                        const gained = payment.creditsGranted || 500;
+                        creditsHtml = `<span class="inline-flex items-center gap-1 font-black text-emerald-500 text-xs bg-emerald-50 px-2 py-0.5 rounded-md"><span class="material-symbols-outlined text-[14px]">diamond</span> +${gained}</span>`;
+
+                    } else if (payment.status === 'rejected') {
+                        statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-rose-50 text-rose-500 border border-rose-200 uppercase">Rejected</span>';
+                    }
+
+                    return `
+                        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                            <td class="p-4 whitespace-nowrap text-slate-500 text-xs">${date}</td>
+                            <td class="p-4 font-bold text-slate-700 font-mono text-xs">${payment.transactionId}</td>
+                            <td class="p-4 text-center">${creditsHtml}</td>
+                            <td class="p-4 text-right">${statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // Update pagination info and controls
+                if (allPayments.length > itemsPerPage) {
+                    const showStart = startIdx + 1;
+                    const showEnd = Math.min(endIdx, allPayments.length);
+                    pageInfo.textContent = `Showing ${showStart} to ${showEnd} of ${allPayments.length} entries`;
+
+                    prevBtn.disabled = currentPage === 1;
+                    nextBtn.disabled = currentPage === totalPages;
+
+                    prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
+                    nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; renderTable(); } };
+
+                    // Page numbers
+                    let pageHtml = '';
+                    let startPage = Math.max(1, currentPage - 1);
+                    let endPage = Math.min(totalPages, startPage + 2);
+                    if (endPage - startPage < 2 && startPage > 1) {
+                        startPage = Math.max(1, endPage - 2);
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        pageHtml += `<button onclick="goToPage(${i})" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${i === currentPage ? 'bg-vibrant-turquoise text-white shadow-sm' : 'bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-700'}">${i}</button>`;
+                    }
+                    pageNumbers.innerHTML = pageHtml;
+                }
+            }
+
+            // Expose goToPage to window so onclick handlers work
+            window.goToPage = function (page) {
+                currentPage = page;
+                renderTable();
+            };
+
             // Fetch history function
             async function fetchPaymentHistory() {
                 const container = document.getElementById('historyTableContainer');
-                const tbody = document.getElementById('historyTableBody');
                 const loading = document.getElementById('historyLoading');
                 const empty = document.getElementById('historyEmpty');
 
@@ -442,44 +568,15 @@
                     if (!res.ok) throw new Error('Failed to fetch history');
 
                     const data = await res.json();
-
                     loading.classList.add('hidden');
 
                     if (!data.payments || data.payments.length === 0) {
                         empty.classList.remove('hidden');
                     } else {
                         container.classList.remove('hidden');
-                        tbody.innerHTML = data.payments.map(payment => {
-                            const date = new Date(payment.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric', month: 'short', day: 'numeric',
-                                hour: '2-digit', minute: '2-digit'
-                            });
-
-                            let statusBadge = '';
-                            let creditsHtml = '<span class="text-slate-400 text-[11px] font-bold">-</span>';
-
-                            if (payment.status === 'pending') {
-                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-50 text-amber-500 border border-amber-200 uppercase">Pending</span>';
-                            } else if (payment.status === 'approved') {
-                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-emerald-50 text-emerald-500 border border-emerald-200 uppercase">Approved</span>';
-
-                                // Show +credits (default to 500 for legacy records before this property was added)
-                                const gained = payment.creditsGranted || 500;
-                                creditsHtml = `<span class="inline-flex items-center gap-1 font-black text-emerald-500 text-xs bg-emerald-50 px-2 py-0.5 rounded-md"><span class="material-symbols-outlined text-[14px]">diamond</span> +${gained}</span>`;
-
-                            } else if (payment.status === 'rejected') {
-                                statusBadge = '<span class="inline-flex px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-rose-50 text-rose-500 border border-rose-200 uppercase">Rejected</span>';
-                            }
-
-                            return `
-                                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                    <td class="p-4 whitespace-nowrap text-slate-500 text-xs">${date}</td>
-                                    <td class="p-4 font-bold text-slate-700 font-mono text-xs">${payment.transactionId}</td>
-                                    <td class="p-4 text-center">${creditsHtml}</td>
-                                    <td class="p-4 text-right">${statusBadge}</td>
-                                </tr>
-                            `;
-                        }).join('');
+                        allPayments = data.payments; // Correctly sorted by backend already
+                        currentPage = 1;
+                        renderTable();
                     }
                 } catch (error) {
                     console.error('Error fetching history:', error);

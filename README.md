@@ -1,6 +1,6 @@
-# PDF Form Filler
+# Click2PDF
 
-A 100% free, secure, and privacy-focused online PDF form filler. No login required.
+A 100% free, secure, and privacy-focused online Click2PDF. No login required.
 
 ## 🚀 Features
 
@@ -24,7 +24,7 @@ A 100% free, secure, and privacy-focused online PDF form filler. No login requir
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd pdf-form-filler
+   cd click2pdf
    ```
 
 2. **Install dependencies**

@@ -1,5 +1,5 @@
 /**
- * PDF Form Filler — Service Worker
+ * Click2PDF — Service Worker
  * Caches app shell for offline support and fast loading
  */
 

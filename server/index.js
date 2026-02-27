@@ -29,6 +29,7 @@ app.use(cookieParser());
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/assets', express.static(path.join(__dirname, '../Assets')));
 
 // Serve PDF templates as static files
 app.use('/templates', express.static(path.join(__dirname, '../pdf-format')));
@@ -73,6 +74,6 @@ startCleanupJob();
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 PDF Form Filler running at http://localhost:${PORT}`);
+    console.log(`🚀 Click2PDF running at http://localhost:${PORT}`);
     console.log(`📁 Upload a PDF to get started!`);
 });

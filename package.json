@@ -1,7 +1,7 @@
 {
-  "name": "pdf-form-filler",
+  "name": "click2pdf",
   "version": "1.0.0",
-  "description": "Free online PDF form filler - no login required",
+  "description": "Click2PDF - Free online PDF form filler",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
