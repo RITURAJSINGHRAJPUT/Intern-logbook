@@ -208,6 +208,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Set up download CSV button
     setupDownloadCsvButton();
+
+    // Fetch and display credits
+    fetchEditorCredits();
 });
 
 /**
@@ -519,6 +522,33 @@ function setupSignatureModal() {
 }
 
 /**
+ * Fetch and display user credits in the editor badge
+ */
+async function fetchEditorCredits() {
+    try {
+        const userId = window.getCurrentUserId ? await window.getCurrentUserId() : null;
+        if (!userId) return;
+
+        const res = await fetch('/api/bulk/credits', {
+            headers: { 'x-user-id': userId }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            const badge = document.getElementById('editorCreditsBadge');
+            const count = document.getElementById('editorCreditsCount');
+            if (badge && count) {
+                count.textContent = data.bulkCredits || 0;
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+            }
+        }
+    } catch (err) {
+        console.error('Failed to fetch editor credits:', err);
+    }
+}
+
+/**
  * Set up download button
  */
 function setupDownloadButton(sessionId) {
@@ -561,7 +591,19 @@ function setupDownloadButton(sessionId) {
             });
 
             if (!generateRes.ok) {
-                throw new Error('Failed to generate PDF');
+                const errorData = await generateRes.json().catch(() => ({}));
+
+                // Handle insufficient credits (402)
+                if (generateRes.status === 402) {
+                    hideLoading();
+                    showToast(
+                        `⚠️ ${errorData.error || 'Insufficient credits.'} Go to Buy Credits to get more.`,
+                        'error'
+                    );
+                    return;
+                }
+
+                throw new Error(errorData.error || 'Failed to generate PDF');
             }
 
             const generateData = await generateRes.json();
@@ -579,6 +621,9 @@ function setupDownloadButton(sessionId) {
                 showToast(`${pageWord} downloaded! Starting new session...`, 'success');
             }
 
+            // Refresh credits badge
+            fetchEditorCredits();
+
             // Redirect to home after a delay
             setTimeout(() => {
                 window.location.href = '/app.html';
@@ -587,7 +632,7 @@ function setupDownloadButton(sessionId) {
         } catch (error) {
             console.error('Download error:', error);
             hideLoading();
-            showToast('Failed to download PDF. Please try again.', 'error');
+            showToast(error.message || 'Failed to download PDF. Please try again.', 'error');
         }
     });
 }

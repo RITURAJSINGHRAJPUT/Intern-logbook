@@ -6,6 +6,7 @@ const upload = require('../middleware/upload');
 const { parsePDF } = require('../services/pdfParser');
 const { generateFilledPDF, saveGeneratedPDF } = require('../services/pdfGenerator');
 const { deleteSessionFiles } = require('../utils/cleanup');
+const { db } = require('../config/firebase');
 
 const TEMP_DIR = path.join(__dirname, '../../temp');
 
@@ -119,6 +120,30 @@ router.post('/generate/:sessionId', express.json(), async (req, res) => {
     }
 
     try {
+        // --- Credit Check ---
+        if (userId) {
+            const userDoc = await db.collection('users').doc(userId).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                const requiredCredits = (instances && instances.length > 1) ? instances.length : 1;
+                const currentCredits = userData.bulkCredits || 0;
+
+                if (currentCredits < requiredCredits) {
+                    return res.status(402).json({
+                        error: `Insufficient credits. You need ${requiredCredits} credit(s) but only have ${currentCredits}. Please purchase more credits.`,
+                        creditsNeeded: requiredCredits,
+                        creditsAvailable: currentCredits
+                    });
+                }
+
+                // Deduct credits
+                await db.collection('users').doc(userId).update({
+                    bulkCredits: currentCredits - requiredCredits
+                });
+                console.log(`[Generate] Deducted ${requiredCredits} credit(s) from user ${userId}. Remaining: ${currentCredits - requiredCredits}`);
+            }
+        }
+
         let pdfBuffer;
 
         // Check if we have multiple instances
