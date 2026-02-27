@@ -88,7 +88,7 @@
     <main class="flex-1 flex flex-col min-h-screen w-full">
         <!-- Top Header -->
         <header
-            class="h-20 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-8 sticky top-0 z-40">
+            class="h-16 lg:h-20 bg-white/80 backdrop-blur-md border-b border-friendly-navy/10 shadow-sm flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
             <!-- Left: Logo & Nav -->
             <div class="flex items-center gap-8">
                 <div class="flex items-center gap-3">
@@ -129,26 +129,61 @@
                 </nav>
             </div>
 
-            <!-- Right: Actions & Profile -->
-            <div class="flex items-center gap-5">
-                <a href="#"
-                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-soft-coral hover:text-vibrant-coral border-2 border-slate-100 hover:border-vibrant-coral flex items-center justify-center text-slate-400 transition-all cursor-pointer tactile-sm"
-                    id="sidebarLogout" title="Logout">
-                    <span class="material-symbols-outlined text-[20px]">logout</span>
-                </a>
-
-                <div class="flex items-center gap-3 pl-4 border-l-2 border-slate-100">
-                    <div class="flex flex-col items-end hidden md:flex">
-                        <span class="text-[13px] font-extrabold text-friendly-navy">Admin Panel</span>
-                        <span class="text-[11px] font-bold text-slate-400">Super Admin</span>
+            <!-- Right: Profile Avatar -->
+            <div class="relative flex items-center">
+                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border-2 border-white bg-slate-100 cursor-pointer hover:ring-2 hover:ring-vibrant-turquoise transition-all"
+                    id="mobileMenuToggle">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
+                        alt="Admin" class="w-full h-full object-cover">
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="px-4 py-3 border-b border-slate-100">
+                        <p class="text-sm font-extrabold text-friendly-navy">Admin</p>
+                        <p class="text-[11px] font-bold text-slate-400">Super Admin</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white bg-slate-100">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=00BCD4&color=fff&rounded=true&bold=true"
-                            alt="Admin" class="w-full h-full object-cover">
-                    </div>
+                    <a href="#"
+                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-rose-500 hover:bg-rose-50 transition-colors rounded-b-xl"
+                        id="dropdownLogout">
+                        <span class="material-symbols-outlined text-[18px]">logout</span>
+                        Logout
+                    </a>
                 </div>
             </div>
         </header>
+
+        <!-- Mobile Nav Drawer -->
+        <div class="mobile-nav-drawer lg:hidden bg-white border-b border-slate-200 shadow-md sticky top-16 z-30"
+            id="mobileNavDrawer">
+            <nav class="flex flex-col p-3 gap-1">
+                <a href="/admin-dashboard.html" class="mobile-nav-link">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="/user_management.html" class="mobile-nav-link active-link">
+                    <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+                    User Management
+                </a>
+                <a href="/templates.html" class="mobile-nav-link">
+                    <span class="material-symbols-outlined text-[18px]">file_copy</span>
+                    Templates
+                </a>
+                <a href="/bulkfill_credits.html" class="mobile-nav-link">
+                    <span class="material-symbols-outlined text-[18px]">toll</span>
+                    Credits
+                </a>
+                <a href="/verify_payments.html" class="mobile-nav-link">
+                    <span class="material-symbols-outlined text-[18px]">payments</span>
+                    Verify Payments
+                </a>
+                <div class="border-t border-slate-200 mt-2 pt-2">
+                    <a href="#" class="mobile-nav-link text-rose-500 hover:!bg-rose-50" id="drawerLogout">
+                        <span class="material-symbols-outlined text-[18px]">logout</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </div>
+        <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 
         <!-- Loading State -->
         <div class="flex-1 flex flex-col items-center justify-center min-h-[50vh]" id="adminLoading">
@@ -158,7 +193,7 @@
         </div>
 
         <!-- Dashboard Content -->
-        <div class="p-8 md:p-10 max-w-7xl mx-auto w-full" id="adminPanel" style="display:none">
+        <div class="p-4 sm:p-8 md:p-10 max-w-7xl mx-auto w-full" id="adminPanel" style="display:none">
 
             <div class="flex items-center justify-between mb-8">
                 <h1 class="text-2xl font-extrabold text-friendly-navy flex items-center gap-2.5">
@@ -389,6 +424,60 @@
         });
     </script>
     <script src="js/admin.js"></script>
+    <script>
+        // Mobile nav toggle + Desktop profile dropdown
+        (function () {
+            const btn = document.getElementById('mobileMenuToggle');
+            const drawer = document.getElementById('mobileNavDrawer');
+            const backdrop = document.getElementById('mobileNavBackdrop');
+            const dropdown = document.getElementById('profileDropdown');
+            if (!btn) return;
+
+            function toggleDrawer() {
+                if (drawer) drawer.classList.toggle('open');
+                if (backdrop) backdrop.classList.toggle('visible');
+            }
+            function toggleDropdown() {
+                if (dropdown) dropdown.classList.toggle('open');
+            }
+            function closeDropdown() {
+                if (dropdown) dropdown.classList.remove('open');
+            }
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (window.innerWidth >= 1024) {
+                    toggleDropdown();
+                } else {
+                    toggleDrawer();
+                }
+            });
+            if (backdrop) backdrop.addEventListener('click', toggleDrawer);
+
+            document.addEventListener('click', (e) => {
+                if (dropdown && !dropdown.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+
+            // Drawer logout
+            const drawerLogout = document.getElementById('drawerLogout');
+            if (drawerLogout) {
+                drawerLogout.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    import('./js/auth.js').then(m => m.logout());
+                });
+            }
+            // Dropdown logout
+            const dropdownLogout = document.getElementById('dropdownLogout');
+            if (dropdownLogout) {
+                dropdownLogout.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    import('./js/auth.js').then(m => m.logout());
+                });
+            }
+        })();
+    </script>
 </body>
 
 </html>

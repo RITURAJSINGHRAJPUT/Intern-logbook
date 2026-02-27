@@ -1,5 +1,102 @@
 /* 
- * admin.css is intentionally left empty. 
- * All styling for the Admin Dashboard has been migrated to Tailwind CSS 
- * and inline styles in admin.html.
+ * admin.css — Shared styles for admin pages
+ * Mobile navigation drawer + responsive utilities
  */
+
+/* ── Mobile Nav Drawer ── */
+.mobile-nav-drawer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    opacity: 0;
+}
+
+.mobile-nav-drawer.open {
+    max-height: 400px;
+    opacity: 1;
+}
+
+/* Hamburger animation */
+.hamburger-btn .bar {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: #37474F;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger-btn.active .bar:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
+
+.hamburger-btn.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-btn.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile nav link style */
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #64748b;
+    transition: all 0.15s ease;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+    background-color: rgba(178, 235, 242, 0.3);
+    color: #00BCD4;
+}
+
+.mobile-nav-link.active-link {
+    background-color: rgba(178, 235, 242, 0.4);
+    color: #00BCD4;
+    border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+/* Backdrop for mobile nav */
+.mobile-nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 41, 59, 0.3);
+    backdrop-filter: blur(2px);
+    z-index: 25;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-nav-backdrop.visible {
+    display: block;
+}
+
+/* ── Profile Dropdown ── */
+.profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    width: 13rem;
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.profile-dropdown.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
