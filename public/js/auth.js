@@ -349,25 +349,12 @@ function showWaitingScreen(email, needsVerification = false) {
  * Update UI elements based on auth state
  */
 function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData = null) {
-    const loginBtn = document.getElementById('loginBtn');
-    if (loginBtn) {
-        const textSpan = loginBtn.querySelector('.login-text');
-        if (textSpan) {
-            textSpan.textContent = 'Logout';
-        } else {
-            loginBtn.textContent = 'Logout';
-        }
-        loginBtn.href = '#';
-        loginBtn.onclick = (e) => {
-            e.preventDefault();
-            logout();
-        };
-    }
+    // Configure the unified dropdown menu elements
+    const profileMenuBtn = document.getElementById('profileMenuBtn');
+    const logoutOption = document.getElementById('logoutOption');
 
-    // Update Profile button with User's Name
-    const profileBtn = document.getElementById('profileBtn');
-    if (profileBtn) {
-        const nameSpan = profileBtn.querySelector('span:not(.material-symbols-outlined)');
+    if (profileMenuBtn) {
+        const nameSpan = profileMenuBtn.querySelector('.login-text');
         if (nameSpan) {
             let displayName = 'Profile';
             if (userData && userData.fullName) {
@@ -377,6 +364,13 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
             }
             nameSpan.textContent = displayName;
         }
+    }
+
+    if (logoutOption) {
+        logoutOption.onclick = (e) => {
+            e.preventDefault();
+            logout();
+        };
     }
 
     // Update the credit counter if it exists
@@ -424,6 +418,21 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
     if (bulkFillContainer) {
         bulkFillContainer.classList.remove('hidden');
     }
+
+    // Auto-open profile modal if requested via URL
+    if (window.location.search.includes('openProfile=true')) {
+        const modal = document.getElementById('profileModal');
+        if (modal && modal.firstElementChild) {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.remove('scale-95');
+            modal.firstElementChild.classList.add('scale-100');
+
+            // Clean up the URL
+            const url = new URL(window.location);
+            url.searchParams.delete('openProfile');
+            window.history.replaceState({}, document.title, url);
+        }
+    }
 }
 
 /**
@@ -454,3 +463,8 @@ window.getFirebaseToken = () => {
         });
     });
 };
+
+/**
+ * Expose logout function globally for HTML onclick handlers
+ */
+window.logout = logout;

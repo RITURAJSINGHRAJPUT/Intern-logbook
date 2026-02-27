@@ -410,11 +410,11 @@ class FieldManager {
 
         // Default dimensions
         let width = 150;
-        let height = 20;
+        let height = 18;
 
         if (this.addingFieldType === 'checkbox') {
-            width = 20;
-            height = 20;
+            width = 18;
+            height = 18;
         } else if (this.addingFieldType === 'signature') {
             width = 200;
             height = 50;
@@ -423,10 +423,10 @@ class FieldManager {
             height = 120;
         } else if (this.addingFieldType === 'day') {
             width = 120;
-            height = 24;
+            height = 20;
         } else if (this.addingFieldType === 'time') {
             width = 100;
-            height = 24;
+            height = 20;
         }
 
         const newField = {

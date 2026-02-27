@@ -72,31 +72,54 @@
 
     <!-- Header matching global app styling -->
     <nav
-        class="w-full py-2 px-4 sm:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-20 border-b border-friendly-navy/10">
-        <a href="/app.html" class="flex items-center gap-3">
-            <div class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
+        class="w-full py-2 px-3 sm:px-8 max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-4 relative z-20 border-b border-friendly-navy/10">
+        <a href="/app.html" class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div
+                class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
                 <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
                     class="w-full h-full object-cover rounded-lg">
             </div>
-            <span class="font-bold text-xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
+            <span class="hidden sm:block font-bold text-xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
         </a>
-        <div class="flex items-center gap-4 sm:gap-6">
+        <div class="flex items-center gap-2 sm:gap-4 justify-end">
             <a href="/Buy-Credits.html"
-                class="hidden font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-3 py-1.5 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50 text-sm">
-                <span class="material-symbols-outlined text-[18px]">generating_tokens</span>
-                <span class="whitespace-nowrap">Buy Credits</span>
-                <span id="creditCounter" class="bg-white/50 px-1.5 py-0.5 rounded-md text-xs ml-1 hidden">...</span>
+                class="hidden font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-2.5 py-1.5 sm:px-3 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50 text-xs sm:text-sm">
+                <span class="material-symbols-outlined text-[16px] sm:text-[18px]">generating_tokens</span>
+                <span class="whitespace-nowrap hidden sm:inline">Buy Credits</span>
+                <span id="creditCounter"
+                    class="bg-white/50 px-1.5 py-0.5 rounded-md text-[10px] sm:text-xs ml-0.5 sm:ml-1 hidden">...</span>
             </a>
-            <!-- <a href="/profile.html" id="profileBtn"
-                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-3 py-1.5 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-sm">
-                <span class="material-symbols-outlined text-[18px]">account_circle</span>
-                <span class="whitespace-nowrap">Profile</span>
-            </a> -->
-            <a href="#" id="loginBtn"
-                class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-coral shadow-[2px_2px_0px_0px_#e2e8f0] px-3 py-1.5 rounded-xl text-slate-600 hover:text-vibrant-coral hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#FF7043] transition-all text-sm">
-                <span class="material-symbols-outlined text-[18px]">logout</span>
-                <span class="whitespace-nowrap login-text">Loading...</span>
-            </a>
+            <!-- Profile Dropdown Menu -->
+            <div class="relative group" id="profileDropdownContainer">
+                <button id="profileMenuBtn"
+                    class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-2.5 py-1.5 sm:px-3 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-xs sm:text-sm">
+                    <span class="material-symbols-outlined text-[16px] sm:text-[18px]">account_circle</span>
+                    <span class="whitespace-nowrap login-text hidden sm:inline">Profile</span>
+                    <span
+                        class="material-symbols-outlined text-[16px] transition-transform group-hover:rotate-180">expand_more</span>
+                </button>
+
+                <!-- Dropdown Content -->
+                <div
+                    class="absolute right-0 top-full mt-2 w-48 bg-white border-2 border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+                    <div class="flex flex-col py-1">
+                        <button id="viewProfileOption"
+                            onclick="if(window.location.pathname.includes('app.html')){ document.getElementById('profileModal').classList.remove('opacity-0','pointer-events-none');document.getElementById('profileModal').firstElementChild.classList.remove('scale-95');document.getElementById('profileModal').firstElementChild.classList.add('scale-100'); } else { window.location.href='/app.html?openProfile=true' }"
+                            class="flex items-center gap-2 px-4 py-2 hover:bg-soft-turquoise transition-colors text-left text-sm font-bold text-slate-700 w-full group/item">
+                            <span
+                                class="material-symbols-outlined text-[18px] text-vibrant-turquoise group-hover/item:scale-110 transition-transform">person</span>
+                            View Profile
+                        </button>
+                        <div class="h-px bg-slate-100 my-1 mx-2"></div>
+                        <button id="logoutOption" onclick="window.logout()"
+                            class="flex items-center gap-2 px-4 py-2 hover:bg-soft-coral transition-colors text-left text-sm font-bold text-slate-700 w-full group/item">
+                            <span
+                                class="material-symbols-outlined text-[18px] text-vibrant-coral group-hover/item:scale-110 transition-transform">logout</span>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
             <a href="/admin"
                 class="bg-sunny-yellow text-warm-yellow border-2 border-warm-yellow px-4 py-1.5 rounded-full font-bold shadow-[4px_4px_0px_0px_#FBC02D] hover:translate-y-1 hover:shadow-none transition-all hidden text-sm"
                 id="adminBtn">
@@ -107,6 +130,15 @@
 
     <!-- Main Content -->
     <main class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative mt-10 md:mt-2 gap-8 w-full">
+        <!-- Back Button -->
+        <div class="w-full max-w-[850px] mx-auto flex justify-start -mb-4 relative z-10 w-full">
+            <button onclick="window.history.back()"
+                class="flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-3 py-1.5 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-sm font-bold w-max">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Go Back</span>
+            </button>
+        </div>
+
         <!-- Main Card Container -->
         <div
             class="max-w-[850px] w-full bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col lg:flex-row border border-slate-100 min-h-[500px]">
