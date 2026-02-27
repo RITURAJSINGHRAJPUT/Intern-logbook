@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon_io/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon_io/favicon.ico">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Contact Us | Click2PDF</title>
+    <meta name="description"
+        content="Get in touch with the Click2PDF team. We're here to help you with your PDF tools, form filling, and document magic!">
+
+    <!-- Canonical Tag -->
+    <link rel="canonical" href="https://click2pdf.in/contact.html" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00BCD4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon_io/apple-touch-icon.png">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFEB3B',
+                        'warm-yellow': '#FBC02D',
+                        'friendly-navy': '#263238',
+                        'pastel-yellow-bg': '#FFF9C4',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #FFF9C4;
+            color: #263238;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 48;
+            vertical-align: middle;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .button-tactile {
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.15);
+            transition: all 0.1s ease;
+        }
+
+        .button-tactile:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: white;
+            border-radius: 16px;
+            border-left: 6px solid #00BCD4;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            color: #37474F;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-vibrant-turquoise selection:text-white">
+    <!-- Navbar -->
+    <nav class="w-full py-4 px-6 md:px-10 max-w-7xl mx-auto flex justify-between items-center relative z-20 shrink-0">
+        <a href="/" class="flex items-center gap-2 group cursor-pointer">
+            <div
+                class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl rotate-3 shadow-lg group-hover:rotate-12 transition-transform">
+                <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                    class="w-full h-full object-cover rounded-lg">
+            </div>
+            <span class="font-bold text-lg md:text-2xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
+        </a>
+        <div class="flex flex-wrap items-center gap-2 md:gap-4 justify-end">
+            <a href="/index.html#pricing-section"
+                class="hidden sm:block font-bold text-friendly-navy/70 hover:text-vibrant-coral transition-colors px-4 py-2">Pricing</a>
+            <a href="/login.html"
+                class="font-black bg-white/50 border-2 border-vibrant-turquoise text-vibrant-turquoise px-4 py-2 md:px-6 md:py-2.5 rounded-full hover:bg-vibrant-turquoise hover:text-white transition-all shadow-sm button-tactile text-sm md:text-base">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center w-full px-4 py-12 relative z-10 w-full max-w-7xl mx-auto">
+
+        <!-- Decorative bg elements -->
+        <div
+            class="absolute top-[10%] left-[5%] w-64 h-64 bg-vibrant-turquoise/20 rounded-full blur-3xl -z-10 animate-pulse">
+        </div>
+        <div class="absolute bottom-[20%] right-[10%] w-72 h-72 bg-vibrant-coral/20 rounded-full blur-3xl -z-10 animate-pulse"
+            style="animation-delay: 1s;"></div>
+
+        <div
+            class="w-full max-w-4xl flex flex-col md:flex-row gap-8 items-center bg-white/40 rounded-[2.5rem] p-4 md:p-8 backdrop-blur-sm border-2 border-white">
+
+            <!-- Info Side -->
+            <div class="w-full md:w-1/2 p-6 md:p-8">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-vibrant-turquoise/10 text-vibrant-turquoise mb-6 transform -rotate-6">
+                    <span class="material-symbols-outlined text-4xl">waving_hand</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black text-friendly-navy mb-4 leading-tight">
+                    Let's Chat!
+                </h1>
+                <p class="text-friendly-navy/70 font-bold mb-8 text-lg">
+                    Have a question, feedback, or need help with a stubborn PDF? Drop us a line and we'll get back to
+                    you with lightning speed. ⚡
+                </p>
+
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-soft-coral/30 text-vibrant-coral flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">mail</span>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-friendly-navy/90">Email Us</h3>
+                            <a href="mailto:support@click2pdf.in"
+                                class="font-bold text-vibrant-turquoise hover:text-vibrant-coral transition-colors">support@click2pdf.in</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Side -->
+            <div class="w-full md:w-1/2">
+                <form id="contactForm"
+                    class="glass-card rounded-[2rem] p-6 md:p-8 flex flex-col gap-5 relative overflow-hidden">
+                    <h2 class="text-2xl font-black text-friendly-navy mb-2">Send a Message</h2>
+
+                    <div class="flex flex-col gap-1.5">
+                        <label for="name" class="font-bold text-sm text-friendly-navy/70 ml-2">Your Name</label>
+                        <input type="text" id="name" required placeholder="PDF Wizard"
+                            class="w-full bg-white/80 border-2 border-transparent focus:border-vibrant-turquoise rounded-xl px-4 py-3 font-bold text-friendly-navy placeholder-friendly-navy/30 transition-colors shadow-inner">
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <label for="email" class="font-bold text-sm text-friendly-navy/70 ml-2">Email Address</label>
+                        <input type="email" id="email" required placeholder="wizard@magic.com"
+                            class="w-full bg-white/80 border-2 border-transparent focus:border-vibrant-turquoise rounded-xl px-4 py-3 font-bold text-friendly-navy placeholder-friendly-navy/30 transition-colors shadow-inner">
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <label for="message" class="font-bold text-sm text-friendly-navy/70 ml-2">Message</label>
+                        <textarea id="message" required rows="4" placeholder="How can we help you today?"
+                            class="w-full bg-white/80 border-2 border-transparent focus:border-vibrant-turquoise rounded-xl px-4 py-3 font-bold text-friendly-navy placeholder-friendly-navy/30 transition-colors shadow-inner resize-none"></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="mt-2 w-full bg-vibrant-turquoise text-white font-black text-lg py-3.5 rounded-xl button-tactile flex items-center justify-center gap-2 group hover:bg-[#00acc1]">
+                        <span>Send Message</span>
+                        <span
+                            class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                        class="w-full h-full object-cover rounded-lg">
+                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">Click2PDF</span>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70">
+                <a class="hover:text-vibrant-coral transition-colors" href="/privacy.html">Privacy Bits</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/terms.html">House Rules</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/contact.html">Say Hello!</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="#">Twitter (X)</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
+                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
+                    </div>
+                    <span>Servers Happy</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast">Message sent! We'll get back to you soon.</div>
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const toast = document.getElementById('toast');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Show toast
+            toast.classList.add('show');
+            form.reset();
+
+            // Hide toast after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+
+</html>

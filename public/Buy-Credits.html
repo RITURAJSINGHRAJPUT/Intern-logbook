@@ -72,7 +72,7 @@
 
     <!-- Header matching global app styling -->
     <nav
-        class="w-full py-2 px-3 sm:px-8 max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-4 relative z-20 border-b border-friendly-navy/10">
+        class="w-full py-2 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-4 relative z-20 border-b border-friendly-navy/10">
         <a href="/app.html" class="flex items-center gap-2 sm:gap-3 shrink-0">
             <div
                 class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl rotate-3 shadow-lg">
@@ -83,7 +83,7 @@
         </a>
         <div class="flex items-center gap-2 sm:gap-4 justify-end">
             <a href="/Buy-Credits.html"
-                class="hidden font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-2.5 py-1.5 sm:px-3 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50 text-xs sm:text-sm">
+                class="hidden font-bold items-center gap-1.5 bg-gradient-to-r from-warm-yellow to-[#FFAB91] px-2.5 py-1.5 sm:px-3 md:px-3 lg:py-1.5 rounded-xl text-slate-800 shadow-[0_4px_10px_rgba(251,192,45,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(251,192,45,0.4)] transition-all border-2 border-white/50 text-xs sm:text-sm">
                 <span class="material-symbols-outlined text-[16px] sm:text-[18px]">generating_tokens</span>
                 <span class="whitespace-nowrap hidden sm:inline">Buy Credits</span>
                 <span id="creditCounter"
@@ -92,7 +92,7 @@
             <!-- Profile Dropdown Menu -->
             <div class="relative group" id="profileDropdownContainer">
                 <button id="profileMenuBtn"
-                    class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-2.5 py-1.5 sm:px-3 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-xs sm:text-sm">
+                    class="font-bold flex items-center gap-1.5 bg-white border-2 border-slate-100 hover:border-vibrant-turquoise shadow-[2px_2px_0px_0px_#e2e8f0] px-2.5 py-1.5 sm:px-3 md:px-3 lg:py-1.5 rounded-xl text-slate-600 hover:text-vibrant-turquoise hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#4DD0E1] transition-all text-xs sm:text-sm">
                     <span class="material-symbols-outlined text-[16px] sm:text-[18px]">account_circle</span>
                     <span class="whitespace-nowrap login-text hidden sm:inline">Profile</span>
                     <span
@@ -185,7 +185,7 @@
                         <!-- Actual QR Container -->
                         <div
                             class="bg-white rounded-[1.25rem] p-3 shadow-2xl relative z-10 w-[200px] h-[200px] md:w-[260px] md:h-[260px] transform hover:scale-[1.02] transition-transform duration-500">
-                            <img src="/Assets/QR%20Code.jpeg" alt="Payment QR Code"
+                            <img src="/assets/qr.jpeg" alt="Payment QR Code"
                                 class="w-full h-full object-contain rounded-xl pointer-events-none" />
                         </div>
                     </div>
@@ -315,8 +315,8 @@
 
         <!-- History Section -->
         <div
-            class="max-w-[1000px] w-full bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] p-8 md:p-10 border-[4px] border-slate-100">
-            <h3 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2">
+            class="max-w-[1000px] w-full bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,0,0,0.06)] p-6 md:p-8 border-[4px] border-slate-100">
+            <h3 class="text-2xl font-black text-slate-800 mb-5 flex items-center gap-2">
                 <span class="material-symbols-outlined text-vibrant-turquoise">history</span>
                 Payment History
             </h3>
@@ -336,10 +336,10 @@
                         <thead>
                             <tr
                                 class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                                <th class="p-4 rounded-tl-xl whitespace-nowrap">Date</th>
-                                <th class="p-4 whitespace-nowrap">Transaction ID</th>
-                                <th class="p-4 whitespace-nowrap text-center">Credits Gained</th>
-                                <th class="p-4 rounded-tr-xl text-right whitespace-nowrap">Status</th>
+                                <th class="py-3 px-4 rounded-tl-xl whitespace-nowrap">Date</th>
+                                <th class="py-3 px-4 whitespace-nowrap">Transaction ID</th>
+                                <th class="py-3 px-4 whitespace-nowrap text-center">Credits Gained</th>
+                                <th class="py-3 px-4 rounded-tr-xl text-right whitespace-nowrap">Status</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody" class="text-sm font-semibold text-slate-600">
@@ -349,7 +349,7 @@
                 </div>
 
                 <div id="paginationControls"
-                    class="hidden w-full flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50 rounded-b-xl border-x">
+                    class="hidden w-full flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50 rounded-b-xl border-x">
                     <span id="pageInfo" class="text-xs font-bold text-slate-500">Showing -- to -- of -- entries</span>
                     <div class="flex items-center gap-2">
                         <button id="prevPageBtn"
@@ -540,10 +540,10 @@
 
                     return `
                         <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                            <td class="p-4 whitespace-nowrap text-slate-500 text-xs">${date}</td>
-                            <td class="p-4 font-bold text-slate-700 font-mono text-xs">${payment.transactionId}</td>
-                            <td class="p-4 text-center">${creditsHtml}</td>
-                            <td class="p-4 text-right">${statusBadge}</td>
+                            <td class="py-2.5 px-4 whitespace-nowrap text-slate-500 text-xs">${date}</td>
+                            <td class="py-2.5 px-4 font-bold text-slate-700 font-mono text-xs">${payment.transactionId}</td>
+                            <td class="py-2.5 px-4 text-center">${creditsHtml}</td>
+                            <td class="py-2.5 px-4 text-right">${statusBadge}</td>
                         </tr>
                     `;
                 }).join('');

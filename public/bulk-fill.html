@@ -426,6 +426,37 @@
         </div>
     </footer>
 
+    <!-- Generation Confirmation Modal -->
+    <div id="generationConfirmModal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div
+            class="bg-white rounded-[2rem] w-full max-w-sm shadow-2xl border-4 border-white overflow-hidden transform scale-95 transition-transform duration-300 relative">
+            <div class="p-8 pb-6 flex flex-col items-center text-center">
+                <div
+                    class="w-20 h-20 bg-vibrant-turquoise/20 rounded-[1.5rem] flex items-center justify-center mb-4 rotate-3">
+                    <span class="material-symbols-outlined text-vibrant-turquoise text-5xl">auto_awesome</span>
+                </div>
+                <h3 class="text-3xl font-black text-slate-800 mb-2">Ready?</h3>
+                <h4 class="text-lg font-bold text-slate-600 mb-4 tracking-tight leading-snug">
+                    You are about to generate <span id="confirmPdfCount"
+                        class="text-vibrant-turquoise font-black">0</span> PDFs. This will consume <span
+                        id="confirmCreditCount" class="text-vibrant-coral font-black">0</span> credits.
+                </h4>
+            </div>
+            <div class="p-6 bg-slate-50/80 border-t-2 border-slate-100 flex flex-col gap-3">
+                <button id="confirmGenerateBtn"
+                    class="w-full bg-vibrant-turquoise text-white px-6 py-3.5 rounded-2xl font-black text-lg shadow-[0_4px_0_0_#00ACC1] hover:translate-y-1 hover:shadow-[0_2px_0_0_#00ACC1] active:translate-y-2 active:shadow-none transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-xl">rocket_launch</span>
+                    Confirm & Generate
+                </button>
+                <button id="cancelGenerateBtn"
+                    class="w-full bg-white border-2 border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300 px-6 py-3 rounded-2xl font-bold transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Insufficient Credits Modal -->
     <div id="creditsModal"
         class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">

@@ -43,6 +43,13 @@ const modalCurrentCredits = document.getElementById('modalCurrentCredits');
 const closeCreditsModalBtn = document.getElementById('closeCreditsModalBtn');
 const buyCreditsBtn = document.getElementById('buyCreditsBtn');
 
+// Confirm Generation Modal Elements
+const generationConfirmModal = document.getElementById('generationConfirmModal');
+const confirmPdfCount = document.getElementById('confirmPdfCount');
+const confirmCreditCount = document.getElementById('confirmCreditCount');
+const confirmGenerateBtn = document.getElementById('confirmGenerateBtn');
+const cancelGenerateBtn = document.getElementById('cancelGenerateBtn');
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     // Check auth first
@@ -193,6 +200,23 @@ function setupEventListeners() {
     if (buyCreditsBtn) {
         buyCreditsBtn.addEventListener('click', () => {
             window.location.href = '/Buy-Credits.html';
+        });
+    }
+
+    if (cancelGenerateBtn) {
+        cancelGenerateBtn.addEventListener('click', () => {
+            generationConfirmModal.classList.add('opacity-0', 'pointer-events-none');
+            generationConfirmModal.firstElementChild.classList.remove('scale-100');
+            generationConfirmModal.firstElementChild.classList.add('scale-95');
+        });
+    }
+
+    if (confirmGenerateBtn) {
+        confirmGenerateBtn.addEventListener('click', () => {
+            generationConfirmModal.classList.add('opacity-0', 'pointer-events-none');
+            generationConfirmModal.firstElementChild.classList.remove('scale-100');
+            generationConfirmModal.firstElementChild.classList.add('scale-95');
+            executeGeneration();
         });
     }
 }
@@ -480,7 +504,7 @@ async function generatePreview() {
 }
 
 /**
- * Start bulk generation
+ * Start bulk generation - shows confirmation modal
  */
 async function startGeneration() {
     if (!selectedTemplate || uploadedData.length === 0) {
@@ -507,6 +531,23 @@ async function startGeneration() {
         return;
     }
 
+    // Show confirmation modal
+    if (confirmPdfCount && confirmCreditCount && generationConfirmModal) {
+        confirmPdfCount.textContent = requiredCredits;
+        confirmCreditCount.textContent = requiredCredits; // 1 credit = 1 PDF in this model
+        generationConfirmModal.classList.remove('opacity-0', 'pointer-events-none');
+        generationConfirmModal.firstElementChild.classList.remove('scale-95');
+        generationConfirmModal.firstElementChild.classList.add('scale-100');
+    } else {
+        // Fallback if modal HTML isn't there
+        executeGeneration();
+    }
+}
+
+/**
+ * Execute bulk generation (API call)
+ */
+async function executeGeneration() {
     generateBtn.disabled = true;
     downloadBtn.classList.add('hidden');
     progressContainer.classList.remove('hidden');
