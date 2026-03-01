@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon_io/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon_io/favicon.ico">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Refund Policy – Click2PDF</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FF5722">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-turquoise': '#B2EBF2',
+                        'vibrant-turquoise': '#00BCD4',
+                        'soft-coral': '#FFCCBC',
+                        'vibrant-coral': '#FF5722',
+                        'sunny-yellow': '#FFF9C4',
+                        'warm-yellow': '#FFD54F',
+                        'friendly-navy': '#37474F',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #FFFDF5;
+            color: #37474F;
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="antialiased overflow-x-hidden">
+
+    <nav
+        class="py-2 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50 border-b border-friendly-navy/10 w-full">
+        <a href="/" class="flex items-center gap-2 group cursor-pointer">
+            <div
+                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform">
+                <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                    class="w-full h-full object-cover rounded-lg">
+            </div>
+            <span class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
+        </a>
+        <div class="flex items-center gap-3 md:gap-6">
+            <a class="bg-vibrant-coral text-white px-4 py-1.5 md:px-5 md:py-2 rounded-full font-extrabold text-sm shadow-md hover:-translate-y-1 transition-transform"
+                href="/login.html">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 py-12 md:py-16">
+        <div class="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-slate-100">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-friendly-navy mb-6 text-center">Refund Policy</h1>
+            <p class="text-slate-500 font-bold text-center mb-10">Last updated: <span id="currentDate"></span></p>
+
+            <div class="prose prose-slate max-w-none text-friendly-navy/80 font-medium space-y-6">
+                <p>Because Click2PDF offers digital services and credits, we issue refunds based strictly on the
+                    following conditions.</p>
+
+                <h3 class="text-xl font-bold text-friendly-navy mt-8 mb-3">1. Eligibility for Refunds</h3>
+                <p>Refunds are only granted under the following circumstances:</p>
+                <ul class="list-disc pl-6 space-y-2 mt-2">
+                    <li>You made a duplicate purchase by mistake, and the duplicate credits have not been used.</li>
+                    <li>There is a major technical issue on our end that prevents you from using the service, and our
+                        support team cannot resolve it within a reasonable timeframe.</li>
+                    <li>A subscription charge was made in error, and you notify us within 3 days of the charge date
+                        without using any features during that window.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-friendly-navy mt-8 mb-3">2. Non-Refundable Situations</h3>
+                <p>We do not issue refunds if:</p>
+                <ul class="list-disc pl-6 space-y-2 mt-2">
+                    <li>You simply changed your mind after making a purchase.</li>
+                    <li>You have partially or fully consumed the credits purchased.</li>
+                    <li>You encounter a document incompatibility that falls outside our supported formats.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-friendly-navy mt-8 mb-3">3. How to Request a Refund</h3>
+                <p>To request a refund, please email our support team at <a href="mailto:support@click2pdf.in"
+                        class="text-vibrant-coral hover:underline">support@click2pdf.in</a>. Include your account email,
+                    order number, and a detailed explanation of why you are requesting a refund. We review requests
+                    within 3-5 business days.</p>
+            </div>
+
+            <div class="mt-12 text-center">
+                <a href="/"
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-soft-coral/30 text-vibrant-coral rounded-xl font-bold hover:bg-vibrant-coral hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
+                    <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
+                        class="w-full h-full object-cover rounded-lg">
+                </div>
+                <span class="font-bold text-sm tracking-tight text-friendly-navy">Click2PDF</span>
+            </div>
+
+            <div
+                class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70 uppercase tracking-wide">
+                <a class="hover:text-vibrant-coral transition-colors" href="/privacy-policy.html">Privacy</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/return-policy.html">Returns</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/refund-policy.html">Refunds</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/disclaimer.html">Disclaimer</a>
+                <a class="hover:text-vibrant-coral transition-colors" href="/contact.html">Contact</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
+                <p>© 2026. Sparsh Digital Solutions.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    </script>
+</body>
+
+</html>

@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isAdminMode && !templateFile) {
         showToast('No template specified to edit.', 'error');
         setTimeout(() => {
-            window.location.href = '/templates.html';
+            window.location.href = '/master/templates.html';
         }, 2000);
         return;
     }
@@ -937,7 +937,7 @@ async function saveTemplateToServer(fields, filename, isAdminMode) {
 
         if (isAdminMode) {
             setTimeout(() => {
-                window.location.href = '/templates.html';
+                window.location.href = '/master/templates.html';
             }, 2000);
         }
     } catch (error) {

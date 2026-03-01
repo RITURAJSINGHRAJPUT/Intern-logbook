@@ -16,7 +16,7 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="/css/admin.css">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00BCD4">
@@ -177,7 +177,7 @@
 <body class="antialiased overflow-x-hidden min-h-screen">
     <!-- Auth Check -->
     <script type="module">
-        import { checkAuth, logout } from './js/auth.js';
+        import { checkAuth, logout } from '/js/auth.js';
         checkAuth(true); // Redirect to login if not authenticated
 
         // Define global admin logout for the header
@@ -205,27 +205,27 @@
 
                 <!-- Navigation Links -->
                 <nav class="hidden lg:flex items-center gap-2">
-                    <a href="/admin-dashboard.html"
+                    <a href="/master/admin-dashboard.html"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl text-vibrant-turquoise bg-soft-turquoise/40 font-bold border border-vibrant-turquoise/20 shadow-sm text-sm">
                         <span class="material-symbols-outlined text-[18px]">dashboard</span>
                         Dashboard
                     </a>
-                    <a href="/user_management.html"
+                    <a href="/master/user_management.html"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
                         <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
                         User Management
                     </a>
-                    <a href="/templates.html"
+                    <a href="/master/templates.html"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm">
                         <span class="material-symbols-outlined text-[18px]">file_copy</span>
                         Templates
                     </a>
-                    <a href="/bulkfill_credits.html"
+                    <a href="/master/bulkfill_credits.html"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
                         <span class="material-symbols-outlined text-[18px]">toll</span>
                         Credits
                     </a>
-                    <a href="/verify_payments.html"
+                    <a href="/master/verify_payments.html"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-soft-turquoise/30 hover:text-vibrant-turquoise transition-all text-sm border border-transparent shadow-none">
                         <span class="material-symbols-outlined text-[18px]">payments</span>
                         Verify Payments
@@ -260,23 +260,23 @@
         <div class="mobile-nav-drawer lg:hidden bg-white border-b border-slate-200 shadow-md sticky top-16 z-30"
             id="mobileNavDrawer">
             <nav class="flex flex-col p-3 gap-1">
-                <a href="/admin-dashboard.html" class="mobile-nav-link active-link">
+                <a href="/master/admin-dashboard.html" class="mobile-nav-link active-link">
                     <span class="material-symbols-outlined text-[18px]">dashboard</span>
                     Dashboard
                 </a>
-                <a href="/user_management.html" class="mobile-nav-link">
+                <a href="/master/user_management.html" class="mobile-nav-link">
                     <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
                     User Management
                 </a>
-                <a href="/templates.html" class="mobile-nav-link">
+                <a href="/master/templates.html" class="mobile-nav-link">
                     <span class="material-symbols-outlined text-[18px]">file_copy</span>
                     Templates
                 </a>
-                <a href="/bulkfill_credits.html" class="mobile-nav-link">
+                <a href="/master/bulkfill_credits.html" class="mobile-nav-link">
                     <span class="material-symbols-outlined text-[18px]">toll</span>
                     Credits
                 </a>
-                <a href="/verify_payments.html" class="mobile-nav-link">
+                <a href="/master/verify_payments.html" class="mobile-nav-link">
                     <span class="material-symbols-outlined text-[18px]">payments</span>
                     Verify Payments
                 </a>
@@ -471,7 +471,7 @@
     </main>
 
     <!-- App JS -->
-    <script src="js/app.js"></script>
+    <script src="/js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');

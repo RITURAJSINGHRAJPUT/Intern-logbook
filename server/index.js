@@ -57,7 +57,7 @@ app.get('/editor', verifySessionCookie, (req, res) => {
 
 // Serve admin panel for authenticated users
 app.get('/admin', verifySessionCookie, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/user_management.html'));
+    res.sendFile(path.join(__dirname, '../public/master/user_management.html'));
 });
 
 // Serve robots.txt
@@ -73,7 +73,11 @@ app.get('/sitemap.xml', (req, res) => {
     const urls = [
         '/',
         '/login.html',
-        '/Buy-Credits.html'
+        '/Buy-Credits.html',
+        '/privacy-policy.html',
+        '/return-policy.html',
+        '/refund-policy.html',
+        '/disclaimer.html'
     ];
 
     // Add other relevant public pages as needed

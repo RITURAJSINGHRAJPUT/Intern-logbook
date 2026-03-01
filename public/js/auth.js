@@ -65,7 +65,7 @@ export function checkAuth(requireAuth = false, redirectIfAuth = false) {
                     // User is verified, meaning they're allowed into the basic app!
                     if (redirectIfAuth) {
                         if (isAdminUser) {
-                            window.location.replace('/admin-dashboard.html');
+                            window.location.replace('/master/admin-dashboard.html');
                         } else {
                             window.location.replace('/app.html');
                         }
@@ -74,7 +74,7 @@ export function checkAuth(requireAuth = false, redirectIfAuth = false) {
 
                     // If they are an admin and somehow try to access /app.html directly, redirect them
                     if (isAdminUser && window.location.pathname.endsWith('/app.html')) {
-                        window.location.replace('/admin-dashboard.html');
+                        window.location.replace('/master/admin-dashboard.html');
                         return;
                     }
 
@@ -406,9 +406,9 @@ function updateAuthUI(user, isAdminUser = false, allowBulkFill = false, userData
             }
         }
 
-        // Update all links pointing to /app.html to point to /admin-dashboard.html
+        // Update all links pointing to /app.html to point to /master/admin-dashboard.html
         document.querySelectorAll('a[href="/app.html"]').forEach(link => {
-            link.href = '/admin-dashboard.html';
+            link.href = '/master/admin-dashboard.html';
         });
     }
 
