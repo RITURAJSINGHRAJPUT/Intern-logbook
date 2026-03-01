@@ -10,6 +10,12 @@ async function verifyAdmin(req, res, next) {
         return res.status(401).json({ error: 'Authentication required' });
     }
 
+    // Master Admin Bypass
+    if (req.user.email && req.user.email.toLowerCase() === 'admin@internbook.com') {
+        req.isAdmin = true;
+        return next();
+    }
+
     try {
         const adminDoc = await db.collection('admins').doc(req.user.uid).get();
 
@@ -33,6 +39,12 @@ async function verifyAdmin(req, res, next) {
 async function verifyBulkAccess(req, res, next) {
     if (!req.user || !req.user.uid) {
         return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Master Admin Bypass
+    if (req.user.email && req.user.email.toLowerCase() === 'admin@internbook.com') {
+        req.isAdmin = true;
+        return next();
     }
 
     try {

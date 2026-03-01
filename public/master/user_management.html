@@ -360,8 +360,9 @@
                 <span class="font-bold text-sm tracking-tight text-friendly-navy">Click2PDF</span>
             </div>
 
-            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70 uppercase tracking-wide">
-                 <a class="hover:text-vibrant-coral transition-colors" href="/privacy-policy.html">Privacy</a>
+            <div
+                class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70 uppercase tracking-wide">
+                <a class="hover:text-vibrant-coral transition-colors" href="/privacy-policy.html">Privacy</a>
                 <a class="hover:text-vibrant-coral transition-colors" href="/return-policy.html">Returns</a>
                 <a class="hover:text-vibrant-coral transition-colors" href="/refund-policy.html">Refunds</a>
                 <a class="hover:text-vibrant-coral transition-colors" href="/disclaimer.html">Disclaimer</a>
@@ -472,7 +473,7 @@
             if (drawerLogout) {
                 drawerLogout.addEventListener('click', (e) => {
                     e.preventDefault();
-                    import('./js/auth.js').then(m => m.logout());
+                    import('/js/auth.js').then(m => m.logout());
                 });
             }
             // Dropdown logout
@@ -480,7 +481,7 @@
             if (dropdownLogout) {
                 dropdownLogout.addEventListener('click', (e) => {
                     e.preventDefault();
-                    import('./js/auth.js').then(m => m.logout());
+                    import('/js/auth.js').then(m => m.logout());
                 });
             }
         })();

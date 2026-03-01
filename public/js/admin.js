@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const actions = user.approved
                 ? `
-                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-turquoise hover:bg-soft-turquoise/30 transition-colors" title="View" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates || []).replace(/"/g, '&quot;')})">
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-turquoise hover:bg-soft-turquoise/30 transition-colors" title="View/Assign" onclick="adminActions.assignTemplates('${user.uid}', ${JSON.stringify(user.allowedTemplates || []).replace(/"/g, '&quot;')})">
                         <span class="material-symbols-outlined text-[18px]">assignment</span>
                     </button>
                     <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-warm-yellow hover:bg-sunny-yellow/30 transition-colors" title="Toggle Bulk Fill" onclick="adminActions.toggleBulkFill('${user.uid}')">
@@ -178,11 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-coral hover:bg-soft-coral/30 transition-colors" title="Deactivate" onclick="adminActions.toggleActive('${user.uid}')">
                         <span class="material-symbols-outlined text-[18px]">block</span>
                     </button>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors" title="Delete User" onclick="adminActions.deleteUser('${user.uid}')">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
                   `
                 : `
                     <button class="px-3 py-1 rounded-lg text-[11px] font-bold bg-vibrant-turquoise text-white hover:bg-[#00acc1] shadow-sm transition-colors tactile-sm" onclick="adminActions.approve('${user.uid}')">Approve</button>
-                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-vibrant-coral hover:bg-soft-coral/30 transition-colors ml-1" title="Reject" onclick="adminActions.reject('${user.uid}')">
-                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    <button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors ml-1" title="Delete/Reject" onclick="adminActions.deleteUser('${user.uid}')">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                   `;
 
@@ -371,31 +374,40 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const headers = await getAuthHeaders();
                 const res = await fetch(`/api/admin/users/${uid}/approve`, { method: 'POST', headers });
-                if (!res.ok) throw new Error('Failed');
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || `Error ${res.status}`);
+                }
                 await Promise.all([loadStats(), loadUsers()]);
                 showToast('User approved');
-            } catch (error) { showToast('Failed to approve', 'error'); }
+            } catch (error) { showToast(`Failed to approve: ${error.message}`, 'error'); }
         },
 
-        reject: async (uid) => {
+        deleteUser: async (uid) => {
             try {
-                if (!confirm("Are you sure you want to reject/delete this user?")) return;
+                if (!confirm("Are you sure you want to PERMANENTLY delete this user? This cannot be undone.")) return;
                 const headers = await getAuthHeaders();
-                const res = await fetch(`/api/admin/users/${uid}/reject`, { method: 'POST', headers });
-                if (!res.ok) throw new Error('Failed');
+                const res = await fetch(`/api/admin/users/${uid}`, { method: 'DELETE', headers });
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || `Error ${res.status}`);
+                }
                 await Promise.all([loadStats(), loadUsers()]);
-                showToast('User rejected');
-            } catch (error) { showToast('Failed to reject', 'error'); }
+                showToast('User deleted permanently');
+            } catch (error) { showToast(`Failed to delete: ${error.message}`, 'error'); }
         },
 
         toggleActive: async (uid) => {
             try {
                 const headers = await getAuthHeaders();
                 const res = await fetch(`/api/admin/users/${uid}/toggle-active`, { method: 'POST', headers });
-                if (!res.ok) throw new Error('Failed');
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || `Error ${res.status}`);
+                }
                 await loadUsers();
                 showToast('User status updated');
-            } catch (error) { showToast('Failed to update user', 'error'); }
+            } catch (error) { showToast(`Failed to update user: ${error.message}`, 'error'); }
         },
 
         assignTemplates: (uid, currentTemplates) => {
@@ -406,10 +418,13 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const headers = await getAuthHeaders();
                 const res = await fetch(`/api/admin/users/${uid}/toggle-bulk`, { method: 'POST', headers });
-                if (!res.ok) throw new Error('Failed');
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || `Error ${res.status}`);
+                }
                 await loadUsers();
                 showToast('Bulk Fill access updated');
-            } catch (error) { showToast('Failed to update Bulk Fill', 'error'); }
+            } catch (error) { showToast(`Failed to update Bulk Fill: ${error.message}`, 'error'); }
         },
 
         goToPage: (page) => {

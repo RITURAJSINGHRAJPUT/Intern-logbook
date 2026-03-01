@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { db } = require('../config/firebase');
+const { db, auth } = require('../config/firebase');
 const { verifyToken } = require('../middleware/auth');
 const { verifyAdmin } = require('../middleware/adminAuth');
 const fs = require('fs');
@@ -124,19 +124,40 @@ router.post('/users/:uid/approve', async (req, res) => {
 });
 
 /**
+ * DELETE /api/admin/users/:uid
+ */
+router.delete('/users/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+
+        // 1. Delete from Firebase Authentication
+        await auth.deleteUser(uid).catch(err => {
+            console.warn(`Auth deletion failed for ${uid} (maybe already deleted):`, err.message);
+        });
+
+        // 2. Delete the user document from Firestore
+        await db.collection('users').doc(uid).delete();
+
+        console.log(`🗑️ User ${uid} permanently deleted by admin ${req.user.uid}`);
+        res.json({ success: true, message: 'User deleted permanently' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
+/**
  * POST /api/admin/users/:uid/reject
+ * Keep for backward compatibility, same logic as DELETE now
  */
 router.post('/users/:uid/reject', async (req, res) => {
     try {
         const { uid } = req.params;
-        await db.collection('users').doc(uid).update({
-            approved: false
-        });
-        console.log(`❌ User ${uid} rejected by admin ${req.user.uid}`);
-        res.json({ success: true, message: 'User rejected' });
+        await auth.deleteUser(uid).catch(() => { });
+        await db.collection('users').doc(uid).delete();
+        res.json({ success: true, message: 'User deleted successfully' });
     } catch (error) {
-        console.error('Error rejecting user:', error);
-        res.status(500).json({ error: 'Failed to reject user' });
+        res.status(500).json({ error: 'Failed to delete user' });
     }
 });
 
@@ -549,8 +570,6 @@ router.post('/payments/:id/reject', async (req, res) => {
  * One-time setup: creates admin doc for the authenticated user.
  * Only works if zero admins exist in the collection.
  */
-router.post = router.post; // Keep existing post
-
 // We need a special route WITHOUT verifyAdmin for first-time setup
 // So we create a separate router
 const setupRouter = express.Router();

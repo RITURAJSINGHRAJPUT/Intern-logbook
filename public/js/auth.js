@@ -451,7 +451,10 @@ window.getCurrentUserId = () => {
 /**
  * Get Firebase ID token (global)
  */
-window.getFirebaseToken = () => {
+window.getFirebaseToken = async () => {
+    if (auth.currentUser) {
+        return await auth.currentUser.getIdToken();
+    }
     return new Promise((resolve) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             unsubscribe();
