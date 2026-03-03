@@ -25,6 +25,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
 /**
  * Check authentication state
@@ -259,6 +260,24 @@ export async function register(email, password, fullName) {
       });
     }
 
+    // Establish server-side session directly after Auth identity creation
+    const idToken = await userCredential.user.getIdToken();
+    const res = await fetch("/api/sessionLogin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+
+    // Check for bans via HTTP status
+    if (res.status === 403) {
+      await signOut(auth);
+      return {
+        success: false,
+        error:
+          "This account has been permanently restricted from accessing the application.",
+      };
+    }
+
     // Create Firestore user document
     await createUserDoc(userCredential.user);
 
@@ -269,14 +288,6 @@ export async function register(email, password, fullName) {
     } catch (err) {
       console.error("Error sending verification email:", err);
     }
-
-    // Establish server-side session
-    const idToken = await userCredential.user.getIdToken();
-    const res = await fetch("/api/sessionLogin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
 
     if (!res.ok) {
       console.warn("Failed to establish server session");
@@ -301,6 +312,28 @@ export async function loginWithGoogle() {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
 
+    // Establish server-side session first to check ban status
+    const idToken = await user.getIdToken();
+    const res = await fetch("/api/sessionLogin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+
+    // Check for bans via HTTP status
+    if (res.status === 403) {
+      await signOut(auth);
+      return {
+        success: false,
+        error:
+          "This account has been permanently restricted from accessing the application.",
+      };
+    }
+
+    if (!res.ok) {
+      console.warn("Failed to establish server session");
+    }
+
     // Check if user exists, if not create doc
     const userDocRef = doc(firestore, "users", user.uid);
     const userDoc = await getDoc(userDocRef);
@@ -309,18 +342,6 @@ export async function loginWithGoogle() {
     if (!userDoc.exists()) {
       await createUserDoc(user);
       isNewUser = true;
-    }
-
-    // Establish server-side session
-    const idToken = await user.getIdToken();
-    const res = await fetch("/api/sessionLogin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
-
-    if (!res.ok) {
-      console.warn("Failed to establish server session");
     }
 
     return { success: true, user, needsApproval: isNewUser };
