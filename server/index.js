@@ -39,6 +39,11 @@ app.use('/templates', express.static(path.join(__dirname, '../pdf-format')));
 // Serve Payment Uploads securely
 app.use('/uploads/payments', verifySessionCookie, verifyAdmin, express.static(path.join(__dirname, 'uploads/payments')));
 
+// Health check endpoint for Render keep-alive
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // API routes
 app.use('/api', pdfRoutes);
 app.use('/api/templates', templateRoutes);
