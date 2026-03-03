@@ -1,595 +1,1160 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_io/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon_io/favicon-16x16.png">
-    <link rel="icon" type="image/x-icon" href="/assets/favicon_io/favicon.ico">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon_io/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/favicon_io/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/favicon_io/favicon.ico"
+    />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Click2PDF – Free Online PDF Form Filler & PDF Tools</title>
-    <meta name="description"
-        content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals.">
+    <meta
+      name="description"
+      content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals."
+    />
 
     <!-- Canonical Tag -->
     <link rel="canonical" href="https://click2pdf.in/" />
 
     <!-- OpenGraph Metadata -->
-    <meta property="og:title" content="Click2PDF – Free Online PDF Form Filler & PDF Tools" />
-    <meta property="og:description"
-        content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals." />
-    <meta property="og:image" content="https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png" />
+    <meta
+      property="og:title"
+      content="Click2PDF – Free Online PDF Form Filler & PDF Tools"
+    />
+    <meta
+      property="og:description"
+      content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals."
+    />
+    <meta
+      property="og:image"
+      content="https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png"
+    />
     <meta property="og:url" content="https://click2pdf.in/" />
     <meta property="og:type" content="website" />
 
     <!-- Twitter Card Metadata -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Click2PDF – Free Online PDF Form Filler & PDF Tools" />
-    <meta name="twitter:description"
-        content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals." />
-    <meta name="twitter:image" content="https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png" />
+    <meta
+      name="twitter:title"
+      content="Click2PDF – Free Online PDF Form Filler & PDF Tools"
+    />
+    <meta
+      name="twitter:description"
+      content="Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals."
+    />
+    <meta
+      name="twitter:image"
+      content="https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png"
+    />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebApplication",
-          "name": "Click2PDF",
-          "url": "https://click2pdf.in/",
-          "applicationCategory": "UtilitiesApplication",
-          "operatingSystem": "All",
-          "description": "Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals.",
-          "offers": {
-            "@type": "Offer",
-            "price": "0"
-          }
-        },
-        {
-          "@type": "Organization",
-          "name": "Click2PDF",
-          "url": "https://click2pdf.in/",
-          "logo": "https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png",
-          "sameAs": [
-            "https://twitter.com/click2pdf"
-          ]
-        },
-        {
-          "@type": "FAQPage",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "Is Click2PDF free to use?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes, Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Are my files secure?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes! We auto-delete all files after 30 minutes, and we use end-to-end encryption to keep your data safe."
-              }
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Click2PDF",
+            "url": "https://click2pdf.in/",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "All",
+            "description": "Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools. Fast, secure and easy to use PDF tools for students and professionals.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0"
             }
-          ]
-        }
-      ]
-    }
+          },
+          {
+            "@type": "Organization",
+            "name": "Click2PDF",
+            "url": "https://click2pdf.in/",
+            "logo": "https://click2pdf.in/assets/favicon_io/android-chrome-512x512.png",
+            "sameAs": ["https://twitter.com/click2pdf"]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is Click2PDF free to use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, Click2PDF offers free online PDF form filler, PDF converter, merge, split and compression tools."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Are my files secure?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes! We auto-delete all files after 30 minutes, and we use end-to-end encryption to keep your data safe."
+                }
+              }
+            ]
+          }
+        ]
+      }
     </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#00BCD4">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon_io/apple-touch-icon.png">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#00BCD4" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/favicon_io/apple-touch-icon.png"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'soft-turquoise': '#B2EBF2',
-                        'vibrant-turquoise': '#00BCD4',
-                        'soft-coral': '#FFCCBC',
-                        'vibrant-coral': '#FF5722',
-                        'sunny-yellow': '#FFF9C4',
-                        'warm-yellow': '#FFD54F',
-                        'bright-yellow': '#FFEE58',
-                        'friendly-navy': '#37474F',
-                    },
-                    fontFamily: {
-                        sans: ['Quicksand', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        'super-rounded': '3rem',
-                    },
-                },
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "soft-turquoise": "#B2EBF2",
+              "vibrant-turquoise": "#00BCD4",
+              "soft-coral": "#FFCCBC",
+              "vibrant-coral": "#FF5722",
+              "sunny-yellow": "#FFF9C4",
+              "warm-yellow": "#FFD54F",
+              "bright-yellow": "#FFEE58",
+              "friendly-navy": "#37474F",
             },
-        };
+            fontFamily: {
+              sans: ["Quicksand", "sans-serif"],
+            },
+            borderRadius: {
+              "super-rounded": "3rem",
+            },
+          },
+        },
+      };
     </script>
     <style>
-        body {
-            background-color: #FFFDF5;
-            color: #37474F;
-            font-family: 'Quicksand', sans-serif;
-        }
+      body {
+        background-color: #fffdf5;
+        color: #37474f;
+        font-family: "Quicksand", sans-serif;
+      }
 
-        .hero-gradient {
-            background: radial-gradient(circle at center, #FFF9C4 0%, #FFFDF5 70%);
-        }
+      .hero-gradient {
+        background: radial-gradient(circle at center, #fff9c4 0%, #fffdf5 70%);
+      }
 
-        .organic-blob {
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        }
+      .organic-blob {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
 
-        .hand-drawn-path {
-            stroke-dasharray: 10;
-            stroke-linecap: round;
-        }
+      .hand-drawn-path {
+        stroke-dasharray: 10;
+        stroke-linecap: round;
+      }
 
-        .cartoon-character-hover:hover .character-head {
-            transform: translateY(-10px) rotate(5deg);
-        }
+      .cartoon-character-hover:hover .character-head {
+        transform: translateY(-10px) rotate(5deg);
+      }
 
-        .button-tactile {
-            box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.1);
-            transition: all 0.15s ease-in-out;
-        }
+      .button-tactile {
+        box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.15s ease-in-out;
+      }
 
-        .button-tactile:active {
-            box-shadow: none;
-            transform: translateY(4px);
-        }
+      .button-tactile:active {
+        box-shadow: none;
+        transform: translateY(4px);
+      }
 
-        .pricing-bg {
-            background: radial-gradient(circle at top right, #FFF9C4 0%, transparent 40%),
-                radial-gradient(circle at bottom left, #B2EBF2 0%, transparent 40%);
-        }
+      .pricing-bg {
+        background:
+          radial-gradient(circle at top right, #fff9c4 0%, transparent 40%),
+          radial-gradient(circle at bottom left, #b2ebf2 0%, transparent 40%);
+      }
 
-        .pro-glow {
-            box-shadow: 0 0 40px rgba(255, 87, 34, 0.15);
-        }
+      .pro-glow {
+        box-shadow: 0 0 40px rgba(255, 87, 34, 0.15);
+      }
 
-        .toggle-switch:checked+.toggle-label {
-            background-color: #00BCD4;
-        }
+      .toggle-switch:checked + .toggle-label {
+        background-color: #00bcd4;
+      }
 
-        .toggle-switch:checked+.toggle-label .toggle-dot {
-            transform: translateX(2rem);
-        }
+      .toggle-switch:checked + .toggle-label .toggle-dot {
+        transform: translateX(2rem);
+      }
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-            display: inline-block;
-            vertical-align: middle;
-        }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 48;
+        display: inline-block;
+        vertical-align: middle;
+      }
     </style>
-</head>
+  </head>
 
-<body class="antialiased overflow-x-hidden">
-
+  <body class="antialiased overflow-x-hidden">
     <!-- Auth Check -->
     <script type="module">
-        import { checkAuth } from './js/auth.js';
-        checkAuth(false, true); // Redirect to app is handled in auth logic
+      import { checkAuth } from "./js/auth.js";
+      checkAuth(false, true); // Redirect to app is handled in auth logic
     </script>
 
     <nav
-        class="py-1 md:py-2 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50 border-b border-friendly-navy/10">
-        <a href="/" class="flex items-center gap-2 group cursor-pointer">
-            <div
-                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform">
-                <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
-                    class="w-full h-full object-cover rounded-lg">
-            </div>
-            <span class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise">Click2PDF</span>
-        </a>
-        <div class="flex items-center gap-3 md:gap-6">
-            <button onclick="document.getElementById('pricing-modal').classList.remove('hidden')"
-                class="hidden md:block font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors">Pricing</button>
-            <a class="bg-vibrant-coral text-white px-4 py-1.5 md:px-5 md:py-2 rounded-full font-extrabold text-sm button-tactile"
-                href="/login.html">
-                Get Started
-            </a>
+      class="py-1 md:py-2 px-4 md:px-8 max-w-7xl mx-auto flex justify-between items-center relative z-50 border-b border-friendly-navy/10"
+    >
+      <a href="/" class="flex items-center gap-2 group cursor-pointer">
+        <div
+          class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md group-hover:rotate-0 transition-transform"
+        >
+          <img
+            src="/assets/favicon_io/android-chrome-192x192.png"
+            alt="Click2PDF"
+            class="w-full h-full object-cover rounded-lg"
+          />
         </div>
+        <span
+          class="font-bold text-xl md:text-2xl tracking-tight text-vibrant-turquoise"
+          >Click2PDF</span
+        >
+      </a>
+      <div class="flex items-center gap-3 md:gap-6">
+        <button
+          onclick="
+            document.getElementById('pricing-modal').classList.remove('hidden')
+          "
+          class="hidden md:block font-bold text-sm text-friendly-navy hover:text-vibrant-coral transition-colors"
+        >
+          Pricing
+        </button>
+        <a
+          class="bg-vibrant-coral text-white px-4 py-1.5 md:px-5 md:py-2 rounded-full font-extrabold text-sm button-tactile"
+          href="/login.html"
+        >
+          Get Started
+        </a>
+      </div>
     </nav>
     <main>
-        <section class="hero-gradient pt-16 pb-20 px-4 md:px-6 relative">
-            <div class="max-w-5xl mx-auto text-center relative flex flex-col items-center">
+      <section class="hero-gradient pt-16 pb-20 px-4 md:px-6 relative">
+        <div
+          class="max-w-5xl mx-auto text-center relative flex flex-col items-center"
+        >
+          <div
+            class="absolute top-0 -left-10 w-20 h-20 bg-soft-turquoise organic-blob opacity-40 blur-xl animate-pulse"
+          ></div>
+          <div
+            class="absolute top-20 -right-10 w-32 h-32 bg-soft-coral organic-blob opacity-30 blur-2xl"
+          ></div>
+
+          <h1
+            class="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-friendly-navy mb-4 leading-tight"
+          >
+            Free Online PDF Tools <br class="md:hidden" />
+            <span
+              class="text-vibrant-coral relative inline-block whitespace-nowrap"
+            >
+              Fill, Convert, Merge &amp; Edit PDFs
+              <svg
+                class="absolute -bottom-2 left-0 w-full"
+                fill="none"
+                height="10"
+                viewBox="0 0 300 15"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 10C50 2 250 2 295 10"
+                  stroke="#FF5722"
+                  stroke-linecap="round"
+                  stroke-width="6"
+                ></path>
+              </svg>
+            </span>
+          </h1>
+
+          <p
+            class="text-base md:text-lg text-friendly-navy/80 mb-8 max-w-xl mx-auto font-medium px-4"
+          >
+            The friendliest way to fill, sign, and giggle your way through
+            paperwork. ✨
+          </p>
+
+          <div
+            class="relative w-full max-w-lg mx-auto cartoon-character-hover mt-8"
+          >
+            <a
+              href="/login.html"
+              class="block relative bg-white border-4 border-dashed border-soft-turquoise p-6 md:p-8 rounded-[2rem] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10 z-0"
+            >
+              <div
+                class="bg-sunny-yellow w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 border-2 border-white shadow-inner group-hover:rotate-12 transition-transform"
+              >
+                <span
+                  class="material-symbols-outlined text-2xl text-warm-yellow"
+                  >rocket_launch</span
+                >
+              </div>
+              <h2
+                class="text-xl md:text-2xl font-extrabold text-friendly-navy mb-1"
+              >
+                Drop your file here!
+              </h2>
+              <p class="text-sm text-friendly-navy/60 font-bold mb-4">
+                Or click to find it on your computer
+              </p>
+
+              <div class="flex justify-center gap-2 flex-wrap">
                 <div
-                    class="absolute top-0 -left-10 w-20 h-20 bg-soft-turquoise organic-blob opacity-40 blur-xl animate-pulse">
+                  class="flex items-center gap-1 bg-soft-turquoise/30 px-3 py-1 rounded-full border border-soft-turquoise"
+                >
+                  <span
+                    class="material-symbols-outlined text-vibrant-turquoise text-[1rem]"
+                    >check_circle</span
+                  >
+                  <span
+                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-turquoise uppercase tracking-wider"
+                    >Secure &amp; Fast</span
+                  >
                 </div>
-                <div class="absolute top-20 -right-10 w-32 h-32 bg-soft-coral organic-blob opacity-30 blur-2xl"></div>
+                <div
+                  class="flex items-center gap-1 bg-soft-coral/30 px-3 py-1 rounded-full border border-soft-coral"
+                >
+                  <span
+                    class="material-symbols-outlined text-vibrant-coral text-[1rem]"
+                    >star</span
+                  >
+                  <span
+                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-coral uppercase tracking-wider"
+                    >Super Easy</span
+                  >
+                </div>
+              </div>
+            </a>
 
-                <h1 class="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-friendly-navy mb-4 leading-tight">
-                    Free Online PDF Tools <br class="md:hidden" />
-                    <span class="text-vibrant-coral relative inline-block whitespace-nowrap">
-                        Fill, Convert, Merge &amp; Edit PDFs
-                        <svg class="absolute -bottom-2 left-0 w-full" fill="none" height="10" viewBox="0 0 300 15"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 10C50 2 250 2 295 10" stroke="#FF5722" stroke-linecap="round" stroke-width="6">
-                            </path>
-                        </svg>
-                    </span>
-                </h1>
+            <div
+              class="character-head absolute -top-8 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none z-10 w-12 h-12"
+            >
+              <div
+                class="bg-bright-yellow w-full h-full rounded-full border-2 border-friendly-navy flex items-center justify-center shadow"
+              >
+                <div class="flex flex-col items-center mt-1">
+                  <div class="flex gap-1.5 mb-1">
+                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
+                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
+                  </div>
+                  <div
+                    class="w-3 h-1.5 border-b-2 border-friendly-navy rounded-full"
+                  ></div>
+                </div>
+                <div
+                  class="absolute -right-10 top-0 bg-white px-2 py-0.5 rounded-lg border-2 border-friendly-navy font-bold text-[0.6rem] -rotate-12 shadow-sm"
+                >
+                  Hello! 👋
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <p class="text-base md:text-lg text-friendly-navy/80 mb-8 max-w-xl mx-auto font-medium px-4">
-                    The friendliest way to fill, sign, and giggle your way through paperwork. ✨
+      <section class="py-12 px-4 md:px-6 max-w-5xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-12">
+          3 Simple Steps to Joy 🌈
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
+          <!-- SVG Connectors (Hidden on mobile) -->
+          <div
+            class="hidden md:block absolute left-[25%] top-16 w-1/4 translate-x-4"
+          >
+            <svg
+              class="w-full text-warm-yellow/50"
+              viewBox="0 0 100 30"
+              preserveAspectRatio="none"
+            >
+              <path
+                class="hand-drawn-path"
+                d="M0 15 Q 50 -10, 100 15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="hidden md:block absolute right-[25%] top-16 w-1/4 -translate-x-4"
+          >
+            <svg
+              class="w-full text-warm-yellow/50"
+              viewBox="0 0 100 30"
+              preserveAspectRatio="none"
+            >
+              <path
+                class="hand-drawn-path"
+                d="M0 15 Q 50 40, 100 15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              ></path>
+            </svg>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="text-center group flex flex-col items-center">
+            <div
+              class="w-24 h-24 md:w-28 md:h-28 bg-soft-turquoise organic-blob mb-4 flex items-center justify-center shadow-md rotate-3 group-hover:rotate-0 transition-transform border-2 border-white"
+            >
+              <span
+                class="material-symbols-outlined text-4xl text-vibrant-turquoise"
+                >add_to_photos</span
+              >
+            </div>
+            <h3 class="text-xl font-extrabold mb-2">1. Pick it</h3>
+            <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">
+              Drag in that dusty PDF and watch it come to life!
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div
+            class="text-center group flex flex-col items-center md:translate-y-6"
+          >
+            <div
+              class="w-24 h-24 md:w-28 md:h-28 bg-soft-coral organic-blob mb-4 flex items-center justify-center shadow-md -rotate-3 group-hover:rotate-0 transition-transform border-2 border-white"
+            >
+              <span
+                class="material-symbols-outlined text-4xl text-vibrant-coral"
+                >draw</span
+              >
+            </div>
+            <h3 class="text-xl font-extrabold mb-2">2. Fill it</h3>
+            <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">
+              Our editor is so easy, even your goldfish could use it.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="text-center group flex flex-col items-center">
+            <div
+              class="w-24 h-24 md:w-28 md:h-28 bg-sunny-yellow organic-blob mb-4 flex items-center justify-center shadow-md rotate-6 group-hover:rotate-0 transition-transform border-2 border-white"
+            >
+              <span class="material-symbols-outlined text-4xl text-warm-yellow"
+                >celebration</span
+              >
+            </div>
+            <h3 class="text-xl font-extrabold mb-2">3. Celebrate</h3>
+            <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">
+              Download your masterpiece and take the rest of the day off!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fixed Security Section Layout -->
+      <section class="max-w-4xl mx-auto px-4 md:px-6 py-8">
+        <div
+          class="bg-soft-turquoise/40 rounded-[2rem] p-6 md:p-8 flex flex-col sm:flex-row items-center sm:items-start md:items-center gap-6 md:gap-8 border-2 border-vibrant-turquoise/20"
+        >
+          <div class="shrink-0 relative">
+            <div
+              class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center shadow-lg mx-auto sm:mx-0"
+            >
+              <div class="relative flex items-center justify-center">
+                <span
+                  class="material-symbols-outlined text-[4rem] md:text-[5.5rem] text-vibrant-turquoise opacity-10 absolute"
+                  >shield</span
+                >
+                <span
+                  class="material-symbols-outlined text-[2.5rem] md:text-[3.5rem] text-vibrant-turquoise relative z-10"
+                  >lock_open_right</span
+                >
+              </div>
+            </div>
+            <div
+              class="absolute -bottom-2 -right-2 md:-right-4 bg-vibrant-coral text-white px-3 py-1 md:py-1.5 rounded-xl rotate-6 font-bold text-xs md:text-sm shadow-md whitespace-nowrap"
+            >
+              100% Safe!
+            </div>
+          </div>
+
+          <div class="text-center sm:text-left flex-1">
+            <h3
+              class="text-2xl md:text-3xl font-extrabold text-friendly-navy mb-3 md:mb-4"
+            >
+              Your Privacy is Our Superpower! 🛡️
+            </h3>
+            <p
+              class="text-sm md:text-base text-friendly-navy/80 font-medium leading-relaxed mb-5 md:mb-6"
+            >
+              Think of us like a digital whiteboard. You do your work, and when
+              you're done, we wipe everything clean. No storage, no snooping,
+              just pure productivity.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-start gap-3 w-full">
+              <div
+                class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md"
+              >
+                <span
+                  class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]"
+                  >timer_off</span
+                >
+                <span class="block text-friendly-navy"
+                  >Auto-delete after 30m</span
+                >
+              </div>
+              <div
+                class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md"
+              >
+                <span
+                  class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]"
+                  >encrypted</span
+                >
+                <span class="block text-friendly-navy"
+                  >End-to-end encryption</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-12 md:py-16 px-4 text-center">
+        <div
+          class="max-w-3xl mx-auto bg-warm-yellow/10 rounded-[2rem] p-8 md:p-10 border-2 border-dashed border-warm-yellow/30"
+        >
+          <h2
+            class="text-2xl md:text-4xl font-extrabold mb-5 text-friendly-navy"
+          >
+            Ready to make PDFs happy?
+          </h2>
+          <a
+            href="/login.html"
+            class="inline-flex bg-vibrant-turquoise text-white px-6 md:px-8 py-3 rounded-full font-black text-lg md:text-xl button-tactile hover:-translate-y-1 transition-transform items-center gap-2 mx-auto shadow-md hover:shadow-lg"
+          >
+            <span class="material-symbols-outlined text-2xl">magic_button</span>
+            Start Your PDF Journey
+          </a>
+          <p class="mt-4 font-bold text-sm text-friendly-navy/50">
+            No credit card. No boring stuff. Just fun.
+          </p>
+        </div>
+      </section>
+
+      <!-- Pricing Modal -->
+      <div
+        id="pricing-modal"
+        class="fixed inset-0 z-[100] hidden overflow-y-auto"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div
+          class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0"
+        >
+          <div
+            class="fixed inset-0 bg-friendly-navy/60 backdrop-blur-sm transition-opacity"
+            onclick="
+              document.getElementById('pricing-modal').classList.add('hidden')
+            "
+            aria-hidden="true"
+          ></div>
+          <span
+            class="hidden sm:inline-block sm:h-screen sm:align-middle"
+            aria-hidden="true"
+            >&#8203;</span
+          >
+          <div
+            class="pricing-bg relative inline-block transform overflow-hidden rounded-[2.5rem] bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle border-4 border-white"
+          >
+            <button
+              onclick="
+                document.getElementById('pricing-modal').classList.add('hidden')
+              "
+              class="absolute top-4 right-4 md:top-6 md:right-6 bg-white hover:bg-soft-coral hover:text-vibrant-coral text-friendly-navy/50 p-2 rounded-full shadow-md z-10 transition-colors"
+            >
+              <span class="material-symbols-outlined font-bold">close</span>
+            </button>
+
+            <div
+              class="px-5 py-8 md:px-10 md:py-10 max-h-[90vh] overflow-y-auto"
+            >
+              <div class="text-center mb-8">
+                <h2
+                  class="text-3xl md:text-4xl font-extrabold text-friendly-navy mb-3"
+                  id="modal-title"
+                >
+                  Choose Your Plan!
+                </h2>
+                <p
+                  class="text-base md:text-lg text-friendly-navy/70 font-bold mb-4"
+                >
+                  Pick the perfect sidekick for your PDF adventures.
                 </p>
-
-                <div class="relative w-full max-w-lg mx-auto cartoon-character-hover mt-8">
-                    <a href="/login.html"
-                        class="block relative bg-white border-4 border-dashed border-soft-turquoise p-6 md:p-8 rounded-[2rem] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-10 z-0">
-                        <div
-                            class="bg-sunny-yellow w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 border-2 border-white shadow-inner group-hover:rotate-12 transition-transform">
-                            <span class="material-symbols-outlined text-2xl text-warm-yellow">rocket_launch</span>
-                        </div>
-                        <h2 class="text-xl md:text-2xl font-extrabold text-friendly-navy mb-1">Drop your file here!</h2>
-                        <p class="text-sm text-friendly-navy/60 font-bold mb-4">Or click to find it on your computer</p>
-
-                        <div class="flex justify-center gap-2 flex-wrap">
-                            <div
-                                class="flex items-center gap-1 bg-soft-turquoise/30 px-3 py-1 rounded-full border border-soft-turquoise">
-                                <span
-                                    class="material-symbols-outlined text-vibrant-turquoise text-[1rem]">check_circle</span>
-                                <span
-                                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-turquoise uppercase tracking-wider">Secure
-                                    &amp; Fast</span>
-                            </div>
-                            <div
-                                class="flex items-center gap-1 bg-soft-coral/30 px-3 py-1 rounded-full border border-soft-coral">
-                                <span class="material-symbols-outlined text-vibrant-coral text-[1rem]">star</span>
-                                <span
-                                    class="text-[0.65rem] md:text-xs font-bold text-vibrant-coral uppercase tracking-wider">Super
-                                    Easy</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <div
-                        class="character-head absolute -top-8 left-1/2 -translate-x-1/2 transition-transform duration-300 pointer-events-none z-10 w-12 h-12">
-                        <div
-                            class="bg-bright-yellow w-full h-full rounded-full border-2 border-friendly-navy flex items-center justify-center shadow">
-                            <div class="flex flex-col items-center mt-1">
-                                <div class="flex gap-1.5 mb-1">
-                                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
-                                    <div class="w-1 h-1 bg-friendly-navy rounded-full"></div>
-                                </div>
-                                <div class="w-3 h-1.5 border-b-2 border-friendly-navy rounded-full"></div>
-                            </div>
-                            <div
-                                class="absolute -right-10 top-0 bg-white px-2 py-0.5 rounded-lg border-2 border-friendly-navy font-bold text-[0.6rem] -rotate-12 shadow-sm">
-                                Hello! 👋
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-12 px-4 md:px-6 max-w-5xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-12">3 Simple Steps to Joy 🌈</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
-                <!-- SVG Connectors (Hidden on mobile) -->
-                <div class="hidden md:block absolute left-[25%] top-16 w-1/4 translate-x-4">
-                    <svg class="w-full text-warm-yellow/50" viewBox="0 0 100 30" preserveAspectRatio="none">
-                        <path class="hand-drawn-path" d="M0 15 Q 50 -10, 100 15" fill="none" stroke="currentColor"
-                            stroke-width="2"></path>
-                    </svg>
-                </div>
-                <div class="hidden md:block absolute right-[25%] top-16 w-1/4 -translate-x-4">
-                    <svg class="w-full text-warm-yellow/50" viewBox="0 0 100 30" preserveAspectRatio="none">
-                        <path class="hand-drawn-path" d="M0 15 Q 50 40, 100 15" fill="none" stroke="currentColor"
-                            stroke-width="2"></path>
-                    </svg>
-                </div>
-
-                <!-- Step 1 -->
-                <div class="text-center group flex flex-col items-center">
-                    <div
-                        class="w-24 h-24 md:w-28 md:h-28 bg-soft-turquoise organic-blob mb-4 flex items-center justify-center shadow-md rotate-3 group-hover:rotate-0 transition-transform border-2 border-white">
-                        <span class="material-symbols-outlined text-4xl text-vibrant-turquoise">add_to_photos</span>
-                    </div>
-                    <h3 class="text-xl font-extrabold mb-2">1. Pick it</h3>
-                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Drag in that dusty PDF and watch it
-                        come to life!</p>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="text-center group flex flex-col items-center md:translate-y-6">
-                    <div
-                        class="w-24 h-24 md:w-28 md:h-28 bg-soft-coral organic-blob mb-4 flex items-center justify-center shadow-md -rotate-3 group-hover:rotate-0 transition-transform border-2 border-white">
-                        <span class="material-symbols-outlined text-4xl text-vibrant-coral">draw</span>
-                    </div>
-                    <h3 class="text-xl font-extrabold mb-2">2. Fill it</h3>
-                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Our editor is so easy, even your
-                        goldfish could use it.</p>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="text-center group flex flex-col items-center">
-                    <div
-                        class="w-24 h-24 md:w-28 md:h-28 bg-sunny-yellow organic-blob mb-4 flex items-center justify-center shadow-md rotate-6 group-hover:rotate-0 transition-transform border-2 border-white">
-                        <span class="material-symbols-outlined text-4xl text-warm-yellow">celebration</span>
-                    </div>
-                    <h3 class="text-xl font-extrabold mb-2">3. Celebrate</h3>
-                    <p class="text-sm font-bold text-friendly-navy/70 max-w-[250px]">Download your masterpiece and take
-                        the rest of the day off!</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Fixed Security Section Layout -->
-        <section class="max-w-4xl mx-auto px-4 md:px-6 py-8">
-            <div
-                class="bg-soft-turquoise/40 rounded-[2rem] p-6 md:p-8 flex flex-col sm:flex-row items-center sm:items-start md:items-center gap-6 md:gap-8 border-2 border-vibrant-turquoise/20">
-
-                <div class="shrink-0 relative">
-                    <div
-                        class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center shadow-lg mx-auto sm:mx-0">
-                        <div class="relative flex items-center justify-center">
-                            <span
-                                class="material-symbols-outlined text-[4rem] md:text-[5.5rem] text-vibrant-turquoise opacity-10 absolute">shield</span>
-                            <span
-                                class="material-symbols-outlined text-[2.5rem] md:text-[3.5rem] text-vibrant-turquoise relative z-10">lock_open_right</span>
-                        </div>
-                    </div>
-                    <div
-                        class="absolute -bottom-2 -right-2 md:-right-4 bg-vibrant-coral text-white px-3 py-1 md:py-1.5 rounded-xl rotate-6 font-bold text-xs md:text-sm shadow-md whitespace-nowrap">
-                        100% Safe!
-                    </div>
-                </div>
-
-                <div class="text-center sm:text-left flex-1">
-                    <h3 class="text-2xl md:text-3xl font-extrabold text-friendly-navy mb-3 md:mb-4">Your Privacy is Our
-                        Superpower! 🛡️</h3>
-                    <p class="text-sm md:text-base text-friendly-navy/80 font-medium leading-relaxed mb-5 md:mb-6">
-                        Think of us like a digital whiteboard. You do your work, and when you're done, we wipe
-                        everything clean. No storage, no snooping, just pure productivity.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row justify-start gap-3 w-full">
-                        <div
-                            class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md">
-                            <span
-                                class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]">timer_off</span>
-                            <span class="block text-friendly-navy">Auto-delete after 30m</span>
-                        </div>
-                        <div
-                            class="flex-1 bg-white/80 px-3 py-3 rounded-2xl border-2 border-vibrant-turquoise/30 font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-2 shadow-sm text-center transition-all hover:bg-white hover:border-vibrant-turquoise hover:shadow-md">
-                            <span
-                                class="material-symbols-outlined text-vibrant-turquoise text-[24px] md:text-[28px]">encrypted</span>
-                            <span class="block text-friendly-navy">End-to-end encryption</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <section class="py-12 md:py-16 px-4 text-center">
-            <div
-                class="max-w-3xl mx-auto bg-warm-yellow/10 rounded-[2rem] p-8 md:p-10 border-2 border-dashed border-warm-yellow/30">
-                <h2 class="text-2xl md:text-4xl font-extrabold mb-5 text-friendly-navy">Ready to make PDFs happy?</h2>
-                <a href="/login.html"
-                    class="inline-flex bg-vibrant-turquoise text-white px-6 md:px-8 py-3 rounded-full font-black text-lg md:text-xl button-tactile hover:-translate-y-1 transition-transform items-center gap-2 mx-auto shadow-md hover:shadow-lg">
-                    <span class="material-symbols-outlined text-2xl">magic_button</span>
-                    Start Your PDF Journey
-                </a>
-                <p class="mt-4 font-bold text-sm text-friendly-navy/50">No credit card. No boring stuff. Just fun.</p>
-            </div>
-        </section>
-
-        <!-- Pricing Modal -->
-        <div id="pricing-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
-            role="dialog" aria-modal="true">
-            <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0">
-                <div class="fixed inset-0 bg-friendly-navy/60 backdrop-blur-sm transition-opacity"
-                    onclick="document.getElementById('pricing-modal').classList.add('hidden')" aria-hidden="true"></div>
-                <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
                 <div
-                    class="pricing-bg relative inline-block transform overflow-hidden rounded-[2.5rem] bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle border-4 border-white">
-                    <button onclick="document.getElementById('pricing-modal').classList.add('hidden')"
-                        class="absolute top-4 right-4 md:top-6 md:right-6 bg-white hover:bg-soft-coral hover:text-vibrant-coral text-friendly-navy/50 p-2 rounded-full shadow-md z-10 transition-colors">
-                        <span class="material-symbols-outlined font-bold">close</span>
-                    </button>
-
-                    <div class="px-5 py-8 md:px-10 md:py-10 max-h-[90vh] overflow-y-auto">
-                        <div class="text-center mb-8">
-                            <h2 class="text-3xl md:text-4xl font-extrabold text-friendly-navy mb-3" id="modal-title">
-                                Choose Your Plan!</h2>
-                            <p class="text-base md:text-lg text-friendly-navy/70 font-bold mb-6">Pick the perfect
-                                sidekick
-                                for your PDF adventures.</p>
-                            <div class="flex items-center justify-center gap-3">
-                                <span class="font-bold text-sm text-friendly-navy/60">Monthly</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input class="sr-only toggle-switch" type="checkbox" />
-                                    <div
-                                        class="toggle-label w-12 h-6 bg-soft-turquoise rounded-full p-1 transition-colors duration-300">
-                                        <div
-                                            class="toggle-dot w-4 h-4 bg-white rounded-full shadow transition-transform duration-300">
-                                        </div>
-                                    </div>
-                                </label>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-sm text-friendly-navy">Yearly</span>
-                                    <span
-                                        class="bg-sunny-yellow text-vibrant-coral text-[9px] font-black px-1.5 py-0.5 rounded-lg border border-warm-yellow rotate-3">SAVE
-                                        20%!</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-3 gap-4 md:gap-5 mb-10">
-                            <div
-                                class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-soft-turquoise transition-all flex flex-col">
-                                <div
-                                    class="bg-soft-turquoise/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-2xl text-vibrant-turquoise">send</span>
-                                </div>
-                                <h3 class="text-xl font-black mb-1">Casual Plan</h3>
-                                <div class="flex items-baseline gap-1 mb-3">
-                                    <span class="text-3xl font-black">$0</span>
-                                    <span class="text-friendly-navy/50 font-bold text-xs">/forever</span>
-                                </div>
-                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">For
-                                    the occasional traveler in the land of forms.</p>
-                                <button onclick="window.location.href='/login.html'"
-                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-soft-turquoise/20 text-vibrant-turquoise border-2 border-vibrant-turquoise/30 hover:bg-vibrant-turquoise hover:text-white transition-all">Start
-                                    Free</button>
-                            </div>
-
-                            <div
-                                class="bg-white p-6 rounded-[1.5rem] shadow-xl border-4 border-vibrant-coral relative pro-glow md:scale-105 z-10 flex flex-col">
-                                <div
-                                    class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-4 py-1 rounded-full font-black text-[10px] tracking-widest shadow-md">
-                                    MOST POPULAR</div>
-                                <div
-                                    class="bg-soft-coral/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                                    <span
-                                        class="material-symbols-outlined text-2xl text-vibrant-coral">rocket_launch</span>
-                                </div>
-                                <h3 class="text-xl font-black mb-1">Power Plan</h3>
-                                <div class="flex items-baseline gap-1 mb-3">
-                                    <span class="text-3xl font-black">$12</span>
-                                    <span class="text-friendly-navy/50 font-bold text-xs">/month</span>
-                                </div>
-                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">For
-                                    the PDF wizards who need the magic touch every day.</p>
-                                <button onclick="window.location.href='/login.html'"
-                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-vibrant-coral text-white button-tactile">Go
-                                    Power</button>
-                            </div>
-
-                            <div
-                                class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-sunny-yellow transition-all flex flex-col">
-                                <div
-                                    class="bg-sunny-yellow/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-2xl text-warm-yellow">groups</span>
-                                </div>
-                                <h3 class="text-xl font-black mb-1">Business Plan</h3>
-                                <div class="flex items-baseline gap-1 mb-3">
-                                    <span class="text-3xl font-black">$49</span>
-                                    <span class="text-friendly-navy/50 font-bold text-xs">/month</span>
-                                </div>
-                                <p class="text-friendly-navy/70 font-bold mb-4 flex-grow text-xs leading-relaxed">
-                                    Perfect for teams who want to play and work together.</p>
-                                <button onclick="window.location.href='/login.html'"
-                                    class="w-full py-2.5 rounded-xl font-black text-sm bg-vibrant-turquoise text-white button-tactile">Team
-                                    Up</button>
-                            </div>
-                        </div>
-
-                        <div class="max-w-3xl mx-auto">
-                            <h3 class="text-2xl font-extrabold text-center mb-6">What's included? 🍭</h3>
-                            <div
-                                class="bg-white/90 rounded-3xl shadow-md overflow-x-auto border-2 border-soft-turquoise/20">
-                                <table class="w-full text-left border-collapse min-w-[500px]">
-                                    <thead>
-                                        <tr class="bg-soft-turquoise/10 border-b border-soft-turquoise/20">
-                                            <th class="p-3 text-sm font-black text-friendly-navy/90">Feature</th>
-                                            <th class="p-3 text-center text-vibrant-turquoise font-black text-sm">Casual
-                                            </th>
-                                            <th class="p-3 text-center text-vibrant-coral font-black text-sm">Power</th>
-                                            <th class="p-3 text-center text-warm-yellow font-black text-sm">Business
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="font-bold text-friendly-navy/70 text-xs">
-                                        <tr class="border-b border-soft-turquoise/10">
-                                            <td class="p-4 pl-6">Daily PDF Fills</td>
-                                            <td class="p-4 text-center">3</td>
-                                            <td class="p-4 text-center">Unlimited</td>
-                                            <td class="p-4 text-center">Unlimited</td>
-                                        </tr>
-                                        <tr class="border-b border-soft-turquoise/10">
-                                            <td class="p-4 pl-6">Maximum File Size</td>
-                                            <td class="p-4 text-center">10 MB</td>
-                                            <td class="p-4 text-center">2 GB</td>
-                                            <td class="p-4 text-center">10 GB</td>
-                                        </tr>
-                                        <tr class="border-b border-soft-turquoise/10">
-                                            <td class="p-4 pl-6">Custom Stickers &amp; Emojis</td>
-                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b border-soft-turquoise/10">
-                                            <td class="p-4 pl-6">Hand-drawn Signatures</td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-4 pl-6">Shared Team Folder</td>
-                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
-                                            <td class="p-4 text-center text-friendly-navy/20">—</td>
-                                            <td class="p-4 text-center"><span
-                                                    class="material-symbols-outlined text-vibrant-turquoise">check_circle</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                  class="inline-flex items-center gap-2 bg-vibrant-turquoise/10 px-4 py-2 rounded-full border border-vibrant-turquoise/30"
+                >
+                  <span
+                    class="material-symbols-outlined text-vibrant-turquoise text-xl"
+                    >bolt</span
+                  ><span class="font-black text-sm text-friendly-navy"
+                    >1 Credit = 1 PDF Processing</span
+                  >
                 </div>
+              </div>
+              <div
+                class="grid md:grid-cols-3 gap-5 md:gap-5 mb-10 w-full items-stretch flex-1"
+              >
+                <div
+                  class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-soft-turquoise transition-all flex flex-col items-start text-left h-full"
+                >
+                  <div
+                    class="bg-soft-turquoise/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                  >
+                    <span
+                      class="material-symbols-outlined text-2xl text-vibrant-turquoise"
+                      >send</span
+                    >
+                  </div>
+                  <h3 class="text-xl font-black mb-1">Free Starter</h3>
+                  <div class="flex items-baseline gap-1 mb-1">
+                    <span class="text-3xl font-black">₹0</span>
+                  </div>
+                  <div class="text-vibrant-turquoise font-bold text-sm mb-3">
+                    10 Credits
+                    <span class="text-friendly-navy/50 text-xs"
+                      >(One-Time)</span
+                    >
+                  </div>
+                  <p
+                    class="text-friendly-navy/70 font-bold text-xs leading-relaxed mb-5"
+                  >
+                    Try it before you upgrade.<br />Perfect for occasional users
+                    who need basic PDF processing.
+                  </p>
+                  <ul
+                    class="text-xs font-bold text-friendly-navy/70 space-y-3 mb-6 flex-grow w-full"
+                  >
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-turquoise text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>10 Credits</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >speed</span
+                      >
+                      <span>Slow Processing Speed</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No Bulk Fill</span
+                      >
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >warning</span
+                      >
+                      <span>Limited Tool Access</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No CSV Upload</span
+                      >
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No API Access</span
+                      >
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No Team Access</span
+                      >
+                    </li>
+                  </ul>
+                  <button
+                    onclick="window.location.href = '/login.html'"
+                    class="w-full py-3 rounded-xl font-black text-sm bg-soft-turquoise/20 text-vibrant-turquoise border-2 border-vibrant-turquoise/30 hover:bg-vibrant-turquoise hover:text-white transition-all mt-auto"
+                  >
+                    Start Free
+                  </button>
+                </div>
+                <div
+                  class="bg-white p-6 rounded-[1.5rem] shadow-xl border-4 border-vibrant-coral relative pro-glow md:scale-105 z-10 flex flex-col items-start text-left h-full"
+                >
+                  <div
+                    class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-vibrant-coral text-white px-4 py-1 rounded-full font-black text-[10px] tracking-widest shadow-md whitespace-nowrap"
+                  >
+                    MOST POPULAR
+                  </div>
+                  <div
+                    class="bg-soft-coral/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                  >
+                    <span
+                      class="material-symbols-outlined text-2xl text-vibrant-coral"
+                      >rocket_launch</span
+                    >
+                  </div>
+                  <h3 class="text-xl font-black mb-1">Standard</h3>
+                  <div class="flex items-baseline gap-1 mb-1">
+                    <span class="text-3xl font-black">₹129</span>
+                  </div>
+                  <div class="text-vibrant-coral font-bold text-sm mb-1">
+                    150 Credits
+                  </div>
+                  <div
+                    class="text-friendly-navy/80 font-bold text-[10px] mb-3 bg-soft-coral/20 px-2 py-0.5 rounded"
+                  >
+                    Just ₹0.86 per credit
+                  </div>
+                  <p
+                    class="text-friendly-navy/70 font-bold text-xs leading-relaxed mb-5"
+                  >
+                    Best for students, professionals & frequent users.
+                  </p>
+                  <ul
+                    class="text-xs font-bold text-friendly-navy/70 space-y-3 mb-6 flex-grow w-full"
+                  >
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >check_circle</span
+                      >
+                      <span class="text-vibrant-coral">150 Credits</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >bolt</span
+                      >
+                      <span class="text-vibrant-coral"
+                        >Fast Processing Speed</span
+                      >
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>Bulk Fill Enabled</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>Access to All Tools</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-vibrant-coral text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>CSV Upload Supported</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No API Access</span
+                      >
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-friendly-navy/30 text-[16px]"
+                        >close</span
+                      >
+                      <span class="line-through text-friendly-navy/40"
+                        >No Team Access</span
+                      >
+                    </li>
+                  </ul>
+                  <button
+                    onclick="window.location.href = '/login.html'"
+                    class="w-full py-3 rounded-xl font-black text-sm bg-vibrant-coral text-white button-tactile mt-auto mb-2"
+                  >
+                    Upgrade Now
+                  </button>
+                  <p
+                    class="text-center w-full text-[10px] font-bold text-friendly-navy/40"
+                  >
+                    One-time payment. No subscription.
+                  </p>
+                </div>
+                <div
+                  class="bg-white/90 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border-4 border-transparent hover:border-sunny-yellow transition-all flex flex-col items-start text-left h-full"
+                >
+                  <div
+                    class="bg-sunny-yellow/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                  >
+                    <span
+                      class="material-symbols-outlined text-2xl text-warm-yellow"
+                      >groups</span
+                    >
+                  </div>
+                  <h3 class="text-xl font-black mb-1">Premium</h3>
+                  <div class="flex items-baseline gap-1 mb-1">
+                    <span class="text-2xl font-black mt-1">Custom Pricing</span>
+                  </div>
+                  <div class="text-warm-yellow font-bold text-sm mb-3 mt-1">
+                    Custom / Bulk Credits
+                  </div>
+                  <p
+                    class="text-friendly-navy/70 font-bold text-xs leading-relaxed mb-5"
+                  >
+                    Built for teams & high-volume usage.
+                  </p>
+                  <ul
+                    class="text-xs font-bold text-friendly-navy/70 space-y-3 mb-6 flex-grow w-full"
+                  >
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>Custom Credit Allocation</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >speed</span
+                      >
+                      <span>Priority Processing</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>Bulk Fill Enabled</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>All Tools Access</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>CSV Upload</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>API Access</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >check_circle</span
+                      >
+                      <span>Team Access</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span
+                        class="material-symbols-outlined text-warm-yellow text-[16px]"
+                        >support_agent</span
+                      >
+                      <span>Dedicated Support</span>
+                    </li>
+                  </ul>
+                  <button
+                    onclick="window.location.href = '/contact.html'"
+                    class="w-full py-3 rounded-xl font-black text-sm bg-warm-yellow text-friendly-navy button-tactile mt-auto mb-2"
+                  >
+                    Contact Sales
+                  </button>
+                  <p
+                    class="text-center w-full text-[10px] font-bold text-friendly-navy/50"
+                  >
+                    Custom solutions for startups & enterprises.
+                  </p>
+                </div>
+              </div>
+              <div class="max-w-3xl mx-auto w-full">
+                <h3 class="text-2xl font-extrabold text-center mb-6">
+                  Compare Features 🍭
+                </h3>
+                <div
+                  class="bg-white/90 rounded-3xl shadow-md overflow-x-auto border-2 border-soft-turquoise/20"
+                >
+                  <table class="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                      <tr
+                        class="bg-soft-turquoise/10 border-b border-soft-turquoise/20"
+                      >
+                        <th
+                          class="p-3 text-sm font-black text-friendly-navy/90"
+                        >
+                          Feature
+                        </th>
+                        <th
+                          class="p-3 text-center text-vibrant-turquoise font-black text-sm"
+                        >
+                          Free
+                        </th>
+                        <th
+                          class="p-3 text-center text-vibrant-coral font-black text-sm"
+                        >
+                          Standard
+                        </th>
+                        <th
+                          class="p-3 text-center text-warm-yellow font-black text-sm"
+                        >
+                          Premium
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="font-bold text-friendly-navy/70 text-xs">
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">Credits</td>
+                        <td class="p-4 text-center">10</td>
+                        <td class="p-4 text-center">150</td>
+                        <td class="p-4 text-center">Custom</td>
+                      </tr>
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">Processing Speed</td>
+                        <td class="p-4 text-center">Slow</td>
+                        <td class="p-4 text-center text-vibrant-coral">Fast</td>
+                        <td class="p-4 text-center text-warm-yellow">
+                          Priority
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">Bulk Fill</td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">All Tools Access</td>
+                        <td class="p-4 text-center">Limited</td>
+                        <td class="p-4 text-center">Full</td>
+                        <td class="p-4 text-center">Full</td>
+                      </tr>
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">CSV Upload</td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-soft-turquoise/10 hover:bg-white transition-colors"
+                      >
+                        <td class="p-4 pl-6">API Access</td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                      </tr>
+                      <tr class="hover:bg-white transition-colors">
+                        <td class="p-4 pl-6">Team Access</td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-friendly-navy/30"
+                            >close</span
+                          >
+                        </td>
+                        <td class="p-4 text-center">
+                          <span
+                            class="material-symbols-outlined text-vibrant-turquoise"
+                            >check_circle</span
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </main>
-    <footer class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2 group cursor-pointer">
-                <div
-                    class="w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform">
-                    <img src="/assets/favicon_io/android-chrome-192x192.png" alt="Click2PDF"
-                        class="w-full h-full object-cover rounded-lg">
-                </div>
-                <span class="font-bold text-sm tracking-tight text-friendly-navy">Click2PDF</span>
-            </div>
-
-            <div class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70 uppercase tracking-wide">
-                <a class="hover:text-vibrant-coral transition-colors" href="/privacy-policy.html">Privacy</a>
-                <a class="hover:text-vibrant-coral transition-colors" href="/return-policy.html">Returns</a>
-                <a class="hover:text-vibrant-coral transition-colors" href="/refund-policy.html">Refunds</a>
-                <a class="hover:text-vibrant-coral transition-colors" href="/disclaimer.html">Disclaimer</a>
-                <a class="hover:text-vibrant-coral transition-colors" href="/contact.html">Contact</a>
-            </div>
-
-            <div class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs">
-                <p>© 2026. Sparsh Digital Solutions.</p>
-                <div class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm">
-                    <div class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]">
-                    </div>
-                    <span>Servers Happy</span>
-                </div>
-            </div>
+    <footer
+      class="bg-[#e3eaef] py-4 px-4 md:px-6 border-t border-friendly-navy/10 mt-auto shrink-0 w-full z-10"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4"
+      >
+        <div class="flex items-center gap-2 group cursor-pointer">
+          <div
+            class="w-6 h-6 flex items-center justify-center rounded-lg shadow-sm group-hover:rotate-6 transition-transform"
+          >
+            <img
+              src="/assets/favicon_io/android-chrome-192x192.png"
+              alt="Click2PDF"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+          <span class="font-bold text-sm tracking-tight text-friendly-navy"
+            >Click2PDF</span
+          >
         </div>
+
+        <div
+          class="flex flex-wrap justify-center gap-4 font-bold text-xs text-friendly-navy/70 uppercase tracking-wide"
+        >
+          <a
+            class="hover:text-vibrant-coral transition-colors"
+            href="/privacy-policy.html"
+            >Privacy</a
+          >
+          <a
+            class="hover:text-vibrant-coral transition-colors"
+            href="/return-policy.html"
+            >Returns</a
+          >
+          <a
+            class="hover:text-vibrant-coral transition-colors"
+            href="/refund-policy.html"
+            >Refunds</a
+          >
+          <a
+            class="hover:text-vibrant-coral transition-colors"
+            href="/disclaimer.html"
+            >Disclaimer</a
+          >
+          <a
+            class="hover:text-vibrant-coral transition-colors"
+            href="/contact.html"
+            >Contact</a
+          >
+        </div>
+
+        <div
+          class="flex items-center gap-4 text-friendly-navy/50 font-bold text-xs"
+        >
+          <p>© 2026. Sparsh Digital Solutions.</p>
+          <div
+            class="flex items-center gap-1.5 bg-white/50 px-2 py-1 rounded-full shadow-sm"
+          >
+            <div
+              class="w-2 h-2 bg-vibrant-turquoise rounded-full animate-[pulse_2s_ease-in-out_infinite]"
+            ></div>
+            <span>Servers Happy</span>
+          </div>
+        </div>
+      </div>
     </footer>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
-        }
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
     </script>
-</body>
-
+  </body>
 </html>
